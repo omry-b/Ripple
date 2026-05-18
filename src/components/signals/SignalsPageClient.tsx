@@ -5,6 +5,7 @@ import type { Company, SignalStream } from "@/types/domain";
 import { StreamGrid } from "@/components/streams/StreamGrid";
 import { SignalFilters, type SignalFilterState } from "./SignalFilters";
 import { SignalDetailDrawer } from "./SignalDetailDrawer";
+import { exportSignalsCsv } from "@/lib/export/entities";
 
 type SignalsPageClientProps = {
   streams: SignalStream[];
@@ -33,12 +34,22 @@ export function SignalsPageClient({ streams, companies }: SignalsPageClientProps
 
   return (
     <>
-      <SignalFilters
-        categories={categories}
-        filters={filters}
-        onChange={setFilters}
-        resultCount={filtered.length}
-      />
+      <div className="signals-toolbar">
+        <SignalFilters
+          categories={categories}
+          filters={filters}
+          onChange={setFilters}
+          resultCount={filtered.length}
+        />
+        <button
+          type="button"
+          className="filter-export-btn"
+          onClick={() => exportSignalsCsv(filtered)}
+          disabled={filtered.length === 0}
+        >
+          Export CSV
+        </button>
+      </div>
       <StreamGrid
         streams={filtered}
         onStreamSelect={setSelected}

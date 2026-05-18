@@ -46,9 +46,14 @@ export function fetchCompany(id: string): Promise<{ asOf: string; company: Compa
 }
 
 export function runScenarioApi(
-  id: string
+  id: string,
+  options?: { severity?: number; durationDays?: number }
 ): Promise<{ asOf: string; run: SimulationRun }> {
-  return fetchJson(`/api/scenarios/${id}/run`, { method: "POST" });
+  return fetchJson(`/api/scenarios/${id}/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(options ?? {}),
+  });
 }
 
 export function fetchSimulationRuns(): Promise<{ asOf: string; runs: SimulationRun[] }> {

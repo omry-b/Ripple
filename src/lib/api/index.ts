@@ -6,6 +6,7 @@ import type {
   DashboardPayload,
   DashboardSnapshot,
   Scenario,
+  ScenarioRunOptions,
   ScoreFactor,
   SignalStream,
   SimulationRun,
@@ -52,10 +53,13 @@ export async function getScenario(id: string): Promise<Scenario | null> {
   return mockStore.getScenario(id) ?? null;
 }
 
-export async function runScenario(id: string): Promise<SimulationRun | null> {
+export async function runScenario(
+  id: string,
+  options?: ScenarioRunOptions
+): Promise<SimulationRun | null> {
   const scenario = mockStore.getScenario(id);
   if (!scenario) return null;
-  return simulationRunStore.run(scenario);
+  return simulationRunStore.run(scenario, options);
 }
 
 export async function getSimulationRuns(): Promise<SimulationRun[]> {

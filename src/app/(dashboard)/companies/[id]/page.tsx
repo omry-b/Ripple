@@ -7,6 +7,7 @@ import {
   getSignalsForCompany,
 } from "@/lib/api";
 import { ScoreBreakdownChart } from "@/components/charts/ScoreBreakdownChart";
+import { RiskScoreSparkline } from "@/components/charts/RiskScoreSparkline";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { CompanyProfileSections } from "@/components/companies/CompanyProfileSections";
@@ -72,11 +73,15 @@ export default async function CompanyDetailPage({ params }: Props) {
           </div>
         </div>
 
-        <span className="section-label">7-day trend</span>
+        <span className="section-label">30-day risk trend</span>
         <section className="workbench-card" style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, color: "#A3A3A3" }}>
+          <RiskScoreSparkline
+            values={company.history30d}
+            accent={company.scoreLevel === "critical" ? "#EF4444" : "#F59E0B"}
+          />
+          <p style={{ fontSize: 12, color: "#A3A3A3", marginTop: 12 }}>
             <span className={`trend-indicator ${company.deltaTrend}`}>{company.delta7d}</span>
-            {" "}risk score change vs prior week.
+            {" "}7-day change vs prior week.
           </p>
         </section>
 

@@ -7,6 +7,7 @@ import { RefreshBanner } from "@/components/shell/RefreshBanner";
 import { SkipToContent } from "@/components/shell/SkipToContent";
 import { OfflineBanner } from "@/components/shell/OfflineBanner";
 import { CommandPalette } from "@/components/shell/CommandPalette";
+import { KeyboardShortcuts } from "@/components/shell/KeyboardShortcuts";
 
 export default async function DashboardLayout({
   children,
@@ -28,6 +29,7 @@ export default async function DashboardLayout({
       <SignalTicker items={ticker} />
       <PageEffects />
       <CommandPalette />
+      <KeyboardShortcuts />
       {children}
     </LiveDataProvider>
   );

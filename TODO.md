@@ -44,11 +44,11 @@
 - [x] Add `not-found.tsx` at dashboard root
 - [x] Company `not-found.tsx` for unknown IDs
 - [x] Add `error.tsx` at dashboard root (recoverable errors)
-- [ ] Add `global-error.tsx` at app root
+- [x] Add `global-error.tsx` at app root
 - [ ] Breadcrumb component for nested routes
 - [ ] Mobile nav: collapsible tabs or bottom bar
 - [x] Command palette ⌘K (search companies, alerts, nav)
-- [ ] Keyboard shortcuts (g+o overview, g+s signals, etc.)
+- [x] Keyboard shortcuts (g+o overview, g+s signals, etc.)
 
 ### Component architecture
 - [x] Delete monolithic `Dashboard.tsx`
@@ -64,7 +64,7 @@
 - [x] `components/streams/StreamGrid`
 - [x] `components/scenario/ScenarioWorkbench`
 - [x] `components/overview/OverviewPage`
-- [ ] Extract `GlobalRiskMap` SVG to own component
+- [x] Extract `GlobalRiskMap` SVG to own component
 - [ ] Extract `AlertCard` conic border wrapper to variant prop only
 - [ ] Storybook setup for shell + bento cards
 - [ ] Shared `MetricCard` primitive for bento small tiles
@@ -123,9 +123,9 @@
 - [x] Filter by category (Logistics, Geopolitical, etc.)
 - [x] `SignalsPageClient` wraps grid + filters + drawer
 - [x] Extended signal mock data (description, methodology, related companies)
-- [ ] Signal history chart (7d) — Recharts or SVG
-- [ ] Signal definition / methodology tooltip
-- [ ] Export signals CSV
+- [x] Signal history chart (7d) — Recharts or SVG
+- [x] Signal definition / methodology tooltip
+- [x] Export signals CSV
 - [ ] Signal comparison mode (select 2, overlay sparklines)
 - [ ] RSS/webhook subscribe CTA (placeholder)
 
@@ -133,21 +133,21 @@
 - [x] Search filter by company name
 - [x] Sort by score, CVaR, name
 - [x] `CompaniesPageClient` with controlled table state
-- [ ] Pagination (25 per page)
+- [x] Pagination (25 per page)
 - [ ] Column visibility toggles
 - [x] Tier filter (Tier 1 / Tier 2)
-- [ ] Score range slider filter
-- [ ] Export companies CSV
+- [x] Score range slider filter
+- [x] Export companies CSV
 - [ ] Bulk select + add to watchlist (UI only until auth)
 
 ### Alerts & cross-links
 - [x] Alert "View Exposure" links to `/companies?alert={id}`
 - [x] Companies page reads `alert` query and shows filter banner
 - [x] `getAlert(id)` in mock store + API
-- [ ] Alert detail modal with full narrative + timeline
-- [ ] Alert status: open / acknowledged / resolved
-- [ ] Alert acknowledge button (mock PATCH)
-- [ ] Map hotspot click → alert or region filter
+- [x] Alert detail modal with full narrative + timeline
+- [x] Alert status: open / acknowledged / resolved
+- [x] Alert acknowledge button (mock PATCH)
+- [x] Map hotspot click → alert or region filter
 
 ### Overview enhancements
 - [x] Hero metrics refresh when poll updates (without full page reload)
@@ -160,9 +160,9 @@
 - [x] `POST /api/scenarios/[id]/run` returns run result
 - [x] Save simulation run to mock store history (in-memory, last 10)
 - [x] Simulation history list below workbench (click to reopen)
-- [ ] Compare two scenarios side-by-side
+- [x] Compare two scenarios side-by-side
 - [ ] Export simulation results CSV
-- [ ] Scenario parameters form (duration, severity slider)
+- [x] Scenario parameters form (duration, severity slider)
 - [ ] Share scenario link with encoded params
 
 ---
@@ -170,20 +170,20 @@
 ## Phase 2 — Company profiles & geography
 
 ### Company detail (`/companies/[id]`)
-- [ ] Score breakdown chart (5 factors with weights)
+- [x] Score breakdown chart (5 factors with weights)
 - [x] Linked alerts list for company
 - [x] Linked signals affecting company
 - [x] Breadcrumbs on company page
 - [ ] Supplier graph mini visualization (React Flow)
 - [ ] Tier-1 / tier-2 supplier table
-- [ ] Historical risk score sparkline (30d)
+- [x] Historical risk score sparkline (30d)
 - [ ] Peer comparison (vs sector median)
 - [ ] Notes field (localStorage until auth)
 - [ ] Print-friendly company report view
 
 ### Map & geography
 - [ ] Replace stylized SVG with TopoJSON world map
-- [ ] Hotspot tooltips with region name + alert count
+- [x] Hotspot tooltips with region name + alert count
 - [ ] Region filter on companies page from map click
 - [ ] Map legend interactive (toggle critical/elevated)
 - [ ] Full-screen map mode
@@ -192,7 +192,7 @@
 ### Search & discovery
 - [x] Global command palette (⌘K) — jump to company/signal/alert
 - [x] `GET /api/search` index endpoint
-- [ ] Recent items in command palette
+- [x] Recent items in command palette
 - [ ] Full-text search API mock
 
 ---
@@ -385,13 +385,17 @@
 | 2026-05-18 | README: live URLs + auto-deploy notes; latest prod deploy commit `4ee1124` |
 | 2026-05-18 | Live hero/bento, scenario API+history, ⌘K palette, company alerts/signals, tier filter |
 | 2026-05-18 | Score breakdown, alert modal+PATCH, signal 7d chart, pagination, map hotspots |
+| 2026-05-18 | Shortcuts, CSV export, score slider, 30d sparkline, scenario compare, recents |
 
 ---
 
 ## Current sprint (active)
 
-1. [x] Score breakdown chart on company profile
-2. [x] Alert detail modal + acknowledge (mock PATCH)
-3. [x] Signal 7d history chart on drawer
-4. [x] Companies pagination (25/page)
-5. [x] Map hotspot click → filter companies/alerts
+1. [x] Keyboard shortcuts (g+o/s/c/w) + ? help
+2. [x] Export companies & signals CSV
+3. [x] Score range slider on companies page
+4. [x] Command palette recent items (localStorage)
+5. [x] Company 30d risk sparkline
+6. [x] Scenario compare (2 runs) + severity/duration params
+7. [x] Map hotspot hover tooltips
+8. [x] `global-error.tsx` + signal methodology tooltip

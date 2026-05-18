@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Alert, Company } from "@/types/domain";
 import { CompanyExposureTable } from "@/components/tables/CompanyExposureTable";
+import { exportCompaniesCsv } from "@/lib/export/entities";
 import Link from "next/link";
 
 export type CompanySortKey = "score" | "name" | "cvar" | "delta";
@@ -18,6 +19,8 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<CompanySortKey>("score");
   const [tier, setTier] = useState<string>("all");
+  const [scoreMin, setScoreMin] = useState(0);
+  const [scoreMax, setScoreMax] = useState(100);
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
@@ -30,6 +33,8 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
     if (tier !== "all") {
       list = list.filter((c) => c.tier === tier);
     }
+
+    list = list.filter((c) => c.score >= scoreMin && c.score <= scoreMax);
 
     const q = search.trim().toLowerCase();
     if (q) {
@@ -49,7 +54,7 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           return b.score - a.score;
       }
     });
-  }, [companies, alertFilter, search, sort, tier]);
+  }, [companies, alertFilter, search, sort, tier, scoreMin, scoreMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -108,7 +113,52 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           <option value="name">Sort: Name</option>
           <option value="delta">Sort: Score (alt)</option>
         </select>
+        <button
+          type="button"
+          className="filter-export-btn"
+          onClick={() => exportCompaniesCsv(filtered)}
+          disabled={filtered.length === 0}
+        >
+          Export CSV
+        </button>
         <span className="filter-count">{filtered.length} companies</span>
+      </div>
+
+      <div className="score-range-bar">
+        <label className="score-range-label" htmlFor="score-min">
+          Min score {scoreMin}
+        </label>
+        <input
+          id="score-min"
+          type="range"
+          min={0}
+          max={100}
+          value={scoreMin}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            setScoreMin(Math.min(v, scoreMax));
+            setPage(1);
+          }}
+          className="score-range-input"
+          aria-label="Minimum risk score"
+        />
+        <label className="score-range-label" htmlFor="score-max">
+          Max score {scoreMax}
+        </label>
+        <input
+          id="score-max"
+          type="range"
+          min={0}
+          max={100}
+          value={scoreMax}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            setScoreMax(Math.max(v, scoreMin));
+            setPage(1);
+          }}
+          className="score-range-input"
+          aria-label="Maximum risk score"
+        />
       </div>
 
       {filtered.length === 0 ? (

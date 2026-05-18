@@ -16,6 +16,12 @@ export type Company = {
   deltaTrend: "bad" | "good";
   contagionHops: number;
   scoreLevel: "critical" | "elevated";
+  history30d: number[];
+};
+
+export type ScenarioRunOptions = {
+  severity?: number;
+  durationDays?: number;
 };
 
 export type AlertStatus = "open" | "acknowledged" | "resolved";

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Company, SignalStream } from "@/types/domain";
 import { LEVEL_COLOR } from "@/types/domain";
 import { SignalHistoryChart } from "@/components/charts/SignalHistoryChart";
+import { MethodologyTooltip } from "./MethodologyTooltip";
 
 type SignalDetailDrawerProps = {
   signal: SignalStream | null;
@@ -81,7 +82,9 @@ export function SignalDetailDrawer({
         <p className="drawer-description">{signal.description}</p>
 
         {signal.methodology && (
-          <p className="drawer-methodology">Methodology: {signal.methodology}</p>
+          <p className="drawer-methodology">
+            <MethodologyTooltip methodology={signal.methodology} />
+          </p>
         )}
 
         <span className="section-label" style={{ marginTop: 24 }}>

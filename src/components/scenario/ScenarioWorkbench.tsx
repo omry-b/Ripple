@@ -11,11 +11,14 @@ type ScenarioWorkbenchProps = {
 };
 
 export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
-  const [workbenchView, setWorkbenchView] = useState<"select" | "results">("select");
+  const [workbenchView, setWorkbenchView] = useState<"select" | "results" | "compare">("select");
   const [activeRun, setActiveRun] = useState<SimulationRun | null>(null);
   const [barHeights, setBarHeights] = useState<number[]>([]);
   const [history, setHistory] = useState<SimulationRun[]>([]);
   const [running, setRunning] = useState(false);
+  const [severity, setSeverity] = useState(100);
+  const [durationDays, setDurationDays] = useState(30);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   usePerspectiveTilt(".scenario-card", 12);
 
@@ -49,27 +52,30 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
     async (scenario: Scenario) => {
       setRunning(true);
       try {
-        const { run } = await runScenarioApi(scenario.id);
+        const { run } = await runScenarioApi(scenario.id, { severity, durationDays });
         setActiveRun(run);
         setWorkbenchView("results");
         animateBars(run.profile);
         await loadHistory();
       } catch {
+        const profile = scenario.profile.map((v) =>
+          Math.min(100, Math.round(v * (severity / 100)))
+        );
         setActiveRun({
           id: `local-${Date.now()}`,
           scenarioId: scenario.id,
           scenarioName: scenario.name,
           ranAt: new Date().toISOString(),
-          profile: scenario.profile,
+          profile,
           impacts: scenario.impacts,
         });
         setWorkbenchView("results");
-        animateBars(scenario.profile);
+        animateBars(profile);
       } finally {
         setRunning(false);
       }
     },
-    [animateBars, loadHistory]
+    [animateBars, loadHistory, severity, durationDays]
   );
 
   const openHistoryRun = (run: SimulationRun) => {
@@ -82,17 +88,63 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
     setWorkbenchView("select");
     setActiveRun(null);
     setBarHeights([]);
+    setCompareIds([]);
+  };
+
+  const toggleCompare = (runId: string) => {
+    setCompareIds((prev) => {
+      if (prev.includes(runId)) return prev.filter((id) => id !== runId);
+      if (prev.length >= 2) return [prev[1], runId];
+      return [...prev, runId];
+    });
+  };
+
+  const compareRuns = compareIds
+    .map((id) => history.find((r) => r.id === id))
+    .filter((r): r is SimulationRun => Boolean(r));
+
+  const openCompare = () => {
+    if (compareRuns.length === 2) setWorkbenchView("compare");
   };
 
   return (
     <>
       <section className="workbench-card reveal">
+        <div className="scenario-params-bar">
+          <label className="scenario-param">
+            <span>Severity {severity}%</span>
+            <input
+              type="range"
+              min={50}
+              max={150}
+              value={severity}
+              onChange={(e) => setSeverity(Number(e.target.value))}
+              aria-label="Scenario severity"
+            />
+          </label>
+          <label className="scenario-param">
+            <span>Duration {durationDays} days</span>
+            <input
+              type="range"
+              min={7}
+              max={90}
+              step={1}
+              value={durationDays}
+              onChange={(e) => setDurationDays(Number(e.target.value))}
+              aria-label="Scenario duration in days"
+            />
+          </label>
+        </div>
+
         <div className="workbench-tabs">
           <span className={`workbench-tab${workbenchView === "select" ? " active" : ""}`}>
             Select Scenario
           </span>
           <span className={`workbench-tab${workbenchView === "results" ? " active" : ""}`}>
             Results Simulation
+          </span>
+          <span className={`workbench-tab${workbenchView === "compare" ? " active" : ""}`}>
+            Compare Runs
           </span>
         </div>
 
@@ -128,15 +180,17 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
 
         {workbenchView === "results" && activeRun && (
           <div className="simulation-result-view visible">
+            <div
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+            >
+              <span className="card-title" style={{ marginBottom: 0 }}>
+                {activeRun.scenarioName} Loss Distribution Run
+              </span>
+              <button type="button" className="reset-workbench-btn" onClick={resetWorkbench}>
+                ← Escape Run
+              </button>
+            </div>
             <div className="chart-panel">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span className="card-title" style={{ marginBottom: 0 }}>
-                  {activeRun.scenarioName} Loss Distribution Run
-                </span>
-                <button type="button" className="reset-workbench-btn" onClick={resetWorkbench}>
-                  ← Escape Run
-                </button>
-              </div>
               <div className="chart-bars-container">
                 {activeRun.profile.map((magnitude, i) => (
                   <div
@@ -168,26 +222,67 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
             </div>
           </div>
         )}
+
+        {workbenchView === "compare" && compareRuns.length === 2 && (
+          <div className="scenario-compare-grid">
+            {compareRuns.map((run) => (
+              <div key={run.id} className="scenario-compare-panel">
+                <h3 className="scenario-compare-title">{run.scenarioName}</h3>
+                <p className="scenario-compare-meta">{formatAsOf(run.ranAt)}</p>
+                <div className="chart-bars-container chart-bars-compact">
+                  {run.profile.map((magnitude, i) => (
+                    <div
+                      key={i}
+                      className={`chart-bar${i > 7 ? " highlighted-loss" : ""}`}
+                      style={{ height: `${magnitude}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+            <button type="button" className="reset-workbench-btn" onClick={resetWorkbench}>
+              ← Back to scenarios
+            </button>
+          </div>
+        )}
       </section>
 
       {history.length > 0 && (
         <section className="workbench-card" style={{ marginTop: 8 }}>
-          <span className="section-label" style={{ marginTop: 0 }}>
-            Recent simulation runs
-          </span>
+          <div className="run-history-header">
+            <span className="section-label" style={{ marginTop: 0 }}>
+              Recent simulation runs
+            </span>
+            {compareIds.length === 2 && (
+              <button type="button" className="filter-export-btn" onClick={openCompare}>
+                Compare selected →
+              </button>
+            )}
+          </div>
           <ul className="run-history-list">
-            {history.map((run) => (
-              <li key={run.id}>
-                <button
-                  type="button"
-                  className="run-history-item"
-                  onClick={() => openHistoryRun(run)}
-                >
-                  <span className="run-history-name">{run.scenarioName}</span>
-                  <span className="run-history-time">{formatAsOf(run.ranAt)}</span>
-                </button>
-              </li>
-            ))}
+            {history.map((run) => {
+              const selected = compareIds.includes(run.id);
+              return (
+                <li key={run.id} className="run-history-row">
+                  <label className="run-compare-check">
+                    <input
+                      type="checkbox"
+                      checked={selected}
+                      onChange={() => toggleCompare(run.id)}
+                      aria-label={`Select ${run.scenarioName} for compare`}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="run-history-item"
+                    onClick={() => openHistoryRun(run)}
+                  >
+                    <span className="run-history-name">{run.scenarioName}</span>
+                    <span className="run-history-time">{formatAsOf(run.ranAt)}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}

@@ -10,8 +10,13 @@ import type {
 } from "@/types/domain";
 import { alertState } from "@/lib/mock/alert-state";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
+import { buildScoreHistory30d } from "@/lib/mock/score-history";
 
-const COMPANIES: Company[] = [
+function enrichCompany(c: Omit<Company, "history30d">): Company {
+  return { ...c, history30d: buildScoreHistory30d(c.id, c.score) };
+}
+
+const CORE_COMPANIES: Omit<Company, "history30d">[] = [
   {
     id: "apple",
     name: "Apple Inc.",
@@ -98,7 +103,7 @@ const COMPANIES: Company[] = [
   },
 ];
 
-const EXTENDED_COMPANIES: Company[] = Array.from({ length: 25 }, (_, i) => {
+const EXTENDED_COMPANIES: Omit<Company, "history30d">[] = Array.from({ length: 25 }, (_, i) => {
   const n = i + 1;
   const score = 28 + ((n * 7) % 45);
   const tier = n % 3 === 0 ? "Tier 1" : "Tier 2";
@@ -114,10 +119,10 @@ const EXTENDED_COMPANIES: Company[] = Array.from({ length: 25 }, (_, i) => {
     deltaTrend: n % 2 === 0 ? "bad" : "good",
     contagionHops: 1 + (n % 3),
     scoreLevel: score >= 60 ? "critical" : "elevated",
-  } as Company;
+  };
 });
 
-const ALL_COMPANIES: Company[] = [...COMPANIES, ...EXTENDED_COMPANIES];
+const ALL_COMPANIES: Company[] = [...CORE_COMPANIES, ...EXTENDED_COMPANIES].map(enrichCompany);
 
 const TICKER: TickerItem[] = [
   { label: "TAIWAN STRAIT", level: "critical" },
