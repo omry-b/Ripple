@@ -1,0 +1,51 @@
+import { PageHeader } from "@/components/shell/PageHeader";
+import Link from "next/link";
+
+const DEMO_MEMBERS = [
+  { email: "analyst@ripple.demo", role: "analyst", status: "Active" },
+  { email: "viewer@ripple.demo", role: "viewer", status: "Active" },
+  { email: "admin@ripple.demo", role: "admin", status: "Active" },
+];
+
+export default function TeamSettingsPage() {
+  return (
+    <div className="content-container">
+      <PageHeader
+        title="Team"
+        subtitle="Invite colleagues and manage roles (demo — wire Clerk Organizations for production)."
+      />
+      <section className="workbench-card team-settings-card">
+        <h3 className="supplier-tier-title">Members</h3>
+        <ul className="team-member-list">
+          {DEMO_MEMBERS.map((m) => (
+            <li key={m.email} className="team-member-row">
+              <span>{m.email}</span>
+              <span className="team-member-role">{m.role}</span>
+              <span className="team-member-status">{m.status}</span>
+            </li>
+          ))}
+        </ul>
+        <form className="team-invite-form" action="#">
+          <label htmlFor="invite-email">Invite by email</label>
+          <div className="team-invite-row">
+            <input id="invite-email" type="email" placeholder="colleague@company.com" />
+            <select aria-label="Role for invite">
+              <option value="viewer">Viewer</option>
+              <option value="analyst">Analyst</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button type="submit" className="filter-export-btn">
+              Send invite
+            </button>
+          </div>
+          <p className="watchlist-manager-hint">
+            Invites are a UI placeholder until Clerk Organizations is configured.
+          </p>
+        </form>
+        <p className="watchlist-manager-hint">
+          <Link href="/sign-in">Sign in</Link> with demo roles via the user menu.
+        </p>
+      </section>
+    </div>
+  );
+}

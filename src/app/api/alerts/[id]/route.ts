@@ -1,5 +1,7 @@
 import { acknowledgeAlert, getAlert } from "@/lib/api";
 import { jsonError, jsonOk } from "@/lib/api/response";
+import { getSessionUser } from "@/lib/auth/session";
+import { deliverAlertWebhook } from "@/lib/webhooks/delivery";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -22,6 +24,8 @@ export async function PATCH(request: Request, { params }: Params) {
     if (body.action === "acknowledge") {
       const alert = await acknowledgeAlert(id);
       if (!alert) return jsonError("Alert not found", 404);
+      const user = await getSessionUser(request);
+      void deliverAlertWebhook(alert, user.organizationId);
       return jsonOk({ alert });
     }
 

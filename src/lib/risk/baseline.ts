@@ -9,7 +9,14 @@ export function computeCvarBaseline(companies: Company[]): {
 } {
   const currentUsd = companies.reduce((s, c) => s + c.cvarUsd, 0);
   const currentB = currentUsd / 1e9;
-  const baselineB = currentB * 0.82;
+  const baselineUsd = companies.reduce((s, c) => {
+    const hist = c.history30d;
+    const avgScore = hist.length
+      ? hist.reduce((a, b) => a + b, 0) / hist.length
+      : c.score;
+    return s + c.cvarUsd * (avgScore / Math.max(c.score, 1));
+  }, 0);
+  const baselineB = baselineUsd / 1e9;
   const delta = currentB - baselineB;
   const sign = delta >= 0 ? "↑" : "↓";
   return {

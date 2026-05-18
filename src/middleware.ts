@@ -25,7 +25,8 @@ export function middleware(request: NextRequest) {
     !pathname.startsWith("/api") &&
     !pathname.startsWith("/sign-in") &&
     !pathname.startsWith("/sign-up") &&
-    !pathname.startsWith("/welcome")
+    !pathname.startsWith("/welcome") &&
+    !pathname.startsWith("/embed")
   ) {
     const hasSession =
       request.cookies.get("__session")?.value ||

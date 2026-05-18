@@ -1,5 +1,7 @@
 import { getDataSource } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth/session";
+import { generateWebhookSecret } from "@/lib/webhooks/sign";
+import { rememberSubscriptionSecret } from "@/lib/webhooks/delivery";
 
 export async function GET(request: Request) {
   const user = await getSessionUser(request);
@@ -26,11 +28,15 @@ export async function POST(request: Request) {
     body.events ?? ["alert.critical", "signal.elevated"]
   );
 
+  const signingSecret = generateWebhookSecret();
+  rememberSubscriptionSecret(subscription.id, signingSecret);
+
   return Response.json(
     {
       asOf: new Date().toISOString(),
       subscription,
-      note: "PLACEHOLDER: webhook delivery will fire when ingest + alert engine are live",
+      signingSecret,
+      note: "Store signingSecret securely. Verify X-Ripple-Signature HMAC-SHA256 on delivery.",
     },
     { status: 201 }
   );

@@ -1,4 +1,5 @@
 import type { DashboardSnapshot } from "@/types/domain";
+import { kvDeleteSnapshot, kvGetSnapshot, kvSetSnapshot } from "@/lib/cache/kv-snapshot";
 
 const TTL_MS = 60_000;
 let memoryCache: { snapshot: DashboardSnapshot; expiresAt: number } | null = null;
@@ -11,11 +12,19 @@ export async function getCachedSnapshot(
     return memoryCache.snapshot;
   }
 
+  const fromKv = await kvGetSnapshot();
+  if (fromKv) {
+    memoryCache = { snapshot: fromKv, expiresAt: now + TTL_MS };
+    return fromKv;
+  }
+
   const snapshot = await loader();
   memoryCache = { snapshot, expiresAt: now + TTL_MS };
+  void kvSetSnapshot(snapshot, 60);
   return snapshot;
 }
 
 export function invalidateSnapshotCache(): void {
   memoryCache = null;
+  void kvDeleteSnapshot();
 }

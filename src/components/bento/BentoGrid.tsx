@@ -8,6 +8,7 @@ import { GlobalRiskMap } from "@/components/bento/GlobalRiskMap";
 import { MapFullscreenModal } from "@/components/bento/MapFullscreenModal";
 import { MetricCard } from "@/components/bento/MetricCard";
 import { WatchlistMetricCard } from "@/components/bento/WatchlistMetricCard";
+import { CvarLevelControl } from "@/components/risk/CvarLevelControl";
 import { useCardSpotlight } from "@/lib/hooks";
 
 const SPOTLIGHT_IDS = [
@@ -83,7 +84,10 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
       </div>
 
       <div className="bento-card bento-wide" id="bento-cvar-card">
-        <div className="card-title">CVaR₉₅ · 95th Percentile</div>
+        <div className="map-card-header">
+          <div className="card-title">Portfolio tail risk</div>
+          <CvarLevelControl />
+        </div>
         <div className="metric-display-large critical-accent">
           {snapshot.cvar95Display}
         </div>

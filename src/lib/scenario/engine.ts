@@ -1,5 +1,7 @@
 import type { GeoRegion, Scenario, ScenarioRunOptions, SimulationRun } from "@/types/domain";
-import { monteCarloLossBins, topContagionEntities } from "@/lib/scenario/monte-carlo";
+import { contagionEntityNames } from "@/lib/scenario/graph-propagation";
+import { monteCarloLossBins } from "@/lib/scenario/monte-carlo";
+import { getCvarMultiplier } from "@/lib/risk/cvar-config";
 
 export function runScenarioEngine(
   scenario: Scenario,
@@ -8,6 +10,7 @@ export function runScenarioEngine(
   const severity = (options?.severity ?? 100) / 100;
   const durationDays = options?.durationDays ?? 30;
   const region: GeoRegion = options?.region ?? "APAC";
+  const cvarMult = getCvarMultiplier(options?.cvarLevel ?? 95);
   const profile = scenario.profile.map((v) => Math.min(100, Math.round(v * severity)));
   const suffix =
     severity !== 1 || durationDays !== 30
@@ -21,8 +24,8 @@ export function runScenarioEngine(
     ranAt: new Date().toISOString(),
     profile,
     impacts: [...scenario.impacts],
-    lossDistribution: monteCarloLossBins(severity, scenario.id.length),
-    contagionEntities: topContagionEntities(scenario.name),
+    lossDistribution: monteCarloLossBins(severity * cvarMult, scenario.id.length),
+    contagionEntities: contagionEntityNames(region).slice(0, 8),
     shock: {
       region,
       durationDays,

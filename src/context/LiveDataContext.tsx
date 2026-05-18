@@ -65,6 +65,14 @@ export function LiveDataProvider({
     return () => window.removeEventListener("focus", onFocus);
   }, [refresh]);
 
+  useEffect(() => {
+    const onOrgChange = () => {
+      void refresh();
+    };
+    window.addEventListener("ripple-demo-auth-change", onOrgChange);
+    return () => window.removeEventListener("ripple-demo-auth-change", onOrgChange);
+  }, [refresh]);
+
   const value = useMemo(
     () => ({ asOf, snapshot, isRefreshing, lastError, refresh }),
     [asOf, snapshot, isRefreshing, lastError, refresh]

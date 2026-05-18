@@ -39,6 +39,9 @@ export function UserMenu() {
           <li>{permissions.acknowledgeAlerts ? "✓" : "—"} Acknowledge alerts</li>
           <li>{permissions.manageWebhooks ? "✓" : "—"} Webhooks</li>
         </ul>
+        <Link href="/settings/team" className="user-menu-link">
+          Team & invites →
+        </Link>
         <Link href="/sign-in" className="user-menu-link">
           Sign in page →
         </Link>

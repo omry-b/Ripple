@@ -51,15 +51,42 @@ export function fetchCompany(id: string): Promise<{ asOf: string; company: Compa
   return fetchJson(`/api/companies/${id}`);
 }
 
+export type ScenarioJob = {
+  id: string;
+  scenarioId: string;
+  status: "queued" | "running" | "completed" | "failed";
+  createdAt: string;
+  completedAt?: string;
+  error?: string;
+  run?: SimulationRun;
+};
+
 export function runScenarioApi(
   id: string,
-  options?: { severity?: number; durationDays?: number }
+  options?: { severity?: number; durationDays?: number; cvarLevel?: 95 | 99 }
 ): Promise<{ asOf: string; run: SimulationRun }> {
   return fetchJson(`/api/scenarios/${id}/run`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(options ?? {}),
   });
+}
+
+export function runScenarioAsyncApi(
+  id: string,
+  options?: { severity?: number; durationDays?: number; cvarLevel?: 95 | 99 }
+): Promise<{ asOf: string; job: ScenarioJob }> {
+  return fetchJson(`/api/scenarios/${id}/run?async=true`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...options, async: true }),
+  });
+}
+
+export function fetchScenarioJob(
+  jobId: string
+): Promise<{ asOf: string; job: ScenarioJob }> {
+  return fetchJson(`/api/scenarios/jobs/${jobId}`);
 }
 
 export function fetchSimulationRuns(): Promise<{ asOf: string; runs: SimulationRun[] }> {

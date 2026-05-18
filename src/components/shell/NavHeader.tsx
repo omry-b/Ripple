@@ -9,6 +9,7 @@ import { MobileNav } from "./MobileNav";
 import { useLiveData } from "@/context/LiveDataContext";
 import { getWatchlistIds } from "@/lib/watchlist";
 import { UserMenu } from "@/components/shell/UserMenu";
+import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { OrgSwitcher } from "@/components/shell/OrgSwitcher";
 import { LayoutDashboard, Radio, FlaskConical, Building2 } from "lucide-react";
 
@@ -69,6 +70,7 @@ export function NavHeader() {
         </Link>
       </div>
       <div className="nav-actions">
+        <ThemeToggle />
         <OrgSwitcher />
         <kbd className="nav-kbd" title="Command palette">
           ⌘K

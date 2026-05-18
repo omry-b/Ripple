@@ -14,7 +14,10 @@ export const OPENAPI_SPEC = {
     "/companies": { get: { summary: "Company rankings" } },
     "/alerts": { get: { summary: "Active alerts" } },
     "/search": { get: { summary: "Full-text search", parameters: [{ name: "q", in: "query" }] } },
-    "/scenarios/{id}/run": { post: { summary: "Run scenario simulation" } },
+    "/scenarios/{id}/run": {
+      post: { summary: "Run scenario (sync or ?async=true)" },
+    },
+    "/scenarios/jobs/{id}": { get: { summary: "Poll async scenario job" } },
     "/ingest/run": { post: { summary: "Run ingest pipeline (admin)" } },
     "/ingest/dead-letters": { get: { summary: "Failed ingest jobs (DLQ)" } },
   },

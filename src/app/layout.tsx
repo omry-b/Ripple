@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { VercelInsights } from "@/components/shell/VercelInsights";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -26,9 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} ${dmMono.variable}`}>
+    <html lang="en" className={`${plusJakarta.variable} ${dmMono.variable}`} data-theme="dark">
       <body>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <VercelInsights />
       </body>
     </html>

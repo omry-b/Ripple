@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Scenario, SimulationRun } from "@/types/domain";
 import { usePerspectiveTilt } from "@/lib/hooks";
-import { runScenarioApi, fetchSimulationRuns } from "@/lib/client/api";
+import {
+  runScenarioApi,
+  runScenarioAsyncApi,
+  fetchScenarioJob,
+  fetchSimulationRuns,
+} from "@/lib/client/api";
 import { formatAsOf } from "@/lib/format";
 import { exportSimulationRunCsv } from "@/lib/export/entities";
 import { useDemoAuth } from "@/context/DemoAuthContext";
@@ -33,6 +38,7 @@ export function ScenarioWorkbench({
   const [durationDays, setDurationDays] = useState(initialDurationDays);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [shareCopied, setShareCopied] = useState(false);
+  const [useAsyncJob, setUseAsyncJob] = useState(false);
 
   usePerspectiveTilt(".scenario-card", 12);
 
@@ -67,10 +73,26 @@ export function ScenarioWorkbench({
       if (!canRun) return;
       setRunning(true);
       try {
-        const { run } = await runScenarioApi(scenario.id, { severity, durationDays });
-        setActiveRun(run);
-        setWorkbenchView("results");
-        animateBars(run.profile);
+        if (useAsyncJob) {
+          const { job } = await runScenarioAsyncApi(scenario.id, { severity, durationDays });
+          let polled = job;
+          for (let i = 0; i < 20 && polled.status !== "completed" && polled.status !== "failed"; i += 1) {
+            await new Promise((r) => setTimeout(r, 300));
+            const res = await fetchScenarioJob(polled.id);
+            polled = res.job;
+          }
+          if (polled.status === "failed" || !polled.run) {
+            throw new Error(polled.error ?? "Async simulation failed");
+          }
+          setActiveRun(polled.run);
+          setWorkbenchView("results");
+          animateBars(polled.run.profile);
+        } else {
+          const { run } = await runScenarioApi(scenario.id, { severity, durationDays });
+          setActiveRun(run);
+          setWorkbenchView("results");
+          animateBars(run.profile);
+        }
         await loadHistory();
       } catch {
         const profile = scenario.profile.map((v) =>
@@ -90,7 +112,7 @@ export function ScenarioWorkbench({
         setRunning(false);
       }
     },
-    [animateBars, loadHistory, severity, durationDays, canRun]
+    [animateBars, loadHistory, severity, durationDays, canRun, useAsyncJob]
   );
 
   useEffect(() => {
@@ -162,6 +184,14 @@ export function ScenarioWorkbench({
               onChange={(e) => setSeverity(Number(e.target.value))}
               aria-label="Scenario severity"
             />
+          </label>
+          <label className="scenario-param scenario-param-checkbox">
+            <input
+              type="checkbox"
+              checked={useAsyncJob}
+              onChange={(e) => setUseAsyncJob(e.target.checked)}
+            />
+            <span>Async job (submit → poll)</span>
           </label>
           <label className="scenario-param">
             <span>Duration {durationDays} days</span>
