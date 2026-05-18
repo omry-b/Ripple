@@ -1,4 +1,4 @@
-import type { Company, SignalStream } from "@/types/domain";
+import type { Company, SignalStream, SimulationRun } from "@/types/domain";
 import { downloadCsv } from "./csv";
 
 export function exportCompaniesCsv(companies: Company[]): void {
@@ -31,4 +31,15 @@ export function exportSignalsCsv(streams: SignalStream[]): void {
     ]),
   ];
   downloadCsv(`ripple-signals-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+}
+
+export function exportSimulationRunCsv(run: SimulationRun): void {
+  const rows: (string | number)[][] = [
+    ["scenario", "ran_at", "bar_index", "magnitude"],
+    ...run.profile.map((magnitude, i) => [run.scenarioName, run.ranAt, i, magnitude]),
+  ];
+  downloadCsv(
+    `ripple-simulation-${run.scenarioId}-${new Date().toISOString().slice(0, 10)}.csv`,
+    rows
+  );
 }

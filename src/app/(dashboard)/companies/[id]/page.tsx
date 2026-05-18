@@ -11,6 +11,8 @@ import { RiskScoreSparkline } from "@/components/charts/RiskScoreSparkline";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { CompanyProfileSections } from "@/components/companies/CompanyProfileSections";
+import { PeerComparisonCard } from "@/components/companies/PeerComparisonCard";
+import { CompanyNotes } from "@/components/companies/CompanyNotes";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -87,6 +89,11 @@ export default async function CompanyDetailPage({ params }: Props) {
 
         <span className="section-label">Score drivers</span>
         <ScoreBreakdownChart factors={scoreFactors} totalScore={company.score} />
+
+        <span className="section-label">Sector peers</span>
+        <PeerComparisonCard company={company} />
+
+        <CompanyNotes companyId={company.id} companyName={company.name} />
 
         <CompanyProfileSections company={company} alerts={alerts} signals={signals} />
 

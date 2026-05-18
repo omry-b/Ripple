@@ -2,6 +2,12 @@
 
 import { useEffect } from "react";
 import type { DashboardSnapshot } from "@/types/domain";
+import { useLiveData } from "@/context/LiveDataContext";
+
+export function useDashboard() {
+  const { snapshot, asOf, isRefreshing, lastError, refresh } = useLiveData();
+  return { snapshot, asOf, isRefreshing, lastError, refresh };
+}
 
 export function useRevealOnScroll(selector = ".reveal") {
   useEffect(() => {

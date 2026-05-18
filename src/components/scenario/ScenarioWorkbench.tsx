@@ -5,20 +5,30 @@ import type { Scenario, SimulationRun } from "@/types/domain";
 import { usePerspectiveTilt } from "@/lib/hooks";
 import { runScenarioApi, fetchSimulationRuns } from "@/lib/client/api";
 import { formatAsOf } from "@/lib/format";
+import { exportSimulationRunCsv } from "@/lib/export/entities";
 
 type ScenarioWorkbenchProps = {
   scenarios: Scenario[];
+  initialSeverity?: number;
+  initialDurationDays?: number;
+  initialScenarioId?: string;
 };
 
-export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
+export function ScenarioWorkbench({
+  scenarios,
+  initialSeverity = 100,
+  initialDurationDays = 30,
+  initialScenarioId,
+}: ScenarioWorkbenchProps) {
   const [workbenchView, setWorkbenchView] = useState<"select" | "results" | "compare">("select");
   const [activeRun, setActiveRun] = useState<SimulationRun | null>(null);
   const [barHeights, setBarHeights] = useState<number[]>([]);
   const [history, setHistory] = useState<SimulationRun[]>([]);
   const [running, setRunning] = useState(false);
-  const [severity, setSeverity] = useState(100);
-  const [durationDays, setDurationDays] = useState(30);
+  const [severity, setSeverity] = useState(initialSeverity);
+  const [durationDays, setDurationDays] = useState(initialDurationDays);
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [shareCopied, setShareCopied] = useState(false);
 
   usePerspectiveTilt(".scenario-card", 12);
 
@@ -78,6 +88,13 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
     [animateBars, loadHistory, severity, durationDays]
   );
 
+  useEffect(() => {
+    if (!initialScenarioId) return;
+    const scenario = scenarios.find((s) => s.id === initialScenarioId);
+    if (scenario) void runSimulation(scenario);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once from shared URL
+  }, []);
+
   const openHistoryRun = (run: SimulationRun) => {
     setActiveRun(run);
     setWorkbenchView("results");
@@ -107,10 +124,29 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
     if (compareRuns.length === 2) setWorkbenchView("compare");
   };
 
+  const copyShareLink = async (scenarioId?: string) => {
+    const params = new URLSearchParams({
+      severity: String(severity),
+      duration: String(durationDays),
+    });
+    if (scenarioId) params.set("scenario", scenarioId);
+    const url = `${window.location.origin}/scenario?${params.toString()}`;
+    await navigator.clipboard.writeText(url);
+    setShareCopied(true);
+    window.setTimeout(() => setShareCopied(false), 2000);
+  };
+
   return (
     <>
       <section className="workbench-card reveal">
         <div className="scenario-params-bar">
+          <button
+            type="button"
+            className="filter-export-btn"
+            onClick={() => void copyShareLink()}
+          >
+            {shareCopied ? "Link copied" : "Copy share link"}
+          </button>
           <label className="scenario-param">
             <span>Severity {severity}%</span>
             <input
@@ -186,9 +222,25 @@ export function ScenarioWorkbench({ scenarios }: ScenarioWorkbenchProps) {
               <span className="card-title" style={{ marginBottom: 0 }}>
                 {activeRun.scenarioName} Loss Distribution Run
               </span>
-              <button type="button" className="reset-workbench-btn" onClick={resetWorkbench}>
-                ← Escape Run
-              </button>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="button"
+                  className="filter-export-btn"
+                  onClick={() => activeRun && exportSimulationRunCsv(activeRun)}
+                >
+                  Export CSV
+                </button>
+                <button
+                  type="button"
+                  className="filter-export-btn"
+                  onClick={() => void copyShareLink(activeRun.scenarioId)}
+                >
+                  Share run
+                </button>
+                <button type="button" className="reset-workbench-btn" onClick={resetWorkbench}>
+                  ← Escape Run
+                </button>
+              </div>
             </div>
             <div className="chart-panel">
               <div className="chart-bars-container">

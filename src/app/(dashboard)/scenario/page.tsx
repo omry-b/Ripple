@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { getScenarios } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { ScenarioWorkbench } from "@/components/scenario/ScenarioWorkbench";
+import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
+import { ScenarioPageClient } from "@/components/scenario/ScenarioPageClient";
 
 export const metadata = {
   title: "Scenario Workbench — Ripple",
@@ -15,9 +17,12 @@ export default async function ScenarioPage() {
         title="Scenario Workbench"
         subtitle="What-if loss distribution · contagion preview"
       />
+      <CompactMetricsStrip />
       <main className="content-container">
         <span className="section-label">Select a scenario to simulate</span>
-        <ScenarioWorkbench scenarios={scenarios} />
+        <Suspense fallback={<p className="empty-state">Loading workbench…</p>}>
+          <ScenarioPageClient scenarios={scenarios} />
+        </Suspense>
       </main>
     </>
   );

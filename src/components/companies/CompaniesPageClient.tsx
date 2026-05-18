@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Alert, Company } from "@/types/domain";
-import { CompanyExposureTable } from "@/components/tables/CompanyExposureTable";
+import {
+  CompanyExposureTable,
+  COMPANY_TABLE_COLUMNS,
+  DEFAULT_COLUMN_VISIBILITY,
+  type CompanyColumnVisibility,
+} from "@/components/tables/CompanyExposureTable";
 import { exportCompaniesCsv } from "@/lib/export/entities";
+import { addToWatchlist, getWatchlistIds, toggleWatchlistId } from "@/lib/watchlist";
 import Link from "next/link";
 
 export type CompanySortKey = "score" | "name" | "cvar" | "delta";
@@ -13,18 +19,37 @@ const PAGE_SIZE = 25;
 type CompaniesPageClientProps = {
   companies: Company[];
   alertFilter: Alert | null;
+  watchlistOnly?: boolean;
 };
 
-export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageClientProps) {
+export function CompaniesPageClient({
+  companies,
+  alertFilter,
+  watchlistOnly = false,
+}: CompaniesPageClientProps) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<CompanySortKey>("score");
   const [tier, setTier] = useState<string>("all");
   const [scoreMin, setScoreMin] = useState(0);
   const [scoreMax, setScoreMax] = useState(100);
   const [page, setPage] = useState(1);
+  const [columns, setColumns] = useState<CompanyColumnVisibility>(DEFAULT_COLUMN_VISIBILITY);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [watchlistIds, setWatchlistIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const sync = () => setWatchlistIds(new Set(getWatchlistIds()));
+    sync();
+    window.addEventListener("ripple-watchlist-change", sync);
+    return () => window.removeEventListener("ripple-watchlist-change", sync);
+  }, []);
 
   const filtered = useMemo(() => {
     let list = companies;
+
+    if (watchlistOnly) {
+      list = list.filter((c) => watchlistIds.has(c.id));
+    }
 
     if (alertFilter) {
       list = list.filter((c) => alertFilter.affectedCompanyIds.includes(c.id));
@@ -54,15 +79,45 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           return b.score - a.score;
       }
     });
-  }, [companies, alertFilter, search, sort, tier, scoreMin, scoreMax]);
+  }, [companies, alertFilter, watchlistOnly, watchlistIds, search, sort, tier, scoreMin, scoreMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const pageStart = (safePage - 1) * PAGE_SIZE;
   const paged = filtered.slice(pageStart, pageStart + PAGE_SIZE);
 
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const addSelectedToWatchlist = () => {
+    addToWatchlist([...selectedIds]);
+    setSelectedIds(new Set());
+  };
+
+  const toggleWatchlist = (id: string) => {
+    toggleWatchlistId(id);
+    setWatchlistIds(new Set(getWatchlistIds()));
+  };
+
   return (
     <>
+      {watchlistOnly && (
+        <div className="alert-filter-banner">
+          <span>
+            Showing <strong>watchlist</strong> only ({watchlistIds.size} saved)
+          </span>
+          <Link href="/companies" className="alert-filter-clear">
+            Show all companies ×
+          </Link>
+        </div>
+      )}
+
       {alertFilter && (
         <div className="alert-filter-banner">
           <span>
@@ -73,6 +128,21 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           </Link>
         </div>
       )}
+
+      <div className="column-picker-bar">
+        {COMPANY_TABLE_COLUMNS.map((col) => (
+          <label key={col.key} className="column-picker-label">
+            <input
+              type="checkbox"
+              checked={columns[col.key]}
+              onChange={(e) =>
+                setColumns((c) => ({ ...c, [col.key]: e.target.checked }))
+              }
+            />
+            {col.label}
+          </label>
+        ))}
+      </div>
 
       <div className="filter-bar" style={{ marginBottom: 16 }}>
         <input
@@ -121,6 +191,11 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
         >
           Export CSV
         </button>
+        {selectedIds.size > 0 && (
+          <button type="button" className="filter-export-btn" onClick={addSelectedToWatchlist}>
+            Add {selectedIds.size} to watchlist
+          </button>
+        )}
         <span className="filter-count">{filtered.length} companies</span>
       </div>
 
@@ -165,7 +240,15 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
         <p className="empty-state">No companies match your filters.</p>
       ) : (
         <>
-          <CompanyExposureTable companies={paged} />
+          <CompanyExposureTable
+            companies={paged}
+            columnVisibility={columns}
+            selectable
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            watchlistIds={watchlistIds}
+            onToggleWatchlist={toggleWatchlist}
+          />
           {totalPages > 1 && (
             <nav className="pagination-bar" aria-label="Companies pagination">
               <button

@@ -2,20 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { NAV_ITEMS } from "@/lib/nav";
 import { LiveStatus } from "./LiveStatus";
+import { MobileNav } from "./MobileNav";
 import { useLiveData } from "@/context/LiveDataContext";
+import { getWatchlistIds } from "@/lib/watchlist";
 
 export function NavHeader() {
   const pathname = usePathname();
   const { asOf, isRefreshing } = useLiveData();
+  const [watchlistCount, setWatchlistCount] = useState(0);
+
+  useEffect(() => {
+    const sync = () => setWatchlistCount(getWatchlistIds().length);
+    sync();
+    window.addEventListener("ripple-watchlist-change", sync);
+    return () => window.removeEventListener("ripple-watchlist-change", sync);
+  }, []);
 
   return (
     <nav className="nav-header" role="navigation">
       <Link href="/" className="nav-brand" style={{ textDecoration: "none" }}>
         Ripple
       </Link>
-      <div className="nav-tabs" role="tablist">
+      <MobileNav />
+      <div className="nav-tabs nav-tabs-desktop" role="tablist">
         {NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/"
@@ -34,6 +46,13 @@ export function NavHeader() {
             </Link>
           );
         })}
+        <Link
+          href="/companies?watchlist=1"
+          className={`nav-tab-item${pathname.startsWith("/companies") && watchlistCount > 0 ? "" : ""}`}
+          style={{ textDecoration: "none", display: "inline-block" }}
+        >
+          Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
+        </Link>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <kbd className="nav-kbd" title="Command palette">

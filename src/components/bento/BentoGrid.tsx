@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Company, DashboardSnapshot, Hotspot } from "@/types/domain";
 import { GlobalRiskMap } from "@/components/bento/GlobalRiskMap";
+import { MapFullscreenModal } from "@/components/bento/MapFullscreenModal";
 import { useCardSpotlight } from "@/lib/hooks";
 
 const SPOTLIGHT_IDS = [
@@ -22,27 +24,57 @@ type BentoGridProps = {
 
 export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) {
   const router = useRouter();
+  const [legend, setLegend] = useState({ critical: true, elevated: true });
+  const [mapFullscreen, setMapFullscreen] = useState(false);
   useCardSpotlight(SPOTLIGHT_IDS);
+
+  const visibleHotspots = useMemo(
+    () =>
+      hotspots.filter(
+        (h) =>
+          (h.level === "critical" && legend.critical) ||
+          (h.level === "elevated" && legend.elevated)
+      ),
+    [hotspots, legend]
+  );
+
+  const onHotspotClick = (h: Hotspot) => router.push(`/companies?alert=${h.alertId}`);
 
   return (
     <section className="bento-grid">
       <div className="bento-card bento-large" id="bento-map-card">
         <div>
-          <div className="card-title">Global Risk Map</div>
-          <GlobalRiskMap
-            hotspots={hotspots}
-            onHotspotClick={(h) => router.push(`/companies?alert=${h.alertId}`)}
-          />
+          <div className="map-card-header">
+            <div className="card-title">Global Risk Map</div>
+            <button
+              type="button"
+              className="filter-export-btn"
+              onClick={() => setMapFullscreen(true)}
+            >
+              Full screen
+            </button>
+          </div>
+          <GlobalRiskMap hotspots={visibleHotspots} onHotspotClick={onHotspotClick} />
         </div>
-        <div className="map-legend">
-          <span className="legend-item">
+        <div className="map-legend map-legend-interactive">
+          <button
+            type="button"
+            className={`legend-item legend-toggle${legend.critical ? " active" : ""}`}
+            onClick={() => setLegend((l) => ({ ...l, critical: !l.critical }))}
+            aria-pressed={legend.critical}
+          >
             <span className="legend-dot" style={{ background: "#EF4444" }} />
-            Critical ×1
-          </span>
-          <span className="legend-item">
+            Critical
+          </button>
+          <button
+            type="button"
+            className={`legend-item legend-toggle${legend.elevated ? " active" : ""}`}
+            onClick={() => setLegend((l) => ({ ...l, elevated: !l.elevated }))}
+            aria-pressed={legend.elevated}
+          >
             <span className="legend-dot" style={{ background: "#F59E0B" }} />
-            Elevated ×2
-          </span>
+            Elevated
+          </button>
         </div>
       </div>
 
@@ -116,6 +148,15 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
           </tbody>
         </table>
       </div>
+
+      {mapFullscreen && (
+        <MapFullscreenModal
+          hotspots={hotspots}
+          legend={legend}
+          onHotspotClick={onHotspotClick}
+          onClose={() => setMapFullscreen(false)}
+        />
+      )}
     </section>
   );
 }

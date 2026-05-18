@@ -10,6 +10,9 @@ type StreamGridProps = {
   linkToSignals?: boolean;
   onStreamSelect?: (stream: SignalStream) => void;
   selectedId?: string | null;
+  compareMode?: boolean;
+  compareIds?: string[];
+  onToggleCompare?: (id: string) => void;
 };
 
 export function StreamGrid({
@@ -17,6 +20,9 @@ export function StreamGrid({
   linkToSignals = false,
   onStreamSelect,
   selectedId,
+  compareMode = false,
+  compareIds = [],
+  onToggleCompare,
 }: StreamGridProps) {
   const spotlightIds = streams.map((s) => `stream-card-${s.id}`);
   useCardSpotlight(spotlightIds);
@@ -25,27 +31,39 @@ export function StreamGrid({
     <section className="stream-grid reveal">
       {streams.map((stream) => {
         const isSelected = selectedId === stream.id;
-        const interactive = Boolean(onStreamSelect);
+        const isCompareSelected = compareIds.includes(stream.id);
+        const interactive = Boolean(onStreamSelect) || Boolean(onToggleCompare);
 
         return (
           <div
             key={stream.id}
             id={`stream-card-${stream.id}`}
-            className={`stream-card${interactive ? " stream-card-interactive" : ""}${isSelected ? " stream-card-selected" : ""}`}
-            role={interactive ? "button" : undefined}
-            tabIndex={interactive ? 0 : undefined}
-            onClick={interactive ? () => onStreamSelect?.(stream) : undefined}
+            className={`stream-card${interactive ? " stream-card-interactive" : ""}${isSelected || isCompareSelected ? " stream-card-selected" : ""}`}
+            role={onStreamSelect && !compareMode ? "button" : undefined}
+            tabIndex={onStreamSelect && !compareMode ? 0 : undefined}
+            onClick={
+              compareMode
+                ? () => onToggleCompare?.(stream.id)
+                : onStreamSelect
+                  ? () => onStreamSelect(stream)
+                  : undefined
+            }
             onKeyDown={
-              interactive
+              onStreamSelect && !compareMode
                 ? (e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      onStreamSelect?.(stream);
+                      onStreamSelect(stream);
                     }
                   }
                 : undefined
             }
           >
+            {compareMode && (
+              <span className="stream-compare-badge">
+                {isCompareSelected ? "✓ Selected" : "Click to compare"}
+              </span>
+            )}
             <div className="stream-header">
               <span className="stream-name">{stream.name}</span>
               <span
