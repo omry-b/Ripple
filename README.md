@@ -52,6 +52,27 @@ Unit tests:
 npm run test
 ```
 
+E2E (Playwright):
+
+```bash
+npm run test:e2e
+```
+
+## Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Dashboard overview |
+| `/welcome` | Marketing landing |
+| `/pricing` | Placeholder tiers |
+| `/api-docs` | API overview + OpenAPI link |
+| `/changelog` | Release notes |
+| `/sign-in`, `/sign-up` | Demo auth (localStorage session) |
+
+OpenAPI JSON: [`/api/openapi`](https://ripple-omry-2596s-projects.vercel.app/api/openapi)
+
+Demo roles: set `DEMO_USER_ROLE` to `viewer`, `analyst`, or `admin` in `.env.local`. Optional `REQUIRE_AUTH_FOR_UI=true` redirects unauthenticated users to sign-in.
+
 ## Build log
 
 See [TODO.md](./TODO.md) for the full backlog and what’s shipped.

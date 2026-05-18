@@ -16,5 +16,6 @@ export const OPENAPI_SPEC = {
     "/search": { get: { summary: "Full-text search", parameters: [{ name: "q", in: "query" }] } },
     "/scenarios/{id}/run": { post: { summary: "Run scenario simulation" } },
     "/ingest/run": { post: { summary: "Run ingest pipeline (admin)" } },
+    "/ingest/dead-letters": { get: { summary: "Failed ingest jobs (DLQ)" } },
   },
 };
