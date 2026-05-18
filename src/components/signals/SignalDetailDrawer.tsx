@@ -3,7 +3,8 @@
 import Link from "next/link";
 import type { Company, SignalStream } from "@/types/domain";
 import { LEVEL_COLOR } from "@/types/domain";
-import { SignalHistoryChart } from "@/components/charts/SignalHistoryChart";
+import { SignalHistoryChartLazy } from "@/components/charts/SignalHistoryChartLazy";
+import { FocusTrap } from "@/components/ui/FocusTrap";
 import { MethodologyTooltip } from "./MethodologyTooltip";
 
 type SignalDetailDrawerProps = {
@@ -22,7 +23,7 @@ export function SignalDetailDrawer({
   const related = companies.filter((c) => signal.relatedCompanyIds.includes(c.id));
 
   return (
-    <>
+    <FocusTrap active onEscape={onClose}>
       <button
         type="button"
         className="drawer-backdrop"
@@ -76,7 +77,7 @@ export function SignalDetailDrawer({
         </svg>
 
         {signal.history7d?.length > 0 && (
-          <SignalHistoryChart values={signal.history7d} level={signal.level} />
+          <SignalHistoryChartLazy values={signal.history7d} level={signal.level} />
         )}
 
         <p className="drawer-description">{signal.description}</p>
@@ -103,6 +104,6 @@ export function SignalDetailDrawer({
           ))}
         </ul>
       </aside>
-    </>
+    </FocusTrap>
   );
 }

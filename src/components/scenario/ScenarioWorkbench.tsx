@@ -6,6 +6,8 @@ import { usePerspectiveTilt } from "@/lib/hooks";
 import { runScenarioApi, fetchSimulationRuns } from "@/lib/client/api";
 import { formatAsOf } from "@/lib/format";
 import { exportSimulationRunCsv } from "@/lib/export/entities";
+import { useDemoAuth } from "@/context/DemoAuthContext";
+import { SimulationLossChart } from "@/components/scenario/SimulationLossChart";
 
 type ScenarioWorkbenchProps = {
   scenarios: Scenario[];
@@ -20,6 +22,8 @@ export function ScenarioWorkbench({
   initialDurationDays = 30,
   initialScenarioId,
 }: ScenarioWorkbenchProps) {
+  const { permissions } = useDemoAuth();
+  const canRun = permissions.runScenarios;
   const [workbenchView, setWorkbenchView] = useState<"select" | "results" | "compare">("select");
   const [activeRun, setActiveRun] = useState<SimulationRun | null>(null);
   const [barHeights, setBarHeights] = useState<number[]>([]);
@@ -60,6 +64,7 @@ export function ScenarioWorkbench({
 
   const runSimulation = useCallback(
     async (scenario: Scenario) => {
+      if (!canRun) return;
       setRunning(true);
       try {
         const { run } = await runScenarioApi(scenario.id, { severity, durationDays });
@@ -85,7 +90,7 @@ export function ScenarioWorkbench({
         setRunning(false);
       }
     },
-    [animateBars, loadHistory, severity, durationDays]
+    [animateBars, loadHistory, severity, durationDays, canRun]
   );
 
   useEffect(() => {
@@ -193,7 +198,7 @@ export function ScenarioWorkbench({
                 role="button"
                 tabIndex={0}
                 aria-busy={running}
-                onClick={() => !running && void runSimulation(scenario)}
+                onClick={() => canRun && !running && void runSimulation(scenario)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
@@ -206,8 +211,8 @@ export function ScenarioWorkbench({
                   <div className="scenario-sub">{scenario.subtitle}</div>
                   <p className="scenario-preview">{scenario.preview}</p>
                 </div>
-                <button type="button" className="scenario-btn" disabled={running}>
-                  {running ? "Running…" : "Run Simulation →"}
+                <button type="button" className="scenario-btn" disabled={running || !canRun}>
+                  {!canRun ? "Viewer — read only" : running ? "Running…" : "Run Simulation →"}
                 </button>
               </div>
             ))}
@@ -257,10 +262,18 @@ export function ScenarioWorkbench({
                 <span>Target Severity Threshold (Tail Loss Risk)</span>
               </div>
             </div>
+            {activeRun.lossDistribution && (
+              <SimulationLossChart bins={activeRun.lossDistribution} />
+            )}
             <div className="impact-list-panel">
               <div className="card-title" style={{ marginBottom: 4 }}>
                 Top Contagion Entities
               </div>
+              {activeRun.contagionEntities?.map((name) => (
+                <div key={name} className="impact-row">
+                  <span className="impact-name">{name}</span>
+                </div>
+              ))}
               {activeRun.impacts.map((impact) => {
                 const [value, ...nameParts] = impact.split(" ");
                 const name = nameParts.join(" ");

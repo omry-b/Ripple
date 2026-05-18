@@ -28,8 +28,22 @@ export async function dispatchNotification(payload: NotificationPayload): Promis
         console.info("[notifications:slack:placeholder]", payload.title, payload.body);
         return { sent: false, channel: "slack", message: "SLACK_WEBHOOK_URL not set" };
       }
-      // PLACEHOLDER: await fetch(slackUrl, { method: 'POST', body: JSON.stringify({ text: payload.body }) })
-      return { sent: true, channel: "slack", message: "Slack dispatch stub" };
+      try {
+        const res = await fetch(slackUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: `*${payload.title}*\n${payload.body}`,
+          }),
+        });
+        if (!res.ok) {
+          return { sent: false, channel: "slack", message: `Slack HTTP ${res.status}` };
+        }
+        return { sent: true, channel: "slack", message: "Delivered to Slack" };
+      } catch (e) {
+        const message = e instanceof Error ? e.message : "Slack failed";
+        return { sent: false, channel: "slack", message };
+      }
 
     case "email":
       if (!resendKey) {

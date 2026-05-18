@@ -1,4 +1,5 @@
 import { getDataSource } from "@/lib/data";
+import { getCachedSnapshot } from "@/lib/cache/snapshot-cache";
 import type {
   Alert,
   Company,
@@ -21,7 +22,8 @@ export async function getDashboard(): Promise<DashboardPayload> {
 }
 
 export async function getSnapshot(): Promise<DashboardSnapshot> {
-  return (await ds()).getSnapshot();
+  const data = await ds();
+  return getCachedSnapshot(() => data.getSnapshot());
 }
 
 export async function refreshSnapshot(): Promise<DashboardSnapshot> {

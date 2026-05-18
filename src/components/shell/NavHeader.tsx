@@ -8,6 +8,17 @@ import { LiveStatus } from "./LiveStatus";
 import { MobileNav } from "./MobileNav";
 import { useLiveData } from "@/context/LiveDataContext";
 import { getWatchlistIds } from "@/lib/watchlist";
+import { UserMenu } from "@/components/shell/UserMenu";
+import { OrgSwitcher } from "@/components/shell/OrgSwitcher";
+import { LayoutDashboard, Radio, FlaskConical, Building2 } from "lucide-react";
+
+const NAV_ICONS: Record<string, React.ReactNode> = {
+  "/": <LayoutDashboard size={14} aria-hidden />,
+  "/signals": <Radio size={14} aria-hidden />,
+  "/scenario": <FlaskConical size={14} aria-hidden />,
+  "/companies": <Building2 size={14} aria-hidden />,
+  "/methodology": <FlaskConical size={14} aria-hidden />,
+};
 
 export function NavHeader() {
   const pathname = usePathname();
@@ -42,7 +53,10 @@ export function NavHeader() {
               aria-selected={isActive}
               style={{ textDecoration: "none", display: "inline-block" }}
             >
-              {item.label}
+              <span className="nav-tab-inner">
+                {NAV_ICONS[item.href]}
+                {item.label}
+              </span>
             </Link>
           );
         })}
@@ -54,11 +68,13 @@ export function NavHeader() {
           Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
         </Link>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div className="nav-actions">
+        <OrgSwitcher />
         <kbd className="nav-kbd" title="Command palette">
           ⌘K
         </kbd>
         <LiveStatus asOf={asOf} isRefreshing={isRefreshing} />
+        <UserMenu />
       </div>
     </nav>
   );

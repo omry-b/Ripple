@@ -10,6 +10,8 @@ import { CommandPalette } from "@/components/shell/CommandPalette";
 import { KeyboardShortcuts } from "@/components/shell/KeyboardShortcuts";
 import { DataModeBanner } from "@/components/shell/DataModeBanner";
 import { PageTransition } from "@/components/shell/PageTransition";
+import { DemoAuthProvider } from "@/context/DemoAuthContext";
+import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 
 export default async function DashboardLayout({
   children,
@@ -19,11 +21,12 @@ export default async function DashboardLayout({
   const [dashboard, ticker] = await Promise.all([getDashboard(), getTicker()]);
 
   return (
-    <LiveDataProvider
-      initialAsOf={dashboard.snapshot.asOf}
-      initialSnapshot={dashboard.snapshot}
-    >
-      <SkipToContent />
+    <DemoAuthProvider>
+      <LiveDataProvider
+        initialAsOf={dashboard.snapshot.asOf}
+        initialSnapshot={dashboard.snapshot}
+      >
+        <SkipToContent />
       <DataModeBanner />
       <OfflineBanner />
       <NavHeader />
@@ -32,7 +35,9 @@ export default async function DashboardLayout({
       <PageEffects />
       <CommandPalette />
       <KeyboardShortcuts />
-      <PageTransition>{children}</PageTransition>
-    </LiveDataProvider>
+        <PageTransition>{children}</PageTransition>
+        <OnboardingTour />
+      </LiveDataProvider>
+    </DemoAuthProvider>
   );
 }

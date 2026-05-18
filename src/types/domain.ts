@@ -25,6 +25,15 @@ export type Company = {
 export type ScenarioRunOptions = {
   severity?: number;
   durationDays?: number;
+  region?: GeoRegion;
+  cvarLevel?: 95 | 99;
+};
+
+export type ScenarioShock = {
+  region: GeoRegion;
+  durationDays: number;
+  severity: number;
+  description?: string;
 };
 
 export type AlertStatus = "open" | "acknowledged" | "resolved";
@@ -84,6 +93,9 @@ export type SimulationRun = {
   ranAt: string;
   profile: number[];
   impacts: string[];
+  lossDistribution?: number[];
+  contagionEntities?: string[];
+  shock?: ScenarioShock;
 };
 
 export type CommandItem = {

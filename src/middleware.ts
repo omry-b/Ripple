@@ -20,6 +20,21 @@ const PUBLIC_API_PREFIXES = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (
+    process.env.REQUIRE_AUTH_FOR_UI === "true" &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/sign-in") &&
+    !pathname.startsWith("/sign-up") &&
+    !pathname.startsWith("/welcome")
+  ) {
+    const hasSession =
+      request.cookies.get("__session")?.value ||
+      request.headers.get("x-ripple-user-id");
+    if (!hasSession && !process.env.CLERK_SECRET_KEY) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+  }
+
   if (pathname.startsWith("/api/")) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
@@ -62,5 +77,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/:path*"],
+  matcher: ["/api/:path*", "/((?!_next/static|_next/image|favicon.ico).*)"],
 };

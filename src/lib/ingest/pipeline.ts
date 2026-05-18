@@ -1,4 +1,7 @@
 import { getDataSource } from "@/lib/data";
+import { invalidateSnapshotCache } from "@/lib/cache/snapshot-cache";
+import { listDeadLetters, pushDeadLetter } from "@/lib/ingest/dead-letter";
+import { normalizeEventsToReadings } from "@/lib/ingest/normalizer";
 import { INGEST_ADAPTERS, getAdapter } from "./registry";
 import type { IngestAdapterResult, NormalizedIngestEvent } from "./types";
 
@@ -10,7 +13,9 @@ export type IngestPipelineResult = {
     message: string;
   }>;
   totalEvents: number;
+  readingsNormalized: number;
   snapshotRefreshed: boolean;
+  deadLetterCount: number;
 };
 
 export async function runIngestPipeline(
@@ -62,6 +67,7 @@ export async function runIngestPipeline(
       });
     } catch (e) {
       const message = e instanceof Error ? e.message : "Ingest failed";
+      pushDeadLetter(adapter.name, message);
       await data.recordIngestRun({
         id: runId,
         adapter: adapter.name,
@@ -80,16 +86,23 @@ export async function runIngestPipeline(
     }
   }
 
-  // Placeholder: persist readings when postgres + real normalizer exist
-  void allEvents;
+  const readings = normalizeEventsToReadings(allEvents);
+  void readings;
 
   let snapshotRefreshed = false;
   try {
     await data.refreshSnapshot();
+    invalidateSnapshotCache();
     snapshotRefreshed = true;
   } catch {
     /* mock mode always succeeds */
   }
 
-  return { runs, totalEvents, snapshotRefreshed };
+  return {
+    runs,
+    totalEvents,
+    readingsNormalized: readings.length,
+    snapshotRefreshed,
+    deadLetterCount: listDeadLetters().length,
+  };
 }

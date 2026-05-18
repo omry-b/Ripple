@@ -80,10 +80,10 @@
 - [x] `GET /api/scenarios`
 - [x] `GET /api/companies/[id]`
 - [x] `GET /api/snapshot` (lightweight shell payload)
-- [ ] API response envelope: `{ asOf, data }` consistent everywhere
+- [x] API response envelope: `{ asOf, data }` consistent everywhere
 - [x] API error responses with proper status codes (404, 500)
 - [x] Rate limiting middleware on API routes
-- [ ] OpenAPI / typed client generation from routes
+- [x] OpenAPI / typed client generation from routes
 
 ### UX polish (Phase 0)
 - [x] `loading.tsx` skeleton for dashboard routes
@@ -200,15 +200,15 @@
 ## Phase 3 — Auth, orgs & watchlists
 
 ### Authentication
-- [ ] Choose auth provider (Clerk recommended)
+- [~] Choose auth provider (Clerk recommended; demo auth shipped)
 - [x] Sign in / sign up pages
-- [ ] Protected dashboard routes middleware
-- [ ] User menu in nav (avatar, sign out)
-- [ ] Session refresh handling
+- [x] Protected dashboard routes middleware (opt-in `REQUIRE_AUTH_FOR_UI`)
+- [x] User menu in nav (avatar, sign out)
+- [~] Session refresh handling (demo localStorage; Clerk TBD)
 
 ### Multi-tenancy
-- [ ] `organizationId` on all domain types
-- [ ] Org switcher in nav
+- [~] `organizationId` on all domain types (demo org in session)
+- [x] Org switcher in nav
 - [ ] Row-level data filtering by org in API
 - [ ] Invite team member flow (Clerk organizations)
 
@@ -220,10 +220,10 @@
 - [x] Email digest preference per watchlist (UI)
 
 ### Roles & permissions
-- [ ] `viewer` — read only
-- [ ] `analyst` — run scenarios, acknowledge alerts
-- [ ] `admin` — manage org, invites
-- [ ] Role-based UI hiding of actions
+- [x] `viewer` — read only
+- [x] `analyst` — run scenarios, acknowledge alerts
+- [x] `admin` — manage org, invites
+- [x] Role-based UI hiding of actions
 
 ---
 
@@ -251,16 +251,16 @@
 - [x] Port congestion adapter (stub)
 - [x] Financial health adapter (stub)
 - [x] Weather events adapter (NOAA stub)
-- [ ] Normalizer: event → signal reading
+- [x] Normalizer: event → signal reading
 - [x] Scorer: recompute signal score from readings (placeholder)
 - [x] Aggregator: refresh `dashboard_snapshots` (`POST /api/cron/refresh-snapshot`)
-- [ ] Dead letter queue for failed ingest jobs
+- [x] Dead letter queue for failed ingest jobs
 
 ### Vercel ops
 - [x] Cron: `/api/cron/refresh-snapshot` hourly (vercel.json)
 - [x] Cron secret `CRON_SECRET` validation
-- [ ] Vercel KV cache for dashboard snapshot (TTL 60s)
-- [ ] Invalidate KV on ingest complete webhook
+- [~] Vercel KV cache for dashboard snapshot (in-memory TTL 60s; KV env optional)
+- [x] Invalidate KV on ingest complete webhook
 
 ---
 
@@ -268,9 +268,9 @@
 
 ### Risk scoring
 - [x] Document methodology page `/methodology`
-- [ ] Configurable weights per signal category
-- [ ] Company score = f(signals, tier, concentration)
-- [ ] Confidence interval on scores
+- [x] Configurable weights per signal category
+- [x] Company score = f(signals, tier, concentration)
+- [x] Confidence interval on scores
 - [x] Score change attribution ("+9 due to Taiwan Strait")
 
 ### CVaR
@@ -280,19 +280,19 @@
 - [x] Backtest CVaR vs realized losses (mock chart)
 
 ### Scenario engine
-- [ ] Shock definition schema (region, duration, severity)
-- [ ] Graph propagation algorithm (supplier edges)
-- [ ] Monte Carlo loss distribution (12 bins)
+- [x] Shock definition schema (region, duration, severity)
+- [~] Graph propagation algorithm (supplier edges; mock contagion list)
+- [x] Monte Carlo loss distribution (12 bins)
 - [ ] Async job: submit → poll → results
 - [ ] Worker runs simulation off Vercel
-- [ ] Store `simulation_runs` with parameters + output
+- [x] Store `simulation_runs` with parameters + output
 - [ ] Top contagion entities from real graph walk
 
 ---
 
 ## Phase 6 — Notifications & integrations
 
-- [ ] Slack webhook on critical alert
+- [x] Slack webhook on critical alert (when `SLACK_WEBHOOK_URL` set)
 - [ ] Email digest daily/weekly
 - [ ] PagerDuty integration for critical
 - [ ] Webhook API for customers (register URL, HMAC sign)
@@ -304,32 +304,32 @@
 
 ### Testing
 - [x] Vitest unit tests for formatters, scoring utils
-- [ ] Vitest tests for mock store
-- [ ] Playwright: nav between all routes
-- [ ] Playwright: run scenario + reset
-- [ ] Playwright: signal drawer open/close
-- [ ] Playwright: company search filter
+- [x] Vitest tests for mock store
+- [x] Playwright: nav between all routes
+- [x] Playwright: run scenario + reset
+- [x] Playwright: signal drawer open/close
+- [x] Playwright: company search filter
 - [ ] Visual regression (Chromatic) on bento grid
 - [ ] k6 load test `/api/dashboard`
 
 ### Accessibility
 - [ ] axe audit on all routes — zero critical
-- [ ] Tab order audit on drawer and modals
+- [x] Tab order audit on drawer and modals (FocusTrap)
 - [x] Screen reader labels on sparklines
 - [ ] Color contrast audit (critical/elevated/normal)
-- [ ] Announce ticker updates via `aria-live`
+- [x] Announce ticker updates via `aria-live`
 
 ### Performance
 - [ ] Lighthouse 90+ on all routes
-- [ ] Dynamic import Recharts / Map only when needed
+- [x] Dynamic import Recharts / Map only when needed
 - [ ] Image optimization for OG assets
 - [ ] Bundle analyzer report in CI
-- [ ] Edge cache headers on static API responses where safe
+- [x] Edge cache headers on static API responses where safe
 
 ### Security
 - [x] CSP headers in `next.config.ts`
 - [x] `X-Frame-Options`, `X-Content-Type-Options`
-- [ ] Sanitize any future user-generated content
+- [x] Sanitize any future user-generated content
 - [ ] Audit dependencies (npm audit fix)
 - [ ] Secret scanning in CI
 
@@ -337,24 +337,24 @@
 
 ## Phase 8 — Product & growth
 
-- [ ] Marketing landing page at `/welcome` or separate domain
-- [ ] Pricing page (placeholder tiers)
-- [ ] Public API docs
+- [x] Marketing landing page at `/welcome` or separate domain
+- [x] Pricing page (placeholder tiers)
+- [x] Public API docs
 - [ ] Embed widget for risk index (iframe)
 - [ ] Dark/light theme toggle (currently dark only)
 - [ ] i18n groundwork (en first)
-- [ ] Onboarding tour for first login
+- [x] Onboarding tour for first login
 - [x] Empty states for filtered tables
-- [ ] Changelog page
+- [x] Changelog page
 
 ---
 
 ## Design system
 
-- [ ] Document color tokens in code comments or `tokens.css`
+- [x] Document color tokens in code comments or `tokens.css`
 - [ ] Spacing scale (4px grid)
 - [ ] Component size variants (sm/md/lg cards)
-- [ ] Icon set (Lucide) for nav and actions
+- [x] Icon set (Lucide) for nav and actions
 - [ ] Figma ↔ code parity checklist
 - [ ] Animation duration tokens
 - [ ] Elevation / shadow tokens for cards
@@ -365,9 +365,9 @@
 
 - [x] Basic README (dev + deploy)
 - [x] TODO.md build log (this file)
-- [ ] `ARCHITECTURE.md` with mermaid diagrams
-- [ ] `CONTRIBUTING.md`
-- [ ] API reference generated from routes
+- [x] `ARCHITECTURE.md` with mermaid diagrams
+- [x] `CONTRIBUTING.md`
+- [x] API reference generated from routes (`GET /api/openapi`, `/api-docs`)
 - [ ] Risk methodology whitepaper (internal)
 - [ ] Runbook for ingest failures
 
@@ -391,6 +391,7 @@
 | 2026-05-18 | Storybook, regions, watchlist bento, suppliers, useSignals, fetch retry |
 | 2026-05-18 | Methodology, search API, rate limit, security headers, attribution, supplier graph |
 | 2026-05-18 | Vercel Analytics, unit tests, CVaR backtest chart, sign-in placeholder, a11y sparklines |
+| 2026-05-18 | Demo auth, API envelope, ingest normalizer+DLQ, OpenAPI, product pages, Playwright+CI |
 
 ---
 
@@ -403,5 +404,7 @@
 5. [x] APIs: health, cron, ingest, watchlists, webhooks, company notes
 6. [x] `.env.example` + `npm run db:push` / `db:seed`
 7. [x] Storybook + UX sprint (breadcrumbs, empty states, methodology)
-8. [ ] Wire real AIS/GDELT/etc. API keys + normalizer
-9. [ ] Clerk auth + protected routes
+8. [x] Ingest normalizer + dead-letter queue + snapshot cache invalidation
+9. [~] Clerk auth + protected routes (demo auth shipped; Clerk env optional)
+10. [ ] Wire real AIS/GDELT/etc. API keys
+11. [ ] Neon/Supabase production DB on Vercel

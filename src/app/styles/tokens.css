@@ -1,0 +1,17 @@
+/* Design tokens — 4px grid */
+:root {
+  --ripple-space-1: 4px;
+  --ripple-space-2: 8px;
+  --ripple-space-3: 12px;
+  --ripple-space-4: 16px;
+  --ripple-space-6: 24px;
+  --ripple-radius-sm: 8px;
+  --ripple-radius-md: 12px;
+  --ripple-duration-fast: 150ms;
+  --ripple-duration-normal: 220ms;
+  --ripple-elevation-1: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --color-critical: #ef4444;
+  --color-elevated: #f59e0b;
+  --color-normal: #22c55e;
+  --color-accent: #3b82f6;
+}

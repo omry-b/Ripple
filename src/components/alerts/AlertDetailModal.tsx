@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import type { Alert } from "@/types/domain";
+import { FocusTrap } from "@/components/ui/FocusTrap";
+import { useDemoAuth } from "@/context/DemoAuthContext";
 
 type AlertDetailModalProps = {
   alert: Alert;
@@ -30,9 +32,11 @@ export function AlertDetailModal({
   acknowledging,
 }: AlertDetailModalProps) {
   const isAck = alert.status === "acknowledged";
+  const { permissions } = useDemoAuth();
+  const canAck = permissions.acknowledgeAlerts;
 
   return (
-    <>
+    <FocusTrap active onEscape={onClose}>
       <button
         type="button"
         className="modal-backdrop"
@@ -72,7 +76,7 @@ export function AlertDetailModal({
         </ul>
 
         <div className="modal-actions">
-          {!isAck && (
+          {!isAck && canAck && (
             <button
               type="button"
               className="alert-action-btn"
@@ -81,6 +85,9 @@ export function AlertDetailModal({
             >
               {acknowledging ? "Acknowledging…" : "Acknowledge alert"}
             </button>
+          )}
+          {!isAck && !canAck && (
+            <p className="user-menu-hint">Viewer role cannot acknowledge alerts.</p>
           )}
           <Link
             href={`/companies?alert=${alert.id}`}
@@ -91,6 +98,6 @@ export function AlertDetailModal({
           </Link>
         </div>
       </div>
-    </>
+    </FocusTrap>
   );
 }

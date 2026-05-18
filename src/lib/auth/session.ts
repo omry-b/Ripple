@@ -18,10 +18,16 @@ export async function getSessionUser(request?: Request): Promise<SessionUser> {
   }
 
   const headers = request?.headers;
+  const roleHeader = headers?.get("x-ripple-role");
+  const role =
+    roleHeader === "viewer" || roleHeader === "analyst" || roleHeader === "admin"
+      ? roleHeader
+      : authConfig.demoRole;
+
   return {
     id: headers?.get("x-ripple-user-id") ?? authConfig.demoUserId,
     email: headers?.get("x-ripple-user-email") ?? authConfig.demoEmail,
     organizationId: headers?.get("x-ripple-org-id") ?? authConfig.demoOrgId,
-    role: authConfig.demoRole,
+    role,
   };
 }

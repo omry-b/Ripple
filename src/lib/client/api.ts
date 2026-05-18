@@ -11,8 +11,16 @@ import type {
 
 import { fetchJsonWithRetry } from "@/lib/client/fetch-retry";
 
+function unwrapApi<T>(raw: Record<string, unknown>): T {
+  if (raw.data !== undefined && typeof raw.data === "object" && raw.data !== null) {
+    return { asOf: raw.asOf, ...(raw.data as Record<string, unknown>) } as T;
+  }
+  return raw as T;
+}
+
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
-  return fetchJsonWithRetry<T>(path, init);
+  const raw = await fetchJsonWithRetry<Record<string, unknown>>(path, init);
+  return unwrapApi<T>(raw);
 }
 
 export function fetchDashboard(): Promise<DashboardPayload> {

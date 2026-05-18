@@ -1,6 +1,6 @@
 /**
- * Auth configuration — Clerk placeholders.
- * Set CLERK_SECRET_KEY + NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to enable real auth.
+ * Auth provider: Clerk (recommended). Set CLERK_SECRET_KEY + NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY.
+ * Demo mode uses x-ripple-role headers + localStorage role switcher until Clerk is wired.
  */
 export const authConfig = {
   provider: process.env.CLERK_SECRET_KEY ? "clerk" : "demo",

@@ -1,3 +1,5 @@
+import { sanitizePlainText } from "@/lib/sanitize";
+
 const prefix = "ripple-notes-";
 
 export function getCompanyNote(companyId: string): string {
@@ -7,8 +9,9 @@ export function getCompanyNote(companyId: string): string {
 
 export function setCompanyNote(companyId: string, note: string): void {
   if (typeof window === "undefined") return;
-  if (note.trim()) {
-    localStorage.setItem(`${prefix}${companyId}`, note);
+  const clean = sanitizePlainText(note);
+  if (clean.trim()) {
+    localStorage.setItem(`${prefix}${companyId}`, clean);
   } else {
     localStorage.removeItem(`${prefix}${companyId}`);
   }

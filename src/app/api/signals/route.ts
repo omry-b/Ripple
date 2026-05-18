@@ -1,6 +1,7 @@
 import { getSignals } from "@/lib/api";
+import { CACHE_PUBLIC_SHORT, jsonData } from "@/lib/api/response";
 
 export async function GET() {
-  const data = await getSignals();
-  return Response.json({ asOf: new Date().toISOString(), signals: data });
+  const signals = await getSignals();
+  return jsonData({ signals }, 200, CACHE_PUBLIC_SHORT);
 }
