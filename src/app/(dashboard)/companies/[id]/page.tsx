@@ -1,0 +1,92 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getCompany } from "@/lib/api";
+import { PageHeader } from "@/components/shell/PageHeader";
+
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({ params }: Props) {
+  const { id } = await params;
+  const company = await getCompany(id);
+  return {
+    title: company ? `${company.name} — Ripple` : "Company — Ripple",
+  };
+}
+
+export default async function CompanyDetailPage({ params }: Props) {
+  const { id } = await params;
+  const company = await getCompany(id);
+
+  if (!company) {
+    notFound();
+  }
+
+  return (
+    <>
+      <PageHeader title={company.name} subtitle={`${company.tier} supplier · risk profile`} />
+      <main className="content-container">
+        <Link
+          href="/companies"
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 10,
+            color: "#737373",
+            textDecoration: "none",
+            display: "inline-block",
+            marginBottom: 24,
+          }}
+        >
+          ← All companies
+        </Link>
+
+        <div className="company-profile-grid">
+          <div className="company-stat-card">
+            <span className="hero-stat-label">Risk score</span>
+            <span
+              className={`metric-display-medium ${company.scoreLevel === "critical" ? "critical-accent" : "elevated-accent"}`}
+              style={{ marginTop: 8 }}
+            >
+              {company.score}
+            </span>
+          </div>
+          <div className="company-stat-card">
+            <span className="hero-stat-label">CVaR₉₅</span>
+            <span className="metric-display-medium" style={{ marginTop: 8 }}>
+              {company.cvar}
+            </span>
+          </div>
+          <div className="company-stat-card">
+            <span className="hero-stat-label">Contagion depth</span>
+            <span className="metric-display-medium" style={{ marginTop: 8 }}>
+              {company.contagionHops} hops
+            </span>
+          </div>
+        </div>
+
+        <span className="section-label">7-day trend</span>
+        <section className="workbench-card" style={{ marginBottom: 24 }}>
+          <p style={{ fontSize: 12, color: "#A3A3A3" }}>
+            <span className={`trend-indicator ${company.deltaTrend}`}>{company.delta7d}</span>
+            {" "}risk score change vs prior week. Supplier graph and linked alerts ship in Phase 2.
+          </p>
+        </section>
+
+        <span className="section-label">Related</span>
+        <section className="workbench-card">
+          <Link href="/signals" style={{ color: "#3B82F6", fontSize: 12, textDecoration: "none" }}>
+            View signal streams →
+          </Link>
+          <br />
+          <Link
+            href="/scenario"
+            style={{ color: "#3B82F6", fontSize: 12, textDecoration: "none", marginTop: 8, display: "inline-block" }}
+          >
+            Run scenario simulation →
+          </Link>
+        </section>
+      </main>
+    </>
+  );
+}

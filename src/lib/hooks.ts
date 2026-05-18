@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import type { DashboardSnapshot } from "@/types/domain";
 
 export function useRevealOnScroll(selector = ".reveal") {
   useEffect(() => {
@@ -135,11 +136,11 @@ export function usePerspectiveTilt(
   }, [selector, intensity]);
 }
 
-export function useMetricCounters() {
-  useAnimatedCounter("counter-index", 67.4, 1400, true, 100);
-  useAnimatedCounter("counter-exposed", 47, 1600, false, 250);
-  useAnimatedCounter("counter-cvar-hero", 2.1, 1800, true, 400);
-  useAnimatedCounter("counter-signals", 214, 2000, false, 550);
-  useAnimatedCounter("bento-val-signals", 214, 2000, false, 600);
-  useAnimatedCounter("bento-val-exposed", 47, 1600, false, 700);
+export function useSnapshotCounters(snapshot: DashboardSnapshot) {
+  useAnimatedCounter("counter-index", snapshot.riskIndex, 1400, true, 100);
+  useAnimatedCounter("counter-exposed", snapshot.exposedCompanies, 1600, false, 250);
+  useAnimatedCounter("counter-cvar-hero", snapshot.cvar95BaselineB, 1800, true, 400);
+  useAnimatedCounter("counter-signals", snapshot.liveSignalsCount, 2000, false, 550);
+  useAnimatedCounter("bento-val-signals", snapshot.liveSignalsCount, 2000, false, 600);
+  useAnimatedCounter("bento-val-exposed", snapshot.exposedCompanies, 1600, false, 700);
 }
