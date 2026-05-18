@@ -2,6 +2,7 @@ import { getCompanies, getSignals, getSnapshot } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
 import { SignalsPageClient } from "@/components/signals/SignalsPageClient";
+import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
@@ -23,6 +24,12 @@ export default async function SignalsPage() {
       />
       <CompactMetricsStrip />
       <main className="content-container">
+        <Breadcrumbs
+          items={[
+            { label: "Overview", href: "/" },
+            { label: "Signals" },
+          ]}
+        />
         <span className="section-label">All streams · click for detail</span>
         <SignalsPageClient streams={streams} companies={companies} />
       </main>

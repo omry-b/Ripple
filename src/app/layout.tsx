@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
+import { VercelInsights } from "@/components/shell/VercelInsights";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -26,7 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plusJakarta.variable} ${dmMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <VercelInsights />
+      </body>
     </html>
   );
 }

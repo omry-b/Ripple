@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Alert, Company } from "@/types/domain";
+import type { Alert, Company, GeoRegion } from "@/types/domain";
 import {
   CompanyExposureTable,
   COMPANY_TABLE_COLUMNS,
@@ -11,6 +11,7 @@ import {
 import { exportCompaniesCsv } from "@/lib/export/entities";
 import { addToWatchlist, getWatchlistIds, toggleWatchlistId } from "@/lib/watchlist";
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export type CompanySortKey = "score" | "name" | "cvar" | "delta";
 
@@ -20,12 +21,16 @@ type CompaniesPageClientProps = {
   companies: Company[];
   alertFilter: Alert | null;
   watchlistOnly?: boolean;
+  regionFilter?: string | null;
 };
+
+const REGIONS: GeoRegion[] = ["APAC", "EMEA", "AMER"];
 
 export function CompaniesPageClient({
   companies,
   alertFilter,
   watchlistOnly = false,
+  regionFilter = null,
 }: CompaniesPageClientProps) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<CompanySortKey>("score");
@@ -55,6 +60,10 @@ export function CompaniesPageClient({
       list = list.filter((c) => alertFilter.affectedCompanyIds.includes(c.id));
     }
 
+    if (regionFilter && REGIONS.includes(regionFilter as GeoRegion)) {
+      list = list.filter((c) => c.region === regionFilter);
+    }
+
     if (tier !== "all") {
       list = list.filter((c) => c.tier === tier);
     }
@@ -79,7 +88,7 @@ export function CompaniesPageClient({
           return b.score - a.score;
       }
     });
-  }, [companies, alertFilter, watchlistOnly, watchlistIds, search, sort, tier, scoreMin, scoreMax]);
+  }, [companies, alertFilter, watchlistOnly, watchlistIds, regionFilter, search, sort, tier, scoreMin, scoreMax]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -114,6 +123,17 @@ export function CompaniesPageClient({
           </span>
           <Link href="/companies" className="alert-filter-clear">
             Show all companies ×
+          </Link>
+        </div>
+      )}
+
+      {regionFilter && REGIONS.includes(regionFilter as GeoRegion) && (
+        <div className="alert-filter-banner">
+          <span>
+            Showing companies in region: <strong>{regionFilter}</strong>
+          </span>
+          <Link href="/companies" className="alert-filter-clear">
+            Clear filter ×
           </Link>
         </div>
       )}
@@ -237,7 +257,11 @@ export function CompaniesPageClient({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="empty-state">No companies match your filters.</p>
+        <EmptyState
+          title="No companies match"
+          description="Try clearing filters, widening the score range, or viewing all companies."
+          action={{ label: "Show all companies", href: "/companies" }}
+        />
       ) : (
         <>
           <CompanyExposureTable

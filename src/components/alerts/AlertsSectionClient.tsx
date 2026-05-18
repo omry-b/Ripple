@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import type { Alert } from "@/types/domain";
 import { acknowledgeAlertApi } from "@/lib/client/api";
 import { AlertCard } from "./AlertCard";
+import { AlertCardShell, type AlertCardVariant } from "./AlertCardShell";
 import { AlertDetailModal } from "./AlertDetailModal";
 
 type AlertsSectionClientProps = {
@@ -33,26 +34,23 @@ export function AlertsSectionClient({ initialAlerts }: AlertsSectionClientProps)
         <div className="atmosphere-blob-2" />
         <div className="glass-grid">
           {alerts.map((alert) => {
-            const inner = <AlertCard alert={alert} />;
-            const clickable = (
-              <button
-                type="button"
-                className="alert-card-trigger"
-                onClick={() => setSelected(alert)}
-                aria-label={`Open details for ${alert.title}`}
-              >
-                {inner}
-              </button>
-            );
+            const variant: AlertCardVariant = alert.critical
+              ? "critical"
+              : alert.level === "elevated"
+                ? "elevated"
+                : "default";
 
-            return alert.critical ? (
-              <div key={alert.id} className="grad-border-wrapper">
-                <div className="grad-border-inner glass-card">{clickable}</div>
-              </div>
-            ) : (
-              <div key={alert.id} className="glass-card">
-                {clickable}
-              </div>
+            return (
+              <AlertCardShell key={alert.id} variant={variant}>
+                <button
+                  type="button"
+                  className="alert-card-trigger"
+                  onClick={() => setSelected(alert)}
+                  aria-label={`Open details for ${alert.title}`}
+                >
+                  <AlertCard alert={alert} />
+                </button>
+              </AlertCardShell>
             );
           })}
         </div>

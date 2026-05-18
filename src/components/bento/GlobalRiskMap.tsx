@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { Hotspot } from "@/types/domain";
 import { LEVEL_COLOR } from "@/types/domain";
@@ -29,6 +30,14 @@ export function GlobalRiskMap({ hotspots, onHotspotClick }: GlobalRiskMapProps) 
             {hovered.level.toUpperCase()}
           </span>
           <span className="map-tooltip-label">{hovered.label}</span>
+          <span className="map-tooltip-hint">Click to filter {hovered.region}</span>
+          <Link
+            href={`/companies?alert=${hovered.alertId}`}
+            className="map-tooltip-link"
+            onClick={(e) => e.stopPropagation()}
+          >
+            View alert exposure →
+          </Link>
         </div>
       )}
       <svg
@@ -71,7 +80,7 @@ export function GlobalRiskMap({ hotspots, onHotspotClick }: GlobalRiskMapProps) 
             tabIndex={onHotspotClick ? 0 : undefined}
             aria-label={
               onHotspotClick
-                ? `${h.label} — ${h.level} risk. Click for exposure.`
+                ? `${h.label} — ${h.level} risk. Click to filter ${h.region}.`
                 : undefined
             }
           >

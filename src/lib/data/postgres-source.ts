@@ -15,11 +15,13 @@ import type {
   TickerItem,
 } from "@/types/domain";
 import type { RippleDataSource, IngestRunRecord, WatchlistRecord, WebhookSubscription } from "./types";
+import { regionForCompanyId } from "@/lib/mock/regions";
 
 function rowToCompany(row: typeof schema.companies.$inferSelect): Company {
   return {
     id: row.id,
     name: row.name,
+    region: regionForCompanyId(row.id),
     score: row.score,
     tier: row.tier,
     cvar: row.cvar,

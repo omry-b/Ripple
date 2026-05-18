@@ -23,9 +23,25 @@ export function RiskScoreSparkline({
     })
     .join(" ");
 
+  const latest = values[values.length - 1];
+  const trend =
+    values.length > 1 && latest > values[0]
+      ? "increasing"
+      : latest < values[0]
+        ? "decreasing"
+        : "stable";
+
   return (
     <div className="risk-sparkline-wrap">
-      <svg width="100%" height={height} viewBox="0 0 100 24" preserveAspectRatio="none">
+      <svg
+        width="100%"
+        height={height}
+        viewBox="0 0 100 24"
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={`30-day risk score trend, ${trend}, current score ${latest}`}
+      >
+        <title>30-day risk score: {latest}</title>
         <polyline
           points={points}
           fill="none"

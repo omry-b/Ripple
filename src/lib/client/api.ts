@@ -9,12 +9,10 @@ import type {
   SimulationRun,
 } from "@/types/domain";
 
+import { fetchJsonWithRetry } from "@/lib/client/fetch-retry";
+
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, { cache: "no-store", ...init });
-  if (!res.ok) {
-    throw new Error(`API ${path} failed: ${res.status}`);
-  }
-  return res.json() as Promise<T>;
+  return fetchJsonWithRetry<T>(path, init);
 }
 
 export function fetchDashboard(): Promise<DashboardPayload> {

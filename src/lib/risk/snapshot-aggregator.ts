@@ -20,13 +20,20 @@ export function aggregateSnapshot(input: AggregateInput): DashboardSnapshot {
   const cvarTotal = input.companies.reduce((sum, c) => sum + c.cvarUsd, 0);
   const cvarB = cvarTotal / 1e9;
 
-  const hotspots = openAlerts.slice(0, 5).map((a, i) => ({
-    cx: 80 + i * 45,
-    cy: 40 + (i % 3) * 20,
-    level: a.level,
-    alertId: a.id,
-    label: a.title,
-  })) as DashboardSnapshot["hotspots"];
+  const hotspots = openAlerts.slice(0, 5).map((a, i) => {
+    const region =
+      a.id === "taiwan" || a.id === "sea-port" || a.id === "tsmc-signal"
+        ? "APAC"
+        : (["APAC", "EMEA", "AMER"] as const)[i % 3];
+    return {
+      cx: 80 + i * 45,
+      cy: 40 + (i % 3) * 20,
+      level: a.level,
+      alertId: a.id,
+      label: a.title,
+      region,
+    };
+  });
 
   const avgScore =
     input.companies.length > 0
@@ -57,6 +64,7 @@ export function aggregateSnapshot(input: AggregateInput): DashboardSnapshot {
               level: "critical",
               alertId: "taiwan",
               label: "Taiwan Strait",
+              region: "APAC",
             },
           ],
   };

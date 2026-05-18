@@ -11,12 +11,17 @@ import type {
 import { alertState } from "@/lib/mock/alert-state";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
+import { regionForCompanyId } from "@/lib/mock/regions";
 
-function enrichCompany(c: Omit<Company, "history30d">): Company {
-  return { ...c, history30d: buildScoreHistory30d(c.id, c.score) };
+function enrichCompany(c: Omit<Company, "history30d" | "region">): Company {
+  return {
+    ...c,
+    region: regionForCompanyId(c.id),
+    history30d: buildScoreHistory30d(c.id, c.score),
+  };
 }
 
-const CORE_COMPANIES: Omit<Company, "history30d">[] = [
+const CORE_COMPANIES: Omit<Company, "history30d" | "region">[] = [
   {
     id: "apple",
     name: "Apple Inc.",
@@ -103,7 +108,7 @@ const CORE_COMPANIES: Omit<Company, "history30d">[] = [
   },
 ];
 
-const EXTENDED_COMPANIES: Omit<Company, "history30d">[] = Array.from({ length: 25 }, (_, i) => {
+const EXTENDED_COMPANIES: Omit<Company, "history30d" | "region">[] = Array.from({ length: 25 }, (_, i) => {
   const n = i + 1;
   const score = 28 + ((n * 7) % 45);
   const tier = n % 3 === 0 ? "Tier 1" : "Tier 2";
@@ -280,9 +285,30 @@ function buildSnapshot(): DashboardSnapshot {
     openAlertsCount: alertState.list().filter((a) => a.status === "open").length,
     activeStreamsCount: 7,
     hotspots: [
-      { cx: 220, cy: 55, level: "critical", alertId: "taiwan", label: "Taiwan Strait" },
-      { cx: 205, cy: 80, level: "elevated", alertId: "sea-port", label: "SEA Ports" },
-      { cx: 145, cy: 40, level: "elevated", alertId: "tsmc-signal", label: "TSMC Signal" },
+      {
+        cx: 220,
+        cy: 55,
+        level: "critical",
+        alertId: "taiwan",
+        label: "Taiwan Strait",
+        region: "APAC",
+      },
+      {
+        cx: 205,
+        cy: 80,
+        level: "elevated",
+        alertId: "sea-port",
+        label: "SEA Ports",
+        region: "APAC",
+      },
+      {
+        cx: 145,
+        cy: 40,
+        level: "elevated",
+        alertId: "tsmc-signal",
+        label: "TSMC Signal",
+        region: "APAC",
+      },
     ],
   };
 }

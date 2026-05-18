@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from "react";
 import type { Company, SignalStream } from "@/types/domain";
+import { useSignals } from "@/lib/hooks";
 import { StreamGrid } from "@/components/streams/StreamGrid";
 import { SignalFilters, type SignalFilterState } from "./SignalFilters";
 import { SignalDetailDrawer } from "./SignalDetailDrawer";
 import { SignalComparePanel } from "./SignalComparePanel";
 import { SubscribeCta } from "./SubscribeCta";
 import { exportSignalsCsv } from "@/lib/export/entities";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 type SignalsPageClientProps = {
   streams: SignalStream[];
@@ -15,6 +17,7 @@ type SignalsPageClientProps = {
 };
 
 export function SignalsPageClient({ streams, companies }: SignalsPageClientProps) {
+  const { signals: liveStreams } = useSignals(streams);
   const [filters, setFilters] = useState<SignalFilterState>({
     level: "all",
     category: "all",
@@ -24,24 +27,24 @@ export function SignalsPageClient({ streams, companies }: SignalsPageClientProps
   const [compareIds, setCompareIds] = useState<string[]>([]);
 
   const categories = useMemo(
-    () => [...new Set(streams.map((s) => s.category))].sort(),
-    [streams]
+    () => [...new Set(liveStreams.map((s) => s.category))].sort(),
+    [liveStreams]
   );
 
   const filtered = useMemo(() => {
-    return streams.filter((s) => {
+    return liveStreams.filter((s) => {
       if (filters.level !== "all" && s.level !== filters.level) return false;
       if (filters.category !== "all" && s.category !== filters.category) return false;
       return true;
     });
-  }, [streams, filters]);
+  }, [liveStreams, filters]);
 
   const compareSignals = useMemo(() => {
     const picked = compareIds
-      .map((id) => streams.find((s) => s.id === id))
+      .map((id) => liveStreams.find((s) => s.id === id))
       .filter((s): s is SignalStream => Boolean(s));
     return picked.length === 2 ? (picked as [SignalStream, SignalStream]) : null;
-  }, [compareIds, streams]);
+  }, [compareIds, liveStreams]);
 
   const toggleCompare = (id: string) => {
     setCompareIds((prev) => {
@@ -89,14 +92,22 @@ export function SignalsPageClient({ streams, companies }: SignalsPageClientProps
         />
       )}
 
-      <StreamGrid
-        streams={filtered}
-        onStreamSelect={compareMode ? undefined : setSelected}
-        selectedId={selected?.id}
-        compareMode={compareMode}
-        compareIds={compareIds}
-        onToggleCompare={compareMode ? toggleCompare : undefined}
-      />
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="No signal streams match"
+          description="Adjust level or category filters to see live channels."
+          action={{ label: "Reset filters", href: "/signals" }}
+        />
+      ) : (
+        <StreamGrid
+          streams={filtered}
+          onStreamSelect={compareMode ? undefined : setSelected}
+          selectedId={selected?.id}
+          compareMode={compareMode}
+          compareIds={compareIds}
+          onToggleCompare={compareMode ? toggleCompare : undefined}
+        />
+      )}
       <SignalDetailDrawer
         signal={selected}
         companies={companies}

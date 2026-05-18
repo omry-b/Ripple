@@ -73,7 +73,15 @@ export function StreamGrid({
                 <span style={{ fontSize: 9, color: "#404040" }}>/100</span>
               </span>
             </div>
-            <svg width="100%" height="20" viewBox="0 0 100 20" style={{ display: "block", margin: "6px 0" }}>
+            <svg
+              width="100%"
+              height="20"
+              viewBox="0 0 100 20"
+              style={{ display: "block", margin: "6px 0" }}
+              role="img"
+              aria-label={`${stream.name} 7-day sparkline, score ${stream.score}`}
+            >
+              <title>{stream.name} recent trend</title>
               <polyline
                 points={stream.sparkline}
                 fill="none"

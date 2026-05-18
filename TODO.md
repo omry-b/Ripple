@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-17
+> **Last updated:** 2026-05-18
 
 ---
 
@@ -29,8 +29,8 @@
 - [x] Fix Turbopack workspace root warning in `next.config.ts`
 - [ ] Add custom domain in Vercel project settings
 - [ ] Configure Vercel environment variables (Production / Preview / Development)
-- [ ] Enable Vercel Analytics + Speed Insights
-- [ ] Add deployment status badge to README
+- [x] Enable Vercel Analytics + Speed Insights
+- [x] Add deployment status badge to README
 
 ### Routing & navigation
 - [x] Route group `(dashboard)` with shared layout
@@ -45,7 +45,7 @@
 - [x] Company `not-found.tsx` for unknown IDs
 - [x] Add `error.tsx` at dashboard root (recoverable errors)
 - [x] Add `global-error.tsx` at app root
-- [ ] Breadcrumb component for nested routes
+- [x] Breadcrumb component for nested routes
 - [x] Mobile nav: collapsible tabs or bottom bar
 - [x] Command palette ⌘K (search companies, alerts, nav)
 - [x] Keyboard shortcuts (g+o overview, g+s signals, etc.)
@@ -65,9 +65,9 @@
 - [x] `components/scenario/ScenarioWorkbench`
 - [x] `components/overview/OverviewPage`
 - [x] Extract `GlobalRiskMap` SVG to own component
-- [ ] Extract `AlertCard` conic border wrapper to variant prop only
-- [ ] Storybook setup for shell + bento cards
-- [ ] Shared `MetricCard` primitive for bento small tiles
+- [x] Extract `AlertCard` conic border wrapper to variant prop only
+- [x] Storybook setup for shell + bento cards
+- [x] Shared `MetricCard` primitive for bento small tiles
 
 ### Data & API façade (mock)
 - [x] `types/domain.ts` canonical types
@@ -81,8 +81,8 @@
 - [x] `GET /api/companies/[id]`
 - [x] `GET /api/snapshot` (lightweight shell payload)
 - [ ] API response envelope: `{ asOf, data }` consistent everywhere
-- [ ] API error responses with proper status codes (404, 500)
-- [ ] Rate limiting middleware on API routes
+- [x] API error responses with proper status codes (404, 500)
+- [x] Rate limiting middleware on API routes
 - [ ] OpenAPI / typed client generation from routes
 
 ### UX polish (Phase 0)
@@ -92,10 +92,10 @@
 - [x] `prefers-reduced-motion` disables ticker + blobs
 - [x] Company rows link to `/companies/[id]`
 - [x] Overview links to signals + scenario pages
-- [ ] Skeleton components match bento card shapes exactly
+- [x] Skeleton components match bento card shapes exactly
 - [x] Focus visible styles on all interactive elements
 - [x] Skip-to-content link in shell
-- [ ] Page transition animation between routes (subtle)
+- [x] Page transition animation between routes (subtle)
 
 ---
 
@@ -111,9 +111,9 @@
 - [x] Retry UI on fetch failure (`RefreshBanner` + Retry button)
 - [ ] SWR or React Query dependency (evaluate vs raw fetch)
 - [x] `useDashboard()` hook for client components
-- [ ] `useSignals()` hook with poll
+- [x] `useSignals()` hook with poll
 - [x] Offline banner when `navigator.onLine === false`
-- [ ] Retry with exponential backoff on fetch failure
+- [x] Retry with exponential backoff on fetch failure
 
 ### Signals page depth
 - [x] Signal detail drawer (slide-over panel)
@@ -174,17 +174,17 @@
 - [x] Linked alerts list for company
 - [x] Linked signals affecting company
 - [x] Breadcrumbs on company page
-- [ ] Supplier graph mini visualization (React Flow)
-- [ ] Tier-1 / tier-2 supplier table
+- [x] Supplier graph mini visualization (React Flow)
+- [x] Tier-1 / tier-2 supplier table
 - [x] Historical risk score sparkline (30d)
 - [x] Peer comparison (vs sector median)
 - [x] Notes field (localStorage until auth)
-- [ ] Print-friendly company report view
+- [x] Print-friendly company report view
 
 ### Map & geography
 - [ ] Replace stylized SVG with TopoJSON world map
 - [x] Hotspot tooltips with region name + alert count
-- [ ] Region filter on companies page from map click
+- [x] Region filter on companies page from map click
 - [x] Map legend interactive (toggle critical/elevated)
 - [x] Full-screen map mode
 - [ ] Mapbox GL integration (optional, env token)
@@ -193,7 +193,7 @@
 - [x] Global command palette (⌘K) — jump to company/signal/alert
 - [x] `GET /api/search` index endpoint
 - [x] Recent items in command palette
-- [ ] Full-text search API mock
+- [x] Full-text search API mock
 
 ---
 
@@ -201,7 +201,7 @@
 
 ### Authentication
 - [ ] Choose auth provider (Clerk recommended)
-- [ ] Sign in / sign up pages
+- [x] Sign in / sign up pages
 - [ ] Protected dashboard routes middleware
 - [ ] User menu in nav (avatar, sign out)
 - [ ] Session refresh handling
@@ -213,11 +213,11 @@
 - [ ] Invite team member flow (Clerk organizations)
 
 ### Watchlists
-- [ ] Create watchlist
-- [ ] Add/remove companies from watchlist
-- [ ] Overview bento: "My watchlist" metric
-- [ ] Filter companies table by watchlist
-- [ ] Email digest preference per watchlist (UI)
+- [x] Create watchlist
+- [x] Add/remove companies from watchlist
+- [x] Overview bento: "My watchlist" metric
+- [x] Filter companies table by watchlist
+- [x] Email digest preference per watchlist (UI)
 
 ### Roles & permissions
 - [ ] `viewer` — read only
@@ -267,17 +267,17 @@
 ## Phase 5 — Risk engine & scenarios
 
 ### Risk scoring
-- [ ] Document methodology page `/methodology`
+- [x] Document methodology page `/methodology`
 - [ ] Configurable weights per signal category
 - [ ] Company score = f(signals, tier, concentration)
 - [ ] Confidence interval on scores
-- [ ] Score change attribution ("+9 due to Taiwan Strait")
+- [x] Score change attribution ("+9 due to Taiwan Strait")
 
 ### CVaR
-- [ ] CVaR calculation module (portfolio + per company)
+- [x] CVaR calculation module (portfolio + per company)
 - [ ] 30-day rolling baseline comparison
 - [ ] CVaR confidence level configurable (95 / 99)
-- [ ] Backtest CVaR vs realized losses (mock chart)
+- [x] Backtest CVaR vs realized losses (mock chart)
 
 ### Scenario engine
 - [ ] Shock definition schema (region, duration, severity)
@@ -303,7 +303,7 @@
 ## Phase 7 — Quality, a11y & performance
 
 ### Testing
-- [ ] Vitest unit tests for formatters, scoring utils
+- [x] Vitest unit tests for formatters, scoring utils
 - [ ] Vitest tests for mock store
 - [ ] Playwright: nav between all routes
 - [ ] Playwright: run scenario + reset
@@ -315,7 +315,7 @@
 ### Accessibility
 - [ ] axe audit on all routes — zero critical
 - [ ] Tab order audit on drawer and modals
-- [ ] Screen reader labels on sparklines
+- [x] Screen reader labels on sparklines
 - [ ] Color contrast audit (critical/elevated/normal)
 - [ ] Announce ticker updates via `aria-live`
 
@@ -327,8 +327,8 @@
 - [ ] Edge cache headers on static API responses where safe
 
 ### Security
-- [ ] CSP headers in `next.config.ts`
-- [ ] `X-Frame-Options`, `X-Content-Type-Options`
+- [x] CSP headers in `next.config.ts`
+- [x] `X-Frame-Options`, `X-Content-Type-Options`
 - [ ] Sanitize any future user-generated content
 - [ ] Audit dependencies (npm audit fix)
 - [ ] Secret scanning in CI
@@ -344,7 +344,7 @@
 - [ ] Dark/light theme toggle (currently dark only)
 - [ ] i18n groundwork (en first)
 - [ ] Onboarding tour for first login
-- [ ] Empty states for filtered tables
+- [x] Empty states for filtered tables
 - [ ] Changelog page
 
 ---
@@ -388,6 +388,9 @@
 | 2026-05-18 | Shortcuts, CSV export, score slider, 30d sparkline, scenario compare, recents |
 | 2026-05-18 | Signal compare, watchlist, columns, peers, notes, map fullscreen, mobile nav |
 | 2026-05-18 | Full backend scaffold: Drizzle, ingest/risk/auth/notifications placeholders, new APIs |
+| 2026-05-18 | Storybook, regions, watchlist bento, suppliers, useSignals, fetch retry |
+| 2026-05-18 | Methodology, search API, rate limit, security headers, attribution, supplier graph |
+| 2026-05-18 | Vercel Analytics, unit tests, CVaR backtest chart, sign-in placeholder, a11y sparklines |
 
 ---
 
@@ -399,5 +402,6 @@
 4. [x] Auth session stub + notification dispatcher placeholders
 5. [x] APIs: health, cron, ingest, watchlists, webhooks, company notes
 6. [x] `.env.example` + `npm run db:push` / `db:seed`
-7. [ ] Wire real AIS/GDELT/etc. API keys + normalizer
-8. [ ] Clerk auth + protected routes
+7. [x] Storybook + UX sprint (breadcrumbs, empty states, methodology)
+8. [ ] Wire real AIS/GDELT/etc. API keys + normalizer
+9. [ ] Clerk auth + protected routes

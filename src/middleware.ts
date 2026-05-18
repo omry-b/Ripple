@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { checkRateLimit } from "@/lib/api/rate-limit";
 
 /**
  * Auth middleware placeholder — extend with Clerk when CLERK_SECRET_KEY is set.
@@ -18,6 +19,27 @@ const PUBLIC_API_PREFIXES = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/")) {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip") ??
+      "anonymous";
+    const limited = checkRateLimit(`api:${ip}`);
+    if (!limited.ok) {
+      return Response.json(
+        {
+          asOf: new Date().toISOString(),
+          error: "Too many requests",
+          retryAfterSec: limited.retryAfterSec,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(limited.retryAfterSec) },
+        }
+      );
+    }
+  }
 
   if (pathname.startsWith("/api/cron/")) {
     return NextResponse.next();

@@ -2,6 +2,9 @@ import { getAlert, getCompanies, getSnapshot } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
 import { CompaniesPageClient } from "@/components/companies/CompaniesPageClient";
+import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
+import { WatchlistManager } from "@/components/watchlists/WatchlistManager";
+import { DigestPreferences } from "@/components/watchlists/DigestPreferences";
 import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
@@ -9,11 +12,11 @@ export const metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ alert?: string; watchlist?: string }>;
+  searchParams: Promise<{ alert?: string; watchlist?: string; region?: string }>;
 };
 
 export default async function CompaniesPage({ searchParams }: Props) {
-  const { alert: alertId, watchlist } = await searchParams;
+  const { alert: alertId, watchlist, region } = await searchParams;
   const watchlistOnly = watchlist === "1";
   const [companies, snapshot, alertFilter] = await Promise.all([
     getCompanies(),
@@ -29,12 +32,19 @@ export default async function CompaniesPage({ searchParams }: Props) {
       />
       <CompactMetricsStrip />
       <main className="content-container">
+        <Breadcrumbs items={[{ label: "Companies" }]} />
         <span className="section-label">Full ranking</span>
         <CompaniesPageClient
           companies={companies}
           alertFilter={alertFilter}
           watchlistOnly={watchlistOnly}
+          regionFilter={region ?? null}
         />
+        <span className="section-label">Watchlists</span>
+        <div className="watchlist-panels">
+          <WatchlistManager />
+          <DigestPreferences />
+        </div>
       </main>
     </>
   );

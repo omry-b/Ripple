@@ -15,10 +15,16 @@ export function CommandPalette() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    fetchSearch()
-      .then((data) => setItems(data.items))
-      .catch(() => setItems([]));
-  }, []);
+    const q = query.trim();
+    const path = q ? `/api/search?q=${encodeURIComponent(q)}` : "/api/search";
+    const timer = window.setTimeout(() => {
+      fetch(path)
+        .then((res) => (res.ok ? res.json() : fetchSearch()))
+        .then((data) => setItems(data.items ?? []))
+        .catch(() => fetchSearch().then((d) => setItems(d.items)).catch(() => setItems([])));
+    }, q ? 200 : 0);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   useEffect(() => {
     if (open) setRecent(getRecentItems());
@@ -57,14 +63,7 @@ export function CommandPalette() {
       const rest = items.filter((i) => !recentIds.has(i.href)).slice(0, 8);
       return [...recentAsItems, ...rest].slice(0, 12);
     }
-    return items
-      .filter(
-        (item) =>
-          item.label.toLowerCase().includes(q) ||
-          item.sublabel?.toLowerCase().includes(q) ||
-          item.group.toLowerCase().includes(q)
-      )
-      .slice(0, 12);
+    return items.slice(0, 12);
   }, [items, query, recentAsItems]);
 
   const go = useCallback(

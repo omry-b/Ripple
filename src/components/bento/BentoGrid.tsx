@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import type { Company, DashboardSnapshot, Hotspot } from "@/types/domain";
 import { GlobalRiskMap } from "@/components/bento/GlobalRiskMap";
 import { MapFullscreenModal } from "@/components/bento/MapFullscreenModal";
+import { MetricCard } from "@/components/bento/MetricCard";
+import { WatchlistMetricCard } from "@/components/bento/WatchlistMetricCard";
 import { useCardSpotlight } from "@/lib/hooks";
 
 const SPOTLIGHT_IDS = [
@@ -13,6 +15,7 @@ const SPOTLIGHT_IDS = [
   "bento-cvar-card",
   "bento-signals-card",
   "bento-exposed-card",
+  "bento-watchlist-card",
   "bento-table-card",
 ];
 
@@ -38,7 +41,8 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
     [hotspots, legend]
   );
 
-  const onHotspotClick = (h: Hotspot) => router.push(`/companies?alert=${h.alertId}`);
+  const onHotspotClick = (h: Hotspot) =>
+    router.push(`/companies?region=${encodeURIComponent(h.region)}`);
 
   return (
     <section className="bento-grid">
@@ -92,21 +96,24 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
         </div>
       </div>
 
-      <div className="bento-card bento-small" id="bento-signals-card">
-        <div className="card-title">Live Signals</div>
-        <div className="metric-display-medium" id="bento-val-signals">
-          0
-        </div>
-        <div className="card-subtitle">{snapshot.signalsDeltaLabel}</div>
-      </div>
+      <MetricCard
+        cardId="bento-signals-card"
+        title="Live Signals"
+        value={0}
+        id="bento-val-signals"
+        subtitle={snapshot.signalsDeltaLabel}
+      />
 
-      <div className="bento-card bento-small" id="bento-exposed-card">
-        <div className="card-title">Exposed</div>
-        <div className="metric-display-medium elevated-accent" id="bento-val-exposed">
-          0
-        </div>
-        <div className="card-subtitle">of {snapshot.trackedCompanies} tracked</div>
-      </div>
+      <MetricCard
+        cardId="bento-exposed-card"
+        title="Exposed"
+        value={0}
+        id="bento-val-exposed"
+        subtitle={`of ${snapshot.trackedCompanies} tracked`}
+        accent="elevated"
+      />
+
+      <WatchlistMetricCard />
 
       <div className="bento-card bento-wide" id="bento-table-card">
         <div className="card-title">Top Risk Companies</div>

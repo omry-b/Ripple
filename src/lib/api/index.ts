@@ -96,4 +96,14 @@ export async function getScoreFactors(companyId: string): Promise<ScoreFactor[]>
   return (await ds()).getScoreFactors(companyId);
 }
 
+export async function getSuppliersForCompany(companyId: string) {
+  const { getSuppliersForCompany: getSuppliers } = await import("@/lib/mock/suppliers");
+  return getSuppliers(companyId);
+}
+
+export async function getScoreAttribution(companyId: string, delta7d: string) {
+  const { getScoreAttribution: getAttr } = await import("@/lib/mock/score-attribution");
+  return getAttr(companyId, delta7d);
+}
+
 export { getDataSourceMode } from "@/lib/data";

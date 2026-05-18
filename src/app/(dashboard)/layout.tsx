@@ -9,6 +9,7 @@ import { OfflineBanner } from "@/components/shell/OfflineBanner";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import { KeyboardShortcuts } from "@/components/shell/KeyboardShortcuts";
 import { DataModeBanner } from "@/components/shell/DataModeBanner";
+import { PageTransition } from "@/components/shell/PageTransition";
 
 export default async function DashboardLayout({
   children,
@@ -31,7 +32,7 @@ export default async function DashboardLayout({
       <PageEffects />
       <CommandPalette />
       <KeyboardShortcuts />
-      {children}
+      <PageTransition>{children}</PageTransition>
     </LiveDataProvider>
   );
 }

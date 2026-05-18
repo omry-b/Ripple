@@ -1,5 +1,9 @@
 # Ripple
 
+[![Deployed on Vercel](https://img.shields.io/badge/deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://ripple-omry-2596s-projects.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+
 Supply chain intelligence dashboard — live risk signals, company exposure, and scenario simulation.
 
 ## Live site
@@ -35,6 +39,18 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+Component catalog (local):
+
+```bash
+npm run storybook
+```
+
+Unit tests:
+
+```bash
+npm run test
+```
 
 ## Build log
 

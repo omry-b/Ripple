@@ -1,5 +1,7 @@
 export type RiskLevel = "critical" | "elevated" | "normal";
 
+export type GeoRegion = "APAC" | "EMEA" | "AMER";
+
 export type TickerItem = {
   label: string;
   level: RiskLevel;
@@ -8,6 +10,7 @@ export type TickerItem = {
 export type Company = {
   id: string;
   name: string;
+  region: GeoRegion;
   score: number;
   tier: string;
   cvar: string;
@@ -97,6 +100,16 @@ export type Hotspot = {
   level: RiskLevel;
   alertId: string;
   label: string;
+  region: GeoRegion;
+};
+
+export type SupplierLink = {
+  id: string;
+  name: string;
+  tier: "Tier 1" | "Tier 2";
+  region: GeoRegion;
+  score: number;
+  relationship: string;
 };
 
 export type DashboardSnapshot = {
