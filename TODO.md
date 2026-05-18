@@ -231,34 +231,34 @@
 
 ### Postgres schema
 - [ ] Choose Neon / Supabase + Vercel integration
-- [ ] Migration tool (Drizzle or Prisma)
-- [ ] Table: `organizations`, `users`
-- [ ] Table: `companies`, `company_suppliers`
-- [ ] Table: `signals`, `signal_readings` (time series)
-- [ ] Table: `alerts`, `alert_companies`
-- [ ] Table: `scenarios`, `simulation_runs`
-- [ ] Table: `dashboard_snapshots`
-- [ ] Table: `watchlists`, `watchlist_companies`
-- [ ] Seed script from current mock store
-- [ ] Replace mock store reads with DB queries in `lib/api`
+- [x] Migration tool (Drizzle)
+- [x] Table: `organizations`, `users`
+- [x] Table: `companies` (+ `signal_readings` stub table)
+- [x] Table: `signal_streams`, `signal_readings`
+- [x] Table: `alerts` (timeline JSON)
+- [x] Table: `scenarios`, `simulation_runs`
+- [x] Table: `dashboard_snapshots`, `map_hotspots`, `ticker_items`
+- [x] Table: `watchlists`, `watchlist_companies`
+- [x] Seed script from current mock store (`npm run db:seed`)
+- [x] Replace mock store reads with DB queries in `lib/api` (via `getDataSource()`)
 
 ### Ingest pipeline
 - [ ] Ingest worker service (Fly.io / Railway / Lambda)
 - [ ] Queue: SQS or Inngest or Trigger.dev
-- [ ] Adapter interface: `IngestAdapter.fetch() → NormalizedEvent[]`
-- [ ] AIS/shipping adapter (stub → real API)
-- [ ] Geopolitical/news adapter (GDELT stub)
-- [ ] Port congestion adapter (stub)
-- [ ] Financial health adapter (stub)
-- [ ] Weather events adapter (NOAA stub)
+- [x] Adapter interface: `IngestAdapter.fetch() → NormalizedEvent[]`
+- [x] AIS/shipping adapter (stub → real API)
+- [x] Geopolitical/news adapter (GDELT stub)
+- [x] Port congestion adapter (stub)
+- [x] Financial health adapter (stub)
+- [x] Weather events adapter (NOAA stub)
 - [ ] Normalizer: event → signal reading
-- [ ] Scorer: recompute signal score from readings
-- [ ] Aggregator: refresh `dashboard_snapshots`
+- [x] Scorer: recompute signal score from readings (placeholder)
+- [x] Aggregator: refresh `dashboard_snapshots` (`POST /api/cron/refresh-snapshot`)
 - [ ] Dead letter queue for failed ingest jobs
 
 ### Vercel ops
-- [ ] Cron: `/api/cron/refresh-snapshot` hourly
-- [ ] Cron secret `CRON_SECRET` validation
+- [x] Cron: `/api/cron/refresh-snapshot` hourly (vercel.json)
+- [x] Cron secret `CRON_SECRET` validation
 - [ ] Vercel KV cache for dashboard snapshot (TTL 60s)
 - [ ] Invalidate KV on ingest complete webhook
 
@@ -387,16 +387,17 @@
 | 2026-05-18 | Score breakdown, alert modal+PATCH, signal 7d chart, pagination, map hotspots |
 | 2026-05-18 | Shortcuts, CSV export, score slider, 30d sparkline, scenario compare, recents |
 | 2026-05-18 | Signal compare, watchlist, columns, peers, notes, map fullscreen, mobile nav |
+| 2026-05-18 | Full backend scaffold: Drizzle, ingest/risk/auth/notifications placeholders, new APIs |
 
 ---
 
 ## Current sprint (active)
 
-1. [x] Signal compare mode (2 streams, overlay chart)
-2. [x] Watchlist (star, bulk add, nav link, ?watchlist=1)
-3. [x] Column visibility toggles on companies table
-4. [x] Peer comparison + analyst notes on company profile
-5. [x] Scenario share link + export simulation CSV
-6. [x] Interactive map legend + fullscreen map
-7. [x] Mobile nav drawer + compact metrics strip
-8. [x] RSS/webhook CTA placeholder · `useDashboard()` hook
+1. [x] Drizzle schema + Postgres data layer (mock fallback)
+2. [x] Ingest adapters (ais, gdelt, ports, financial, weather) — placeholders
+3. [x] Risk engine stubs (scorer, CVaR, snapshot aggregator)
+4. [x] Auth session stub + notification dispatcher placeholders
+5. [x] APIs: health, cron, ingest, watchlists, webhooks, company notes
+6. [x] `.env.example` + `npm run db:push` / `db:seed`
+7. [ ] Wire real AIS/GDELT/etc. API keys + normalizer
+8. [ ] Clerk auth + protected routes

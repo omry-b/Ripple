@@ -1,5 +1,4 @@
-import { mockStore } from "@/lib/mock/store";
-import { simulationRunStore } from "@/lib/mock/simulation-runs";
+import { getDataSource } from "@/lib/data";
 import type {
   Alert,
   Company,
@@ -13,75 +12,88 @@ import type {
   TickerItem,
 } from "@/types/domain";
 
+async function ds() {
+  return getDataSource();
+}
+
 export async function getDashboard(): Promise<DashboardPayload> {
-  return mockStore.getDashboard();
+  return (await ds()).getDashboard();
 }
 
 export async function getSnapshot(): Promise<DashboardSnapshot> {
-  return mockStore.getSnapshot();
+  return (await ds()).getSnapshot();
+}
+
+export async function refreshSnapshot(): Promise<DashboardSnapshot> {
+  return (await ds()).refreshSnapshot();
 }
 
 export async function getTicker(): Promise<TickerItem[]> {
-  return mockStore.getTicker();
+  return (await ds()).getTicker();
 }
 
 export async function getSignals(): Promise<SignalStream[]> {
-  return mockStore.getSignals();
+  return (await ds()).getSignals();
 }
 
 export async function getCompanies(): Promise<Company[]> {
-  return mockStore.getCompanies();
+  return (await ds()).getCompanies();
 }
 
 export async function getCompany(id: string): Promise<Company | null> {
-  return mockStore.getCompany(id) ?? null;
+  return (await ds()).getCompany(id);
 }
 
 export async function getAlerts(): Promise<Alert[]> {
-  return mockStore.getAlerts();
+  return (await ds()).getAlerts();
 }
 
 export async function getAlert(id: string): Promise<Alert | null> {
-  return mockStore.getAlert(id) ?? null;
+  return (await ds()).getAlert(id);
 }
 
 export async function getScenarios(): Promise<Scenario[]> {
-  return mockStore.getScenarios();
+  return (await ds()).getScenarios();
 }
 
 export async function getScenario(id: string): Promise<Scenario | null> {
-  return mockStore.getScenario(id) ?? null;
+  return (await ds()).getScenario(id);
 }
 
 export async function runScenario(
   id: string,
   options?: ScenarioRunOptions
 ): Promise<SimulationRun | null> {
-  const scenario = mockStore.getScenario(id);
-  if (!scenario) return null;
-  return simulationRunStore.run(scenario, options);
+  return (await ds()).runScenario(id, options);
 }
 
 export async function getSimulationRuns(): Promise<SimulationRun[]> {
-  return simulationRunStore.list();
+  return (await ds()).getSimulationRuns();
 }
 
 export async function getAlertsForCompany(companyId: string): Promise<Alert[]> {
-  return mockStore.getAlertsForCompany(companyId);
+  return (await ds()).getAlertsForCompany(companyId);
 }
 
 export async function getSignalsForCompany(companyId: string): Promise<SignalStream[]> {
-  return mockStore.getSignalsForCompany(companyId);
+  return (await ds()).getSignalsForCompany(companyId);
 }
 
 export async function getSearchIndex() {
-  return mockStore.getSearchIndex();
+  return (await ds()).getSearchIndex();
 }
 
 export async function acknowledgeAlert(id: string): Promise<Alert | null> {
-  return mockStore.acknowledgeAlert(id);
+  const alert = await (await ds()).acknowledgeAlert(id);
+  if (alert) {
+    const { notifyCriticalAlert } = await import("@/lib/notifications/dispatcher");
+    void notifyCriticalAlert(alert);
+  }
+  return alert;
 }
 
 export async function getScoreFactors(companyId: string): Promise<ScoreFactor[]> {
-  return mockStore.getScoreFactors(companyId);
+  return (await ds()).getScoreFactors(companyId);
 }
+
+export { getDataSourceMode } from "@/lib/data";

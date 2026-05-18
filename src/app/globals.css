@@ -1161,6 +1161,17 @@ body {
   background: rgba(34, 197, 94, 0.08);
 }
 
+.demo-banner-live {
+  background: rgba(34, 197, 94, 0.08);
+  color: #86efac;
+}
+
+.demo-banner code {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #a3a3a3;
+}
+
 .demo-banner {
   background: rgba(245, 158, 11, 0.08);
   border-bottom: 1px solid #1a1a1a;
@@ -2287,6 +2298,15 @@ body {
 .subscribe-cta-btn.primary {
   border-color: #3b82f6;
   color: #3b82f6;
+  cursor: pointer;
+}
+
+.subscribe-cta-status {
+  width: 100%;
+  margin: 8px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #22c55e;
 }
 
 .signal-compare-panel {

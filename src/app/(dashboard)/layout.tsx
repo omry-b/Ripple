@@ -8,6 +8,7 @@ import { SkipToContent } from "@/components/shell/SkipToContent";
 import { OfflineBanner } from "@/components/shell/OfflineBanner";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import { KeyboardShortcuts } from "@/components/shell/KeyboardShortcuts";
+import { DataModeBanner } from "@/components/shell/DataModeBanner";
 
 export default async function DashboardLayout({
   children,
@@ -22,7 +23,7 @@ export default async function DashboardLayout({
       initialSnapshot={dashboard.snapshot}
     >
       <SkipToContent />
-      <div className="demo-banner">Demo data · scores and CVaR are illustrative</div>
+      <DataModeBanner />
       <OfflineBanner />
       <NavHeader />
       <RefreshBanner />
