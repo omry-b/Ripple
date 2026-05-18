@@ -16,6 +16,10 @@
 ## Phase 0 — Foundation & shell
 
 ### Repo & deploy
+- [x] Production URL documented in README (`ripple-omry-2596s-projects.vercel.app`)
+- [x] Auto-deploy on push to `main` (Vercel GitHub app / vercel[bot])
+- [ ] Disable Vercel Deployment Protection on Production (if login wall appears)
+- [ ] Add stable production alias / custom domain in Vercel → Domains
 - [x] Initialize Next.js 16 + TypeScript + App Router
 - [x] Configure Plus Jakarta Sans + DM Mono fonts
 - [x] Port mockup CSS to `globals.css` design tokens
@@ -375,6 +379,7 @@
 | 2026-05-17 | Phase 0: multi-route refactor, API routes, component split |
 | 2026-05-17 | Created `TODO.md`; starting Phase 1 client layer + signals/companies depth |
 | 2026-05-17 | Phase 1: LiveDataProvider, signal drawer/filters, companies search/sort, alert filter |
+| 2026-05-18 | README: live URLs + auto-deploy notes; latest prod deploy commit `4ee1124` |
 
 ---
 
