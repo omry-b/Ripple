@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import {
   getAlertsForCompany,
   getCompany,
+  getScoreFactors,
   getSignalsForCompany,
 } from "@/lib/api";
+import { ScoreBreakdownChart } from "@/components/charts/ScoreBreakdownChart";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { CompanyProfileSections } from "@/components/companies/CompanyProfileSections";
@@ -29,9 +31,10 @@ export default async function CompanyDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [alerts, signals] = await Promise.all([
+  const [alerts, signals, scoreFactors] = await Promise.all([
     getAlertsForCompany(id),
     getSignalsForCompany(id),
+    getScoreFactors(id),
   ]);
 
   return (
@@ -76,6 +79,9 @@ export default async function CompanyDetailPage({ params }: Props) {
             {" "}risk score change vs prior week.
           </p>
         </section>
+
+        <span className="section-label">Score drivers</span>
+        <ScoreBreakdownChart factors={scoreFactors} totalScore={company.score} />
 
         <CompanyProfileSections company={company} alerts={alerts} signals={signals} />
 

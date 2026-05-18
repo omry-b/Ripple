@@ -18,15 +18,31 @@ export type Company = {
   scoreLevel: "critical" | "elevated";
 };
 
+export type AlertStatus = "open" | "acknowledged" | "resolved";
+
+export type AlertTimelineEvent = {
+  at: string;
+  event: string;
+};
+
 export type Alert = {
   id: string;
   level: RiskLevel;
+  status: AlertStatus;
   statusLabel: string;
   title: string;
   detail: string;
   meta: string;
   critical?: boolean;
   affectedCompanyIds: string[];
+  timeline: AlertTimelineEvent[];
+};
+
+export type ScoreFactor = {
+  key: string;
+  label: string;
+  weight: number;
+  contribution: number;
 };
 
 export type SignalStream = {
@@ -36,6 +52,7 @@ export type SignalStream = {
   score: number;
   level: RiskLevel;
   sparkline: string;
+  history7d: number[];
   time: string;
   description: string;
   relatedCompanyIds: string[];
@@ -72,6 +89,8 @@ export type Hotspot = {
   cx: number;
   cy: number;
   level: RiskLevel;
+  alertId: string;
+  label: string;
 };
 
 export type DashboardSnapshot = {

@@ -4,9 +4,12 @@ import type {
   DashboardPayload,
   DashboardSnapshot,
   Scenario,
+  ScoreFactor,
   SignalStream,
   TickerItem,
 } from "@/types/domain";
+import { alertState } from "@/lib/mock/alert-state";
+import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 
 const COMPANIES: Company[] = [
   {
@@ -95,6 +98,27 @@ const COMPANIES: Company[] = [
   },
 ];
 
+const EXTENDED_COMPANIES: Company[] = Array.from({ length: 25 }, (_, i) => {
+  const n = i + 1;
+  const score = 28 + ((n * 7) % 45);
+  const tier = n % 3 === 0 ? "Tier 1" : "Tier 2";
+  const cvarUsd = Math.round((0.05 + (n % 10) * 0.03) * 1e9);
+  return {
+    id: `supplier-${n}`,
+    name: `SupplyCo ${n}`,
+    score,
+    tier,
+    cvar: `$${(cvarUsd / 1e9).toFixed(1)}B`,
+    cvarUsd,
+    delta7d: n % 2 === 0 ? `↑ +${n % 8}` : `↓ -${n % 4}`,
+    deltaTrend: n % 2 === 0 ? "bad" : "good",
+    contagionHops: 1 + (n % 3),
+    scoreLevel: score >= 60 ? "critical" : "elevated",
+  } as Company;
+});
+
+const ALL_COMPANIES: Company[] = [...COMPANIES, ...EXTENDED_COMPANIES];
+
 const TICKER: TickerItem[] = [
   { label: "TAIWAN STRAIT", level: "critical" },
   { label: "SEA PORT CONGESTION", level: "elevated" },
@@ -108,40 +132,6 @@ const TICKER: TickerItem[] = [
   { label: "SUEZ WATCH", level: "normal" },
 ];
 
-const ALERTS: Alert[] = [
-  {
-    id: "taiwan",
-    level: "critical",
-    critical: true,
-    statusLabel: "● CRITICAL STATE",
-    title: "Taiwan Strait",
-    detail:
-      "Geopolitical tension + AIS vessel anomaly detected across primary maritime shipping lanes.",
-    meta: "34 companies · CVaR₉₅ $2.1B · +8.1 pts today",
-    affectedCompanyIds: ["apple", "tsmc", "foxconn", "qualcomm", "nvidia"],
-  },
-  {
-    id: "sea-port",
-    level: "elevated",
-    statusLabel: "● ELEVATED EXPOSURE",
-    title: "SEA Port Congestion",
-    detail:
-      "Port yard congestion multiplying across regional hubs. Severe weather patterns compounding delays.",
-    meta: "18 companies · +11.2d avg delay · $0.8B exposure",
-    affectedCompanyIds: ["foxconn", "samsung", "qualcomm"],
-  },
-  {
-    id: "tsmc-signal",
-    level: "elevated",
-    statusLabel: "● ELEVATED EXPOSURE",
-    title: "TSMC Financial Signal",
-    detail:
-      "Distress model variance discovered—underlying earnings compression signals matching recruitment drawdowns.",
-    meta: "12 companies · CVaR₉₅ $0.3B · Tier 2 primarily",
-    affectedCompanyIds: ["tsmc", "apple", "nvidia", "amd"],
-  },
-];
-
 const STREAMS: SignalStream[] = [
   {
     id: "ais",
@@ -150,6 +140,7 @@ const STREAMS: SignalStream[] = [
     score: 89,
     level: "critical",
     sparkline: "0,18 15,16 30,12 45,14 60,8 75,5 100,2",
+    history7d: [62, 68, 74, 78, 82, 86, 89],
     time: "2m ago",
     description:
       "Vessel density anomalies and route deviations concentrated in the Taiwan Strait corridor vs 30-day baseline.",
@@ -163,6 +154,7 @@ const STREAMS: SignalStream[] = [
     score: 91,
     level: "critical",
     sparkline: "0,17 20,15 40,11 60,13 80,6 100,2",
+    history7d: [58, 65, 72, 78, 84, 88, 91],
     time: "5m ago",
     description:
       "Escalation index from structured event feeds and maritime exclusion zone advisories in APAC.",
@@ -176,6 +168,7 @@ const STREAMS: SignalStream[] = [
     score: 55,
     level: "elevated",
     sparkline: "0,15 25,12 50,14 75,9 100,6",
+    history7d: [42, 45, 48, 50, 52, 54, 55],
     time: "12m ago",
     description:
       "Composite distress score from earnings revisions, credit spreads, and hiring velocity deltas.",
@@ -189,6 +182,7 @@ const STREAMS: SignalStream[] = [
     score: 48,
     level: "elevated",
     sparkline: "0,14 30,15 60,10 80,11 100,5",
+    history7d: [38, 40, 42, 44, 46, 47, 48],
     time: "1h ago",
     description: "Memory and logistics fuel indices elevated vs semiconductor demand corridor.",
     relatedCompanyIds: ["samsung", "qualcomm"],
@@ -201,6 +195,7 @@ const STREAMS: SignalStream[] = [
     score: 62,
     level: "elevated",
     sparkline: "0,16 20,14 40,15 60,12 80,10 100,8",
+    history7d: [48, 52, 55, 58, 60, 61, 62],
     time: "18m ago",
     description: "Yard occupancy and dwell time spikes at Singapore and Port Klang hubs.",
     relatedCompanyIds: ["foxconn", "samsung"],
@@ -213,6 +208,7 @@ const STREAMS: SignalStream[] = [
     score: 41,
     level: "elevated",
     sparkline: "0,12 25,14 50,11 75,13 100,9",
+    history7d: [32, 34, 36, 38, 39, 40, 41],
     time: "32m ago",
     description: "Typhoon track probability intersecting major APAC fab and port nodes.",
     relatedCompanyIds: ["tsmc", "foxconn"],
@@ -225,6 +221,7 @@ const STREAMS: SignalStream[] = [
     score: 36,
     level: "normal",
     sparkline: "0,10 30,11 60,9 80,10 100,8",
+    history7d: [30, 31, 32, 33, 34, 35, 36],
     time: "2h ago",
     description: "Trans-Pacific container rates stable; Red Sea rerouting premium moderating.",
     relatedCompanyIds: ["apple", "qualcomm"],
@@ -275,12 +272,12 @@ function buildSnapshot(): DashboardSnapshot {
     liveSignalsCount: 214,
     signalsDeltaLabel: "+12 past 24h · 3 elevated",
     elevatedSignals24h: 3,
-    openAlertsCount: 3,
+    openAlertsCount: alertState.list().filter((a) => a.status === "open").length,
     activeStreamsCount: 7,
     hotspots: [
-      { cx: 220, cy: 55, level: "critical" },
-      { cx: 205, cy: 80, level: "elevated" },
-      { cx: 145, cy: 40, level: "elevated" },
+      { cx: 220, cy: 55, level: "critical", alertId: "taiwan", label: "Taiwan Strait" },
+      { cx: 205, cy: 80, level: "elevated", alertId: "sea-port", label: "SEA Ports" },
+      { cx: 145, cy: 40, level: "elevated", alertId: "tsmc-signal", label: "TSMC Signal" },
     ],
   };
 }
@@ -295,15 +292,15 @@ export const mockStore = {
     return {
       snapshot,
       ticker: TICKER,
-      topCompaniesMini: COMPANIES.slice(0, 3).map((c) => ({
+      topCompaniesMini: ALL_COMPANIES.slice(0, 3).map((c) => ({
         id: c.id,
         name: c.name,
         score: c.score,
         cvar: c.cvar,
         delta7d: c.delta7d.replace(/\s/g, ""),
       })),
-      alerts: ALERTS,
-      companies: COMPANIES,
+      alerts: alertState.list(),
+      companies: ALL_COMPANIES,
       streams: STREAMS,
       scenarios: SCENARIOS,
     };
@@ -314,19 +311,29 @@ export const mockStore = {
   },
 
   getCompanies(): Company[] {
-    return COMPANIES;
+    return ALL_COMPANIES;
   },
 
   getCompany(id: string): Company | undefined {
-    return COMPANIES.find((c) => c.id === id);
+    return ALL_COMPANIES.find((c) => c.id === id);
   },
 
   getAlerts(): Alert[] {
-    return ALERTS;
+    return alertState.list();
   },
 
   getAlert(id: string): Alert | undefined {
-    return ALERTS.find((a) => a.id === id);
+    return alertState.get(id);
+  },
+
+  acknowledgeAlert(id: string): Alert | null {
+    return alertState.acknowledge(id);
+  },
+
+  getScoreFactors(companyId: string): ScoreFactor[] {
+    const company = ALL_COMPANIES.find((c) => c.id === companyId);
+    if (!company) return [];
+    return getScoreFactorsForCompany(companyId, company.score);
   },
 
   getScenarios(): Scenario[] {
@@ -342,7 +349,7 @@ export const mockStore = {
   },
 
   getAlertsForCompany(companyId: string): Alert[] {
-    return ALERTS.filter((a) => a.affectedCompanyIds.includes(companyId));
+    return alertState.list().filter((a) => a.affectedCompanyIds.includes(companyId));
   },
 
   getSignalsForCompany(companyId: string): SignalStream[] {
@@ -351,14 +358,14 @@ export const mockStore = {
 
   getSearchIndex() {
     return {
-      companies: COMPANIES.map((c) => ({
+      companies: ALL_COMPANIES.map((c) => ({
         id: c.id,
         label: c.name,
         sublabel: `Score ${c.score} · ${c.tier}`,
         href: `/companies/${c.id}`,
         group: "Company" as const,
       })),
-      alerts: ALERTS.map((a) => ({
+      alerts: alertState.list().map((a) => ({
         id: a.id,
         label: a.title,
         sublabel: a.level.toUpperCase(),

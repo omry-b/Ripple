@@ -384,13 +384,14 @@
 | 2026-05-17 | Phase 1: LiveDataProvider, signal drawer/filters, companies search/sort, alert filter |
 | 2026-05-18 | README: live URLs + auto-deploy notes; latest prod deploy commit `4ee1124` |
 | 2026-05-18 | Live hero/bento, scenario API+history, ⌘K palette, company alerts/signals, tier filter |
+| 2026-05-18 | Score breakdown, alert modal+PATCH, signal 7d chart, pagination, map hotspots |
 
 ---
 
 ## Current sprint (active)
 
-1. [ ] Score breakdown chart on company profile
-2. [ ] Alert detail modal + acknowledge (mock PATCH)
-3. [ ] Signal 7d history chart on drawer
-4. [ ] Companies pagination (25/page)
-5. [ ] Map hotspot click → filter companies/alerts
+1. [x] Score breakdown chart on company profile
+2. [x] Alert detail modal + acknowledge (mock PATCH)
+3. [x] Signal 7d history chart on drawer
+4. [x] Companies pagination (25/page)
+5. [x] Map hotspot click → filter companies/alerts

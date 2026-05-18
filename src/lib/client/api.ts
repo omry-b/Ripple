@@ -58,3 +58,13 @@ export function fetchSimulationRuns(): Promise<{ asOf: string; runs: SimulationR
 export function fetchSearch(): Promise<{ asOf: string; items: CommandItem[] }> {
   return fetchJson("/api/search");
 }
+
+export function acknowledgeAlertApi(
+  id: string
+): Promise<{ asOf: string; alert: Alert }> {
+  return fetchJson(`/api/alerts/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "acknowledge" }),
+  });
+}

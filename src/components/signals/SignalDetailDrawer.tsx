@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Company, SignalStream } from "@/types/domain";
 import { LEVEL_COLOR } from "@/types/domain";
+import { SignalHistoryChart } from "@/components/charts/SignalHistoryChart";
 
 type SignalDetailDrawerProps = {
   signal: SignalStream | null;
@@ -72,6 +73,10 @@ export function SignalDetailDrawer({
             strokeLinecap="round"
           />
         </svg>
+
+        {signal.history7d?.length > 0 && (
+          <SignalHistoryChart values={signal.history7d} level={signal.level} />
+        )}
 
         <p className="drawer-description">{signal.description}</p>
 

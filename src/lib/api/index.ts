@@ -6,6 +6,7 @@ import type {
   DashboardPayload,
   DashboardSnapshot,
   Scenario,
+  ScoreFactor,
   SignalStream,
   SimulationRun,
   TickerItem,
@@ -71,4 +72,12 @@ export async function getSignalsForCompany(companyId: string): Promise<SignalStr
 
 export async function getSearchIndex() {
   return mockStore.getSearchIndex();
+}
+
+export async function acknowledgeAlert(id: string): Promise<Alert | null> {
+  return mockStore.acknowledgeAlert(id);
+}
+
+export async function getScoreFactors(companyId: string): Promise<ScoreFactor[]> {
+  return mockStore.getScoreFactors(companyId);
 }

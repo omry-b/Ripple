@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { DashboardPayload } from "@/types/domain";
 import { useLiveData } from "@/context/LiveDataContext";
 import { BentoGrid } from "@/components/bento/BentoGrid";
-import { AlertsSection } from "@/components/alerts/AlertsSection";
+import { AlertsSectionClient } from "@/components/alerts/AlertsSectionClient";
 import { CompanyExposureTable } from "@/components/tables/CompanyExposureTable";
 import { StreamGrid } from "@/components/streams/StreamGrid";
 
@@ -36,7 +36,7 @@ export function OverviewPage({ data }: OverviewPageProps) {
       <span className="section-label" id="alerts">
         Active Alerts · {snapshot.openAlertsCount} Open
       </span>
-      <AlertsSection alerts={data.alerts} />
+      <AlertsSectionClient initialAlerts={data.alerts} />
 
       <span className="section-label" id="companies">
         Company Exposure Ranking
