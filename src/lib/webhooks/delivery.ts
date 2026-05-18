@@ -1,5 +1,8 @@
+import { eq } from "drizzle-orm";
 import type { Alert } from "@/types/domain";
 import { getDataSource } from "@/lib/data";
+import { getDb, isDatabaseConfigured } from "@/lib/db/client";
+import * as schema from "@/lib/db/schema";
 import { signWebhookPayload } from "@/lib/webhooks/sign";
 
 const subscriptionSecrets = new Map<string, string>();
@@ -10,6 +13,26 @@ export function rememberSubscriptionSecret(subscriptionId: string, secret: strin
 
 export function getSubscriptionSecret(subscriptionId: string): string | undefined {
   return subscriptionSecrets.get(subscriptionId);
+}
+
+async function resolveSigningSecret(subscriptionId: string): Promise<string> {
+  const cached = subscriptionSecrets.get(subscriptionId);
+  if (cached) return cached;
+
+  if (isDatabaseConfigured()) {
+    const db = getDb();
+    const [row] = await db
+      .select({ secret: schema.webhookSubscriptions.secret })
+      .from(schema.webhookSubscriptions)
+      .where(eq(schema.webhookSubscriptions.id, subscriptionId))
+      .limit(1);
+    if (row?.secret) {
+      rememberSubscriptionSecret(subscriptionId, row.secret);
+      return row.secret;
+    }
+  }
+
+  return process.env.WEBHOOK_SIGNING_SECRET ?? "ripple-demo-secret";
 }
 
 export async function deliverWebhookToOrg(
@@ -27,7 +50,7 @@ export async function deliverWebhookToOrg(
 
   for (const sub of subs) {
     if (!sub.enabled || !sub.events.includes(event)) continue;
-    const secret = subscriptionSecrets.get(sub.id) ?? process.env.WEBHOOK_SIGNING_SECRET ?? "ripple-demo-secret";
+    const secret = await resolveSigningSecret(sub.id);
     const signature = signWebhookPayload(secret, body, timestamp);
 
     try {

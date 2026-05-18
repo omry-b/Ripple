@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-18 (ingest scorer, overview section nav, CI badge)
+> **Last updated:** 2026-05-18 (Postgres readings, notifications, alert resolve; manual-only list below)
 
 ---
 
@@ -426,6 +426,7 @@
 | 2026-05-18 | Postgres CI, scenario worker+cron, axe e2e, Lighthouse CI, Chromatic workflow |
 | 2026-05-18 | CI fixes: worker drain test, map aria-labels, scenario e2e selector, LH CI thresholds, Hobby single cron |
 | 2026-05-18 | Ingest scorer wired; overview section jump nav; GitHub CI badge in README |
+| 2026-05-18 | Postgres signal_readings + rescoring; Resend/PagerDuty/webhooks; alert resolve |
 
 
 ---
@@ -455,6 +456,31 @@
 20. [x] Ingest scorer — readings → `applyReadingsToStreams` in pipeline + mock score state
 21. [x] Overview section anchors jump nav (`SectionJumpNav`)
 22. [x] README GitHub Actions CI status badge
-23. [ ] Manual: Vercel env (`DATABASE_URL`, `CRON_SECRET`) + disable deployment protection
-24. [ ] Postgres: persist `signal_readings` + apply scorer on ingest (mock path done)
+23. [ ] **Manual:** Vercel env (`DATABASE_URL`, `CRON_SECRET`, optional Clerk/Mapbox keys) + disable deployment protection + custom domain
+24. [x] Postgres: persist `signal_readings` + apply scorer on ingest
+25. [x] Notifications: Resend email, PagerDuty, org webhooks; alert resolve + ack webhooks
+26. [x] Watchlist digest frequency UI (localStorage until server prefs)
+
+---
+
+## Remaining — manual / external only
+
+These cannot be completed in the repo without your accounts or infra:
+
+| Item | Why manual |
+|------|------------|
+| Vercel Production env vars | Set in [Vercel dashboard](https://vercel.com/omry-2596s-projects/ripple) |
+| Deployment protection off | Vercel → Settings → Deployment Protection |
+| Custom domain / stable alias | Vercel → Domains |
+| Neon `DATABASE_URL` + `npm run db:push` + `db:seed` | Connect Neon, run once against production DB |
+| Clerk Organizations invites | Requires Clerk project + org billing |
+| `CHROMATIC_PROJECT_TOKEN` | Optional visual regression |
+| Third-party API keys | `AIS_API_KEY`, `PORTS_API_KEY`, `MAPBOX`, etc. — adapters already stub→live |
+| Off-Vercel ingest worker on Fly/Railway | Optional; cron `/api/cron/daily` covers Hobby |
+| SQS / Inngest queue | Production-scale infra choice |
+| Lighthouse 90+ on cold `/` | Tune after deploy (images, fonts, edge cache) |
+| Figma ↔ code parity | Design process |
+| RSS feed endpoint | Planned; webhook + Slack wired |
+
+Everything else in Phases 0–8 is implemented in code (demo/mock fallbacks where keys are unset).
 

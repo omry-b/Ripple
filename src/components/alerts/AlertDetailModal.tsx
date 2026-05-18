@@ -9,7 +9,9 @@ type AlertDetailModalProps = {
   alert: Alert;
   onClose: () => void;
   onAcknowledge: (id: string) => void;
+  onResolve?: (id: string) => void;
   acknowledging?: boolean;
+  resolving?: boolean;
 };
 
 function formatTimelineAt(iso: string) {
@@ -29,9 +31,12 @@ export function AlertDetailModal({
   alert,
   onClose,
   onAcknowledge,
+  onResolve,
   acknowledging,
+  resolving,
 }: AlertDetailModalProps) {
   const isAck = alert.status === "acknowledged";
+  const isResolved = alert.status === "resolved";
   const { permissions } = useDemoAuth();
   const canAck = permissions.acknowledgeAlerts;
 
@@ -76,17 +81,27 @@ export function AlertDetailModal({
         </ul>
 
         <div className="modal-actions">
-          {!isAck && canAck && (
+          {!isAck && !isResolved && canAck && (
             <button
               type="button"
               className="alert-action-btn"
-              disabled={acknowledging}
+              disabled={acknowledging || resolving}
               onClick={() => onAcknowledge(alert.id)}
             >
               {acknowledging ? "Acknowledging…" : "Acknowledge alert"}
             </button>
           )}
-          {!isAck && !canAck && (
+          {!isResolved && canAck && onResolve && (
+            <button
+              type="button"
+              className="alert-action-btn elevated-btn"
+              disabled={acknowledging || resolving}
+              onClick={() => onResolve(alert.id)}
+            >
+              {resolving ? "Resolving…" : "Mark resolved"}
+            </button>
+          )}
+          {!isAck && !isResolved && !canAck && (
             <p className="user-menu-hint">Viewer role cannot acknowledge alerts.</p>
           )}
           <Link

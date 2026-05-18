@@ -71,6 +71,7 @@ export interface RippleDataSource {
   getAlerts(): Promise<Alert[]>;
   getAlert(id: string): Promise<Alert | null>;
   acknowledgeAlert(id: string): Promise<Alert | null>;
+  resolveAlert(id: string): Promise<Alert | null>;
   getScenarios(): Promise<Scenario[]>;
   getScenario(id: string): Promise<Scenario | null>;
   runScenario(id: string, options?: ScenarioRunOptions): Promise<SimulationRun | null>;

@@ -106,3 +106,11 @@ export function acknowledgeAlertApi(
     body: JSON.stringify({ action: "acknowledge" }),
   });
 }
+
+export function resolveAlertApi(id: string): Promise<{ asOf: string; alert: Alert }> {
+  return fetchJson(`/api/alerts/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "resolve" }),
+  });
+}

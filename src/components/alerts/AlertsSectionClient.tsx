@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { Alert } from "@/types/domain";
-import { acknowledgeAlertApi } from "@/lib/client/api";
+import { acknowledgeAlertApi, resolveAlertApi } from "@/lib/client/api";
 import { AlertCard } from "./AlertCard";
 import { AlertCardShell, type AlertCardVariant } from "./AlertCardShell";
 import { AlertDetailModal } from "./AlertDetailModal";
@@ -15,6 +15,7 @@ export function AlertsSectionClient({ initialAlerts }: AlertsSectionClientProps)
   const [alerts, setAlerts] = useState(initialAlerts);
   const [selected, setSelected] = useState<Alert | null>(null);
   const [acknowledging, setAcknowledging] = useState(false);
+  const [resolving, setResolving] = useState(false);
 
   const handleAcknowledge = useCallback(async (id: string) => {
     setAcknowledging(true);
@@ -24,6 +25,17 @@ export function AlertsSectionClient({ initialAlerts }: AlertsSectionClientProps)
       setSelected(alert);
     } finally {
       setAcknowledging(false);
+    }
+  }, []);
+
+  const handleResolve = useCallback(async (id: string) => {
+    setResolving(true);
+    try {
+      const { alert } = await resolveAlertApi(id);
+      setAlerts((prev) => prev.map((a) => (a.id === id ? alert : a)));
+      setSelected(alert);
+    } finally {
+      setResolving(false);
     }
   }, []);
 
@@ -61,7 +73,9 @@ export function AlertsSectionClient({ initialAlerts }: AlertsSectionClientProps)
           alert={selected}
           onClose={() => setSelected(null)}
           onAcknowledge={handleAcknowledge}
+          onResolve={handleResolve}
           acknowledging={acknowledging}
+          resolving={resolving}
         />
       )}
     </>

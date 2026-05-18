@@ -27,6 +27,7 @@ export const mockDataSource: RippleDataSource = {
   getAlerts: () => Promise.resolve(mockStore.getAlerts()),
   getAlert: async (id) => mockStore.getAlert(id) ?? null,
   acknowledgeAlert: (id) => Promise.resolve(mockStore.acknowledgeAlert(id)),
+  resolveAlert: (id) => Promise.resolve(mockStore.resolveAlert(id)),
   getScenarios: () => Promise.resolve(mockStore.getScenarios()),
   getScenario: async (id) => mockStore.getScenario(id) ?? null,
   runScenario: async (id, options) => {

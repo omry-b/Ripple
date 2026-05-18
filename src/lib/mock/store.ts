@@ -362,6 +362,10 @@ export const mockStore = {
     return alertState.acknowledge(id);
   },
 
+  resolveAlert(id: string): Alert | null {
+    return alertState.resolve(id);
+  },
+
   getScoreFactors(companyId: string): ScoreFactor[] {
     const company = ALL_COMPANIES.find((c) => c.id === companyId);
     if (!company) return [];

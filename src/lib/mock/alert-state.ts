@@ -78,8 +78,24 @@ export const alertState = {
     return alertState.get(id) ?? null;
   },
 
+  resolve(id: string): Alert | null {
+    const idx = alerts.findIndex((a) => a.id === id);
+    if (idx === -1) return null;
+    alerts[idx] = {
+      ...alerts[idx],
+      status: "resolved",
+      statusLabel: "● RESOLVED",
+      timeline: [
+        { at: new Date().toISOString(), event: "Resolved by analyst" },
+        ...alerts[idx].timeline,
+      ],
+    };
+    return alertState.get(id) ?? null;
+  },
+
   setStatus(id: string, status: AlertStatus): Alert | null {
     if (status === "acknowledged") return alertState.acknowledge(id);
+    if (status === "resolved") return alertState.resolve(id);
     const idx = alerts.findIndex((a) => a.id === id);
     if (idx === -1) return null;
     alerts[idx] = { ...alerts[idx], status };

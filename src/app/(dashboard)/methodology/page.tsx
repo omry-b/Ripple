@@ -20,7 +20,7 @@ const SECTIONS = [
   },
   {
     title: "Scenario engine",
-    body: "Shocks propagate across supplier tiers with severity and duration parameters. Monte Carlo bins and contagion hops are placeholders until the graph worker is connected.",
+    body: "Shocks propagate across supplier tiers with severity and duration parameters. Monte Carlo bins use graph BFS contagion; async jobs drain via the scenario worker cron.",
   },
 ];
 

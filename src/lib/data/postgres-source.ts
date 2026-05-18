@@ -16,6 +16,8 @@ import type {
 } from "@/types/domain";
 import type { RippleDataSource, IngestRunRecord, WatchlistRecord, WebhookSubscription } from "./types";
 import { regionForCompanyId } from "@/lib/mock/regions";
+import { generateWebhookSecret } from "@/lib/webhooks/sign";
+import { rememberSubscriptionSecret } from "@/lib/webhooks/delivery";
 
 function rowToCompany(row: typeof schema.companies.$inferSelect): Company {
   return {
@@ -196,6 +198,33 @@ export const postgresDataSource: RippleDataSource = {
         existing.level === "critical" ? "● CRITICAL · ACK" : "● ELEVATED · ACK",
       timeline: [
         { at: new Date().toISOString(), event: "Acknowledged by analyst" },
+        ...existing.timeline,
+      ],
+    };
+
+    await db
+      .update(schema.alerts)
+      .set({
+        status: updated.status,
+        statusLabel: updated.statusLabel,
+        timeline: updated.timeline,
+      })
+      .where(eq(schema.alerts.id, id));
+
+    return updated;
+  },
+
+  async resolveAlert(id) {
+    const db = getDb();
+    const existing = await this.getAlert(id);
+    if (!existing) return null;
+
+    const updated: Alert = {
+      ...existing,
+      status: "resolved",
+      statusLabel: "● RESOLVED",
+      timeline: [
+        { at: new Date().toISOString(), event: "Resolved by analyst" },
         ...existing.timeline,
       ],
     };
@@ -448,14 +477,16 @@ export const postgresDataSource: RippleDataSource = {
   async createWebhookSubscription(orgId, url, events) {
     const db = getDb();
     const id = `wh_${Date.now()}`;
+    const secret = generateWebhookSecret();
     await db.insert(schema.webhookSubscriptions).values({
       id,
       organizationId: orgId,
       url,
       events,
-      secret: `placeholder_${id}`,
+      secret,
       enabled: true,
     });
+    rememberSubscriptionSecret(id, secret);
     return {
       id,
       url,

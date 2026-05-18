@@ -86,12 +86,11 @@ export async function getSearchIndex() {
 }
 
 export async function acknowledgeAlert(id: string): Promise<Alert | null> {
-  const alert = await (await ds()).acknowledgeAlert(id);
-  if (alert) {
-    const { notifyCriticalAlert } = await import("@/lib/notifications/dispatcher");
-    void notifyCriticalAlert(alert);
-  }
-  return alert;
+  return (await ds()).acknowledgeAlert(id);
+}
+
+export async function resolveAlert(id: string): Promise<Alert | null> {
+  return (await ds()).resolveAlert(id);
 }
 
 export async function getScoreFactors(companyId: string): Promise<ScoreFactor[]> {
