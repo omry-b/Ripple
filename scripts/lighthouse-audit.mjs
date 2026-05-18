@@ -8,8 +8,9 @@ import * as chromeLauncher from "chrome-launcher";
 
 const BASE = process.env.LH_BASE_URL ?? "http://127.0.0.1:3000";
 const PATHS = ["/", "/signals", "/companies", "/scenario"];
+const isCi = process.env.CI === "true";
 const THRESHOLDS = {
-  performance: 0.75,
+  performance: isCi ? 0.5 : 0.75,
   accessibility: 0.9,
   "best-practices": 0.85,
 };

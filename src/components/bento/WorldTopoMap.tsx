@@ -113,7 +113,13 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
             }
             role={onHotspotClick ? "button" : undefined}
             tabIndex={onHotspotClick ? 0 : undefined}
+            aria-label={
+              onHotspotClick
+                ? `${h.label} — ${h.level} risk. Click to filter ${h.region}.`
+                : undefined
+            }
           >
+            <title>{h.label}</title>
             <circle
               cx={h.cx}
               cy={h.cy}

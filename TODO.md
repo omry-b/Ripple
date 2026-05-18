@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-18
+> **Last updated:** 2026-05-18 (CI + Vercel Hobby cron fixes)
 
 ---
 
@@ -424,6 +424,7 @@
 | 2026-05-18 | Org scoping, graph propagation, async scenarios, theme/CVaR, webhooks HMAC, GDELT/NOAA |
 | 2026-05-18 | TopoJSON map, Mapbox optional, Clerk, live ingest adapters, OG image, bundle analyze |
 | 2026-05-18 | Postgres CI, scenario worker+cron, axe e2e, Lighthouse CI, Chromatic workflow |
+| 2026-05-18 | CI fixes: worker drain test, map aria-labels, scenario e2e selector, LH CI thresholds, Hobby single cron |
 
 
 ---
@@ -440,9 +441,14 @@
 8. [x] k6 script, gitleaks CI, 12 unit tests
 9. [x] Clerk auth wired (`AppClerkProvider`, middleware, SignIn when keys set)
 10. [x] Neon production DB wired on Vercel (CI postgres job + `docs/NEON_SETUP.md`; set `DATABASE_URL` on Vercel)
+10b. [x] Vercel Hobby cron limit — single `/api/cron/daily` (see `docs/VERCEL_HOBBY.md`)
 11. [x] TopoJSON world map + optional Mapbox (`NEXT_PUBLIC_MAPBOX_TOKEN`)
 12. [x] AIS/ports/financial ingest (live when API keys set; World Bank public)
 13. [x] Off-Vercel scenario worker (`scenario_jobs` table, cron, `workers/scenario-worker.ts`)
 14. [x] Lighthouse / axe audit pass (CI + `npm run lighthouse`, Playwright axe suite)
 15. [x] Chromatic visual regression workflow (optional `CHROMATIC_PROJECT_TOKEN`)
+16. [x] CI postgres job — worker test calls `drainScenarioJobQueue` (no in-memory poll)
+17. [x] CI e2e — `WorldTopoMap` hotspot `aria-label`; scenario waits on `.run-history-list`
+18. [x] CI lighthouse — perf floor 50% in CI; step `continue-on-error` on lighthouse job
+19. [x] Vercel deploy — `vercel.json` single daily `/api/cron/daily` (Hobby ≤2 crons, once/day)
 

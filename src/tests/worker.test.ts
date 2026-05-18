@@ -1,19 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { enqueueScenarioJob, getScenarioJob } from "../lib/scenario/job-queue";
+import { drainScenarioJobQueue } from "../lib/scenario/worker";
 
-describe("scenario worker (memory)", () => {
-  it("completes async job in memory mode", async () => {
+describe("scenario worker", () => {
+  it("completes async job after drain", async () => {
     const job = await enqueueScenarioJob("taiwan-closure", { severity: 80 });
     expect(job.status).toBe("queued");
 
-    let polled = job;
-    for (let i = 0; i < 30; i += 1) {
-      await new Promise((r) => setTimeout(r, 200));
-      polled = (await getScenarioJob(job.id)) ?? polled;
-      if (polled.status === "completed" || polled.status === "failed") break;
-    }
+    await drainScenarioJobQueue(1);
 
-    expect(polled.status).toBe("completed");
-    expect(polled.run?.scenarioId).toBe("taiwan-closure");
-  }, 15_000);
+    const polled = await getScenarioJob(job.id);
+    expect(polled?.status).toBe("completed");
+    expect(polled?.run?.scenarioId).toBe("taiwan-closure");
+  });
 });
