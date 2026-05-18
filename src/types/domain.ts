@@ -26,6 +26,7 @@ export type Alert = {
   detail: string;
   meta: string;
   critical?: boolean;
+  affectedCompanyIds: string[];
 };
 
 export type SignalStream = {
@@ -36,6 +37,9 @@ export type SignalStream = {
   level: RiskLevel;
   sparkline: string;
   time: string;
+  description: string;
+  relatedCompanyIds: string[];
+  methodology?: string;
 };
 
 export type Scenario = {
@@ -85,5 +89,3 @@ export const LEVEL_COLOR: Record<RiskLevel, string> = {
   elevated: "#F59E0B",
   normal: "#22C55E",
 };
-
-export const LIVE_THRESHOLD_MS = 5 * 60 * 1000;

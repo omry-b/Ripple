@@ -1,12 +1,13 @@
 "use client";
 
-import { LIVE_THRESHOLD_MS } from "@/types/domain";
+import { LIVE_THRESHOLD_MS } from "@/lib/constants";
 
 type LiveStatusProps = {
   asOf: string;
+  isRefreshing?: boolean;
 };
 
-export function LiveStatus({ asOf }: LiveStatusProps) {
+export function LiveStatus({ asOf, isRefreshing = false }: LiveStatusProps) {
   const age = Date.now() - new Date(asOf).getTime();
   const isLive = age < LIVE_THRESHOLD_MS;
 
@@ -18,7 +19,9 @@ export function LiveStatus({ asOf }: LiveStatusProps) {
         role="status"
         aria-label={isLive ? "Data is live" : "Data is stale"}
       />
-      <span className="status-text">{isLive ? "Live" : "Stale"}</span>
+      <span className="status-text">
+        {isRefreshing ? "Syncing" : isLive ? "Live" : "Stale"}
+      </span>
     </div>
   );
 }

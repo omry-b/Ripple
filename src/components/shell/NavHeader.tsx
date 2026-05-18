@@ -4,13 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/nav";
 import { LiveStatus } from "./LiveStatus";
+import { useLiveData } from "@/context/LiveDataContext";
 
-type NavHeaderProps = {
-  asOf: string;
-};
-
-export function NavHeader({ asOf }: NavHeaderProps) {
+export function NavHeader() {
   const pathname = usePathname();
+  const { asOf, isRefreshing } = useLiveData();
 
   return (
     <nav className="nav-header" role="navigation">
@@ -37,7 +35,7 @@ export function NavHeader({ asOf }: NavHeaderProps) {
           );
         })}
       </div>
-      <LiveStatus asOf={asOf} />
+      <LiveStatus asOf={asOf} isRefreshing={isRefreshing} />
     </nav>
   );
 }

@@ -118,6 +118,7 @@ const ALERTS: Alert[] = [
     detail:
       "Geopolitical tension + AIS vessel anomaly detected across primary maritime shipping lanes.",
     meta: "34 companies · CVaR₉₅ $2.1B · +8.1 pts today",
+    affectedCompanyIds: ["apple", "tsmc", "foxconn", "qualcomm", "nvidia"],
   },
   {
     id: "sea-port",
@@ -127,15 +128,17 @@ const ALERTS: Alert[] = [
     detail:
       "Port yard congestion multiplying across regional hubs. Severe weather patterns compounding delays.",
     meta: "18 companies · +11.2d avg delay · $0.8B exposure",
+    affectedCompanyIds: ["foxconn", "samsung", "qualcomm"],
   },
   {
-    id: "tsmc",
+    id: "tsmc-signal",
     level: "elevated",
     statusLabel: "● ELEVATED EXPOSURE",
     title: "TSMC Financial Signal",
     detail:
       "Distress model variance discovered—underlying earnings compression signals matching recruitment drawdowns.",
     meta: "12 companies · CVaR₉₅ $0.3B · Tier 2 primarily",
+    affectedCompanyIds: ["tsmc", "apple", "nvidia", "amd"],
   },
 ];
 
@@ -148,6 +151,10 @@ const STREAMS: SignalStream[] = [
     level: "critical",
     sparkline: "0,18 15,16 30,12 45,14 60,8 75,5 100,2",
     time: "2m ago",
+    description:
+      "Vessel density anomalies and route deviations concentrated in the Taiwan Strait corridor vs 30-day baseline.",
+    relatedCompanyIds: ["apple", "foxconn", "tsmc"],
+    methodology: "AIS positional delta · 6h rolling window",
   },
   {
     id: "geo",
@@ -157,6 +164,10 @@ const STREAMS: SignalStream[] = [
     level: "critical",
     sparkline: "0,17 20,15 40,11 60,13 80,6 100,2",
     time: "5m ago",
+    description:
+      "Escalation index from structured event feeds and maritime exclusion zone advisories in APAC.",
+    relatedCompanyIds: ["tsmc", "apple", "qualcomm"],
+    methodology: "GDELT-style event clustering · NLP severity",
   },
   {
     id: "financial",
@@ -166,6 +177,10 @@ const STREAMS: SignalStream[] = [
     level: "elevated",
     sparkline: "0,15 25,12 50,14 75,9 100,6",
     time: "12m ago",
+    description:
+      "Composite distress score from earnings revisions, credit spreads, and hiring velocity deltas.",
+    relatedCompanyIds: ["tsmc", "nvidia", "amd"],
+    methodology: "Multi-factor z-score · weekly refresh",
   },
   {
     id: "commodity",
@@ -175,6 +190,9 @@ const STREAMS: SignalStream[] = [
     level: "elevated",
     sparkline: "0,14 30,15 60,10 80,11 100,5",
     time: "1h ago",
+    description: "Memory and logistics fuel indices elevated vs semiconductor demand corridor.",
+    relatedCompanyIds: ["samsung", "qualcomm"],
+    methodology: "Futures curve stress · 24h change",
   },
   {
     id: "port",
@@ -184,6 +202,9 @@ const STREAMS: SignalStream[] = [
     level: "elevated",
     sparkline: "0,16 20,14 40,15 60,12 80,10 100,8",
     time: "18m ago",
+    description: "Yard occupancy and dwell time spikes at Singapore and Port Klang hubs.",
+    relatedCompanyIds: ["foxconn", "samsung"],
+    methodology: "Port dwell percentile · regional aggregate",
   },
   {
     id: "weather",
@@ -193,6 +214,9 @@ const STREAMS: SignalStream[] = [
     level: "elevated",
     sparkline: "0,12 25,14 50,11 75,13 100,9",
     time: "32m ago",
+    description: "Typhoon track probability intersecting major APAC fab and port nodes.",
+    relatedCompanyIds: ["tsmc", "foxconn"],
+    methodology: "NOAA track cone · asset geofence",
   },
   {
     id: "freight",
@@ -202,6 +226,9 @@ const STREAMS: SignalStream[] = [
     level: "normal",
     sparkline: "0,10 30,11 60,9 80,10 100,8",
     time: "2h ago",
+    description: "Trans-Pacific container rates stable; Red Sea rerouting premium moderating.",
+    relatedCompanyIds: ["apple", "qualcomm"],
+    methodology: "FBX index · lane-weighted basket",
   },
 ];
 
@@ -296,6 +323,10 @@ export const mockStore = {
 
   getAlerts(): Alert[] {
     return ALERTS;
+  },
+
+  getAlert(id: string): Alert | undefined {
+    return ALERTS.find((a) => a.id === id);
   },
 
   getScenarios(): Scenario[] {

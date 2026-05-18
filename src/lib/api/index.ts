@@ -37,6 +37,10 @@ export async function getAlerts(): Promise<Alert[]> {
   return mockStore.getAlerts();
 }
 
+export async function getAlert(id: string): Promise<Alert | null> {
+  return mockStore.getAlert(id) ?? null;
+}
+
 export async function getScenarios(): Promise<Scenario[]> {
   return mockStore.getScenarios();
 }

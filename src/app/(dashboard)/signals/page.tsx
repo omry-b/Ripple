@@ -1,13 +1,18 @@
-import { getSignals, getSnapshot } from "@/lib/api";
+import { getCompanies, getSignals, getSnapshot } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { StreamGrid } from "@/components/streams/StreamGrid";
+import { SignalsPageClient } from "@/components/signals/SignalsPageClient";
+import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
   title: "Signals — Ripple",
 };
 
 export default async function SignalsPage() {
-  const [streams, snapshot] = await Promise.all([getSignals(), getSnapshot()]);
+  const [streams, snapshot, companies] = await Promise.all([
+    getSignals(),
+    getSnapshot(),
+    getCompanies(),
+  ]);
 
   return (
     <>
@@ -16,18 +21,9 @@ export default async function SignalsPage() {
         subtitle={`${streams.length} active channels · updated ${formatAsOf(snapshot.asOf)}`}
       />
       <main className="content-container">
-        <span className="section-label">All streams</span>
-        <StreamGrid streams={streams} />
+        <span className="section-label">All streams · click for detail</span>
+        <SignalsPageClient streams={streams} companies={companies} />
       </main>
     </>
   );
-}
-
-function formatAsOf(iso: string) {
-  return new Date(iso).toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }

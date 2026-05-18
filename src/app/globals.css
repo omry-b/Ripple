@@ -1182,3 +1182,247 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Filters */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.filter-chip {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid #1a1a1a;
+  background: #0d0d0d;
+  color: #737373;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.filter-chip:hover {
+  border-color: #2a2a2a;
+  color: #a3a3a3;
+}
+
+.filter-chip.active {
+  background: #1a1a1a;
+  color: #f5f5f5;
+  border-color: #2a2a2a;
+}
+
+.filter-select,
+.filter-search {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #1a1a1a;
+  background: #0d0d0d;
+  color: #f5f5f5;
+}
+
+.filter-search {
+  min-width: 200px;
+  flex: 1;
+}
+
+.filter-count {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #404040;
+  margin-left: auto;
+}
+
+.alert-filter-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #1a1a1a;
+  background: rgba(239, 68, 68, 0.06);
+  font-size: 12px;
+  color: #a3a3a3;
+}
+
+.alert-filter-clear {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  color: #3b82f6;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.empty-state {
+  font-size: 12px;
+  color: #525252;
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed #1a1a1a;
+  border-radius: 8px;
+}
+
+.stream-card-interactive {
+  cursor: pointer;
+}
+
+.stream-card-selected {
+  border-color: #3b82f6 !important;
+}
+
+/* Signal drawer */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 200;
+  border: none;
+  cursor: pointer;
+}
+
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, 100vw);
+  background: #0d0d0d;
+  border-left: 1px solid #1a1a1a;
+  z-index: 201;
+  padding: 24px;
+  overflow-y: auto;
+  animation: drawerIn 0.25s ease;
+}
+
+@keyframes drawerIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.drawer-title {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f5f5f5;
+  margin-top: 8px;
+}
+
+.drawer-category {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #525252;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.drawer-close {
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  color: #737373;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.drawer-close:hover {
+  color: #f5f5f5;
+}
+
+.drawer-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.drawer-sparkline {
+  display: block;
+  margin-bottom: 16px;
+  background: #0a0a0a;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.drawer-description {
+  font-size: 12px;
+  color: #a3a3a3;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.drawer-methodology {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #525252;
+  margin-bottom: 8px;
+}
+
+.drawer-company-list {
+  list-style: none;
+  margin-top: 8px;
+}
+
+.drawer-company-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #141414;
+  text-decoration: none;
+  color: #f5f5f5;
+  font-size: 12px;
+}
+
+.drawer-company-link:hover {
+  color: #3b82f6;
+}
+
+.refresh-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px 24px;
+  background: rgba(239, 68, 68, 0.08);
+  border-bottom: 1px solid #1a1a1a;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  color: #ef4444;
+}
+
+.refresh-error-banner button {
+  font-family: inherit;
+  font-size: 9px;
+  padding: 2px 8px;
+  border: 1px solid #ef4444;
+  background: transparent;
+  color: #ef4444;
+  border-radius: 4px;
+  cursor: pointer;
+}
