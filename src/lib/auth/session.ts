@@ -13,8 +13,22 @@ export type SessionUser = {
  */
 export async function getSessionUser(request?: Request): Promise<SessionUser> {
   if (isAuthEnabled()) {
-    // PLACEHOLDER: integrate @clerk/nextjs auth() when keys are set
-    // const { userId, orgId } = await auth();
+    const { auth, currentUser } = await import("@clerk/nextjs/server");
+    const { userId, orgId } = await auth();
+    const user = await currentUser();
+    if (userId && user) {
+      const roleMeta = user.publicMetadata?.role;
+      const role =
+        roleMeta === "viewer" || roleMeta === "analyst" || roleMeta === "admin"
+          ? roleMeta
+          : authConfig.demoRole;
+      return {
+        id: userId,
+        email: user.emailAddresses[0]?.emailAddress ?? authConfig.demoEmail,
+        organizationId: orgId ?? authConfig.demoOrgId,
+        role,
+      };
+    }
   }
 
   const headers = request?.headers;

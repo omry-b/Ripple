@@ -1,4 +1,6 @@
 import { getSearchIndex } from "@/lib/api";
+import { getOrgId } from "@/lib/api/scoped";
+import { filterIdsForOrg } from "@/lib/org/scope";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { NAV_ITEMS } from "@/lib/nav";
 import { fullTextSearch, type SearchableItem } from "@/lib/search/full-text";
@@ -8,7 +10,16 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q")?.trim() ?? "";
 
+    const orgId = await getOrgId(request);
     const index = await getSearchIndex();
+    const companies = filterIdsForOrg(
+      index.companies.map((c) => ({ ...c, id: c.id })),
+      orgId
+    );
+    const alerts = filterIdsForOrg(
+      index.alerts.map((a) => ({ ...a, id: a.id })),
+      orgId
+    );
     const navigation = NAV_ITEMS.map((item) => ({
       id: item.href,
       label: item.label,
@@ -30,8 +41,8 @@ export async function GET(request: Request) {
     const all: SearchableItem[] = [
       ...navigation,
       methodology,
-      ...index.companies.map((c) => ({ ...c, searchText: c.sublabel })),
-      ...index.alerts.map((a) => ({ ...a, searchText: a.sublabel })),
+      ...companies.map((c) => ({ ...c, searchText: c.sublabel })),
+      ...alerts.map((a) => ({ ...a, searchText: a.sublabel })),
       ...index.signals.map((s) => ({ ...s, searchText: s.sublabel })),
     ];
 

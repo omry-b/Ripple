@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { VercelInsights } from "@/components/shell/VercelInsights";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AppClerkProvider } from "@/components/providers/AppClerkProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${plusJakarta.variable} ${dmMono.variable}`} data-theme="dark">
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <AppClerkProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AppClerkProvider>
         <VercelInsights />
       </body>
     </html>

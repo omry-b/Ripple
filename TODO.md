@@ -422,6 +422,7 @@
 | 2026-05-18 | Vercel Analytics, unit tests, CVaR backtest chart, sign-in placeholder, a11y sparklines |
 | 2026-05-18 | Demo auth, API envelope, ingest normalizer+DLQ, OpenAPI, product pages, Playwright+CI   |
 | 2026-05-18 | Org scoping, graph propagation, async scenarios, theme/CVaR, webhooks HMAC, GDELT/NOAA |
+| 2026-05-18 | TopoJSON map, Mapbox optional, Clerk, live ingest adapters, OG image, bundle analyze |
 
 
 ---
@@ -436,8 +437,10 @@
 6. [x] Webhook HMAC signing, email digest cron, Vercel KV snapshot cache layer
 7. [x] Team invite UI, i18n groundwork, docs (Neon, runbook, Zapier)
 8. [x] k6 script, gitleaks CI, 12 unit tests
-9. [~] Clerk auth (demo complete; production keys optional)
-10. [ ] Neon production DB wired on Vercel
-11. [ ] Mapbox / TopoJSON map upgrade
-12. [ ] AIS/ports/financial real API keys
+9. [x] Clerk auth wired (`AppClerkProvider`, middleware, SignIn when keys set)
+10. [ ] Neon production DB wired on Vercel (see `docs/NEON_SETUP.md`)
+11. [x] TopoJSON world map + optional Mapbox (`NEXT_PUBLIC_MAPBOX_TOKEN`)
+12. [x] AIS/ports/financial ingest (live when API keys set; World Bank public)
+13. [ ] Off-Vercel scenario worker
+14. [ ] Lighthouse / axe audit pass
 
