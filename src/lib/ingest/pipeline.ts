@@ -2,6 +2,7 @@ import { getDataSource } from "@/lib/data";
 import { invalidateSnapshotCache } from "@/lib/cache/snapshot-cache";
 import { listDeadLetters, pushDeadLetter } from "@/lib/ingest/dead-letter";
 import { normalizeEventsToReadings } from "@/lib/ingest/normalizer";
+import { refreshScoresFromReadings } from "@/lib/ingest/score-refresh";
 import { INGEST_ADAPTERS, getAdapter } from "./registry";
 import type { IngestAdapterResult, NormalizedIngestEvent } from "./types";
 
@@ -14,6 +15,7 @@ export type IngestPipelineResult = {
   }>;
   totalEvents: number;
   readingsNormalized: number;
+  streamsRescored: number;
   snapshotRefreshed: boolean;
   deadLetterCount: number;
 };
@@ -87,7 +89,7 @@ export async function runIngestPipeline(
   }
 
   const readings = normalizeEventsToReadings(allEvents);
-  void readings;
+  const streamsRescored = await refreshScoresFromReadings(readings);
 
   let snapshotRefreshed = false;
   try {
@@ -102,6 +104,7 @@ export async function runIngestPipeline(
     runs,
     totalEvents,
     readingsNormalized: readings.length,
+    streamsRescored,
     snapshotRefreshed,
     deadLetterCount: listDeadLetters().length,
   };

@@ -12,6 +12,7 @@ import { alertState } from "@/lib/mock/alert-state";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
 import { regionForCompanyId } from "@/lib/mock/regions";
+import { applyIngestScoreOverrides } from "@/lib/mock/ingest-score-state";
 
 function enrichCompany(c: Omit<Company, "history30d" | "region">): Company {
   return {
@@ -332,13 +333,13 @@ export const mockStore = {
       })),
       alerts: alertState.list(),
       companies: ALL_COMPANIES,
-      streams: STREAMS,
+      streams: applyIngestScoreOverrides(STREAMS),
       scenarios: SCENARIOS,
     };
   },
 
   getSignals(): SignalStream[] {
-    return STREAMS;
+    return applyIngestScoreOverrides(STREAMS);
   },
 
   getCompanies(): Company[] {
@@ -384,7 +385,9 @@ export const mockStore = {
   },
 
   getSignalsForCompany(companyId: string): SignalStream[] {
-    return STREAMS.filter((s) => s.relatedCompanyIds.includes(companyId));
+    return applyIngestScoreOverrides(STREAMS).filter((s) =>
+      s.relatedCompanyIds.includes(companyId)
+    );
   },
 
   getSearchIndex() {
@@ -403,7 +406,7 @@ export const mockStore = {
         href: `/companies?alert=${a.id}`,
         group: "Alert" as const,
       })),
-      signals: STREAMS.map((s) => ({
+      signals: applyIngestScoreOverrides(STREAMS).map((s) => ({
         id: s.id,
         label: s.name,
         sublabel: `${s.score}/100 · ${s.category}`,

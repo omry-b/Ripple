@@ -7,6 +7,7 @@ import { BentoGrid } from "@/components/bento/BentoGrid";
 import { AlertsSectionClient } from "@/components/alerts/AlertsSectionClient";
 import { CompanyExposureTable } from "@/components/tables/CompanyExposureTable";
 import { StreamGrid } from "@/components/streams/StreamGrid";
+import { SectionJumpNav } from "@/components/overview/SectionJumpNav";
 
 type OverviewPageProps = {
   data: DashboardPayload;
@@ -24,6 +25,7 @@ export function OverviewPage({ data }: OverviewPageProps) {
 
   return (
     <main className="content-container" id="main-content">
+      <SectionJumpNav />
       <span className="section-label" id="overview">
         Live Risk Overview
       </span>

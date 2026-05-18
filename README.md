@@ -1,5 +1,6 @@
 # Ripple
 
+[![CI](https://github.com/omry-b/Ripple/actions/workflows/ci.yml/badge.svg)](https://github.com/omry-b/Ripple/actions/workflows/ci.yml)
 [![Deployed on Vercel](https://img.shields.io/badge/deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://ripple-omry-2596s-projects.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)

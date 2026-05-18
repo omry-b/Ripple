@@ -1,8 +1,9 @@
 import type { SignalStream } from "@/types/domain";
 
+export { applyReadingsToStreams } from "@/lib/risk/apply-readings";
+
 /**
- * Placeholder risk scorer — recomputes stream scores from latest readings.
- * Replace with weighted model + confidence intervals when real ingest is live.
+ * Legacy single-stream nudge — prefer applyReadingsToStreams via ingest pipeline.
  */
 export function scoreSignalStream(
   stream: SignalStream,

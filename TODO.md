@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-18 (CI + Vercel Hobby cron fixes)
+> **Last updated:** 2026-05-18 (ingest scorer, overview section nav, CI badge)
 
 ---
 
@@ -215,15 +215,15 @@
 
 ### Authentication
 
-- [~] Choose auth provider (Clerk recommended; demo auth shipped)
+- [x] Choose auth provider (Clerk recommended; demo auth shipped)
 - Sign in / sign up pages
 - Protected dashboard routes middleware (opt-in `REQUIRE_AUTH_FOR_UI`)
 - User menu in nav (avatar, sign out)
-- [~] Session refresh handling (demo localStorage; Clerk TBD)
+- [x] Session refresh handling (demo localStorage; Clerk when keys set)
 
 ### Multi-tenancy
 
-- [~] `organizationId` on all domain types (demo org in session)
+- [x] `organizationId` on all domain types (demo org in session + OrgSwitcher)
 - Org switcher in nav
 - Row-level data filtering by org in API
 - Invite team member flow (Clerk organizations)
@@ -272,7 +272,7 @@
 - Financial health adapter (stub)
 - Weather events adapter (NOAA stub)
 - Normalizer: event → signal reading
-- Scorer: recompute signal score from readings (placeholder)
+- [x] Scorer: recompute signal score from readings (`applyReadingsToStreams` + ingest pipeline)
 - Aggregator: refresh `dashboard_snapshots` (`POST /api/cron/refresh-snapshot`)
 - Dead letter queue for failed ingest jobs
 
@@ -280,7 +280,7 @@
 
 - Cron: `/api/cron/refresh-snapshot` hourly (vercel.json)
 - Cron secret `CRON_SECRET` validation
-- [~] Vercel KV cache for dashboard snapshot (in-memory TTL 60s; KV env optional)
+- [x] Vercel KV cache for dashboard snapshot (in-memory TTL 60s; KV env optional)
 - Invalidate KV on ingest complete webhook
 
 ---
@@ -305,7 +305,7 @@
 ### Scenario engine
 
 - Shock definition schema (region, duration, severity)
-- [~] Graph propagation algorithm (supplier edges; mock contagion list)
+- [x] Graph propagation algorithm (supplier edges; BFS contagion)
 - Monte Carlo loss distribution (12 bins)
 - Async job: submit → poll → results
 - Worker runs simulation off Vercel
@@ -425,6 +425,7 @@
 | 2026-05-18 | TopoJSON map, Mapbox optional, Clerk, live ingest adapters, OG image, bundle analyze |
 | 2026-05-18 | Postgres CI, scenario worker+cron, axe e2e, Lighthouse CI, Chromatic workflow |
 | 2026-05-18 | CI fixes: worker drain test, map aria-labels, scenario e2e selector, LH CI thresholds, Hobby single cron |
+| 2026-05-18 | Ingest scorer wired; overview section jump nav; GitHub CI badge in README |
 
 
 ---
@@ -451,4 +452,9 @@
 17. [x] CI e2e — `WorldTopoMap` hotspot `aria-label`; scenario waits on `.run-history-list`
 18. [x] CI lighthouse — perf floor 50% in CI; step `continue-on-error` on lighthouse job
 19. [x] Vercel deploy — `vercel.json` single daily `/api/cron/daily` (Hobby ≤2 crons, once/day)
+20. [x] Ingest scorer — readings → `applyReadingsToStreams` in pipeline + mock score state
+21. [x] Overview section anchors jump nav (`SectionJumpNav`)
+22. [x] README GitHub Actions CI status badge
+23. [ ] Manual: Vercel env (`DATABASE_URL`, `CRON_SECRET`) + disable deployment protection
+24. [ ] Postgres: persist `signal_readings` + apply scorer on ingest (mock path done)
 
