@@ -29,7 +29,8 @@ export function useAnimatedCounter(
   target: number,
   duration: number,
   decimals = false,
-  delay = 0
+  delay = 0,
+  refreshKey?: string
 ) {
   useEffect(() => {
     const el = document.getElementById(elementId);
@@ -54,7 +55,7 @@ export function useAnimatedCounter(
       clearTimeout(timeout);
       cancelAnimationFrame(frame);
     };
-  }, [elementId, target, duration, decimals, delay]);
+  }, [elementId, target, duration, decimals, delay, refreshKey]);
 }
 
 export function useCardSpotlight(cardIds: string[]) {
@@ -137,10 +138,11 @@ export function usePerspectiveTilt(
 }
 
 export function useSnapshotCounters(snapshot: DashboardSnapshot) {
-  useAnimatedCounter("counter-index", snapshot.riskIndex, 1400, true, 100);
-  useAnimatedCounter("counter-exposed", snapshot.exposedCompanies, 1600, false, 250);
-  useAnimatedCounter("counter-cvar-hero", snapshot.cvar95BaselineB, 1800, true, 400);
-  useAnimatedCounter("counter-signals", snapshot.liveSignalsCount, 2000, false, 550);
-  useAnimatedCounter("bento-val-signals", snapshot.liveSignalsCount, 2000, false, 600);
-  useAnimatedCounter("bento-val-exposed", snapshot.exposedCompanies, 1600, false, 700);
+  const key = snapshot.asOf;
+  useAnimatedCounter("counter-index", snapshot.riskIndex, 1400, true, 100, key);
+  useAnimatedCounter("counter-exposed", snapshot.exposedCompanies, 1600, false, 250, key);
+  useAnimatedCounter("counter-cvar-hero", snapshot.cvar95BaselineB, 1800, true, 400, key);
+  useAnimatedCounter("counter-signals", snapshot.liveSignalsCount, 2000, false, 550, key);
+  useAnimatedCounter("bento-val-signals", snapshot.liveSignalsCount, 2000, false, 600, key);
+  useAnimatedCounter("bento-val-exposed", snapshot.exposedCompanies, 1600, false, 700, key);
 }

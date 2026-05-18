@@ -336,4 +336,42 @@ export const mockStore = {
   getTicker(): TickerItem[] {
     return TICKER;
   },
+
+  getScenario(id: string): Scenario | undefined {
+    return SCENARIOS.find((s) => s.id === id);
+  },
+
+  getAlertsForCompany(companyId: string): Alert[] {
+    return ALERTS.filter((a) => a.affectedCompanyIds.includes(companyId));
+  },
+
+  getSignalsForCompany(companyId: string): SignalStream[] {
+    return STREAMS.filter((s) => s.relatedCompanyIds.includes(companyId));
+  },
+
+  getSearchIndex() {
+    return {
+      companies: COMPANIES.map((c) => ({
+        id: c.id,
+        label: c.name,
+        sublabel: `Score ${c.score} · ${c.tier}`,
+        href: `/companies/${c.id}`,
+        group: "Company" as const,
+      })),
+      alerts: ALERTS.map((a) => ({
+        id: a.id,
+        label: a.title,
+        sublabel: a.level.toUpperCase(),
+        href: `/companies?alert=${a.id}`,
+        group: "Alert" as const,
+      })),
+      signals: STREAMS.map((s) => ({
+        id: s.id,
+        label: s.name,
+        sublabel: `${s.score}/100 · ${s.category}`,
+        href: "/signals",
+        group: "Signal" as const,
+      })),
+    };
+  },
 };

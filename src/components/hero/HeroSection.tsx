@@ -1,14 +1,17 @@
 "use client";
 
-import type { DashboardSnapshot } from "@/types/domain";
+import { useLiveData } from "@/context/LiveDataContext";
 import { useSnapshotCounters } from "@/lib/hooks";
+import { formatRelativeAsOf } from "@/lib/format";
 
 type HeroSectionProps = {
-  snapshot: DashboardSnapshot;
   showWordmark?: boolean;
 };
 
-export function HeroSection({ snapshot, showWordmark = true }: HeroSectionProps) {
+export function HeroSection({ showWordmark = true }: HeroSectionProps) {
+  const { snapshot, asOf } = useLiveData();
+  if (!snapshot) return null;
+
   useSnapshotCounters(snapshot);
 
   return (
@@ -17,33 +20,35 @@ export function HeroSection({ snapshot, showWordmark = true }: HeroSectionProps)
       <div className="blob blob-2" />
       <div className="blob blob-3" />
       <div className="hero-inner">
-        <span className="hero-eyebrow">GLOBAL SUPPLY CHAIN INTELLIGENCE</span>
+        <span className="hero-eyebrow">
+          GLOBAL SUPPLY CHAIN INTELLIGENCE · Updated {formatRelativeAsOf(asOf)}
+        </span>
         {showWordmark && <h1 className="gradient-wordmark">Ripple</h1>}
         <div className="hero-stats-row">
           <div className="hero-stat-box">
             <span className="hero-metric critical-accent" id="counter-index">
-              0.0
+              {snapshot.riskIndex.toFixed(1)}
             </span>
             <span className="hero-stat-label">Risk Index</span>
           </div>
           <div className="hero-stat-divider" />
           <div className="hero-stat-box">
             <span className="hero-metric" id="counter-exposed">
-              0
+              {snapshot.exposedCompanies}
             </span>
             <span className="hero-stat-label">Exposed Cos</span>
           </div>
           <div className="hero-stat-divider" />
           <div className="hero-stat-box">
             <span className="hero-metric critical-accent">
-              $<span id="counter-cvar-hero">0.0</span>B
+              $<span id="counter-cvar-hero">{snapshot.cvar95BaselineB.toFixed(1)}</span>B
             </span>
             <span className="hero-stat-label">CVaR₉₅ Baseline</span>
           </div>
           <div className="hero-stat-divider" />
           <div className="hero-stat-box">
             <span className="hero-metric" id="counter-signals">
-              0
+              {snapshot.liveSignalsCount}
             </span>
             <span className="hero-stat-label">Live Signals</span>
           </div>

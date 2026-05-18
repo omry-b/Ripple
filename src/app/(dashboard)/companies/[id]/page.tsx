@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCompany } from "@/lib/api";
+import {
+  getAlertsForCompany,
+  getCompany,
+  getSignalsForCompany,
+} from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
+import { CompanyProfileSections } from "@/components/companies/CompanyProfileSections";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -23,23 +29,21 @@ export default async function CompanyDetailPage({ params }: Props) {
     notFound();
   }
 
+  const [alerts, signals] = await Promise.all([
+    getAlertsForCompany(id),
+    getSignalsForCompany(id),
+  ]);
+
   return (
     <>
       <PageHeader title={company.name} subtitle={`${company.tier} supplier · risk profile`} />
-      <main className="content-container">
-        <Link
-          href="/companies"
-          style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 10,
-            color: "#737373",
-            textDecoration: "none",
-            display: "inline-block",
-            marginBottom: 24,
-          }}
-        >
-          ← All companies
-        </Link>
+      <main className="content-container" id="main-content">
+        <Breadcrumbs
+          items={[
+            { label: "Companies", href: "/companies" },
+            { label: company.name },
+          ]}
+        />
 
         <div className="company-profile-grid">
           <div className="company-stat-card">
@@ -69,14 +73,16 @@ export default async function CompanyDetailPage({ params }: Props) {
         <section className="workbench-card" style={{ marginBottom: 24 }}>
           <p style={{ fontSize: 12, color: "#A3A3A3" }}>
             <span className={`trend-indicator ${company.deltaTrend}`}>{company.delta7d}</span>
-            {" "}risk score change vs prior week. Supplier graph and linked alerts ship in Phase 2.
+            {" "}risk score change vs prior week.
           </p>
         </section>
 
-        <span className="section-label">Related</span>
+        <CompanyProfileSections company={company} alerts={alerts} signals={signals} />
+
+        <span className="section-label">Actions</span>
         <section className="workbench-card">
           <Link href="/signals" style={{ color: "#3B82F6", fontSize: 12, textDecoration: "none" }}>
-            View signal streams →
+            View all signal streams →
           </Link>
           <br />
           <Link

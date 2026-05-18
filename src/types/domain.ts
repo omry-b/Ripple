@@ -51,6 +51,23 @@ export type Scenario = {
   impacts: string[];
 };
 
+export type SimulationRun = {
+  id: string;
+  scenarioId: string;
+  scenarioName: string;
+  ranAt: string;
+  profile: number[];
+  impacts: string[];
+};
+
+export type CommandItem = {
+  id: string;
+  label: string;
+  sublabel?: string;
+  href: string;
+  group: "Navigate" | "Company" | "Alert" | "Signal";
+};
+
 export type Hotspot = {
   cx: number;
   cy: number;

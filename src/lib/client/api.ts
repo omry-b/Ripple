@@ -1,14 +1,16 @@
 import type {
   Alert,
   Company,
+  CommandItem,
   DashboardPayload,
   DashboardSnapshot,
   Scenario,
   SignalStream,
+  SimulationRun,
 } from "@/types/domain";
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const res = await fetch(path, { cache: "no-store" });
+async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(path, { cache: "no-store", ...init });
   if (!res.ok) {
     throw new Error(`API ${path} failed: ${res.status}`);
   }
@@ -41,4 +43,18 @@ export function fetchScenarios(): Promise<{ asOf: string; scenarios: Scenario[] 
 
 export function fetchCompany(id: string): Promise<{ asOf: string; company: Company }> {
   return fetchJson(`/api/companies/${id}`);
+}
+
+export function runScenarioApi(
+  id: string
+): Promise<{ asOf: string; run: SimulationRun }> {
+  return fetchJson(`/api/scenarios/${id}/run`, { method: "POST" });
+}
+
+export function fetchSimulationRuns(): Promise<{ asOf: string; runs: SimulationRun[] }> {
+  return fetchJson("/api/scenarios/runs");
+}
+
+export function fetchSearch(): Promise<{ asOf: string; items: CommandItem[] }> {
+  return fetchJson("/api/search");
 }

@@ -7,7 +7,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection snapshot={data.snapshot} />
+      <HeroSection />
       <OverviewPage data={data} />
     </>
   );

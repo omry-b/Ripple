@@ -41,12 +41,13 @@
 - [x] `/companies/[id]` Company detail page
 - [x] `lib/nav.ts` nav config with hrefs
 - [x] Nav uses Next.js `Link` + `usePathname` active state
-- [ ] Add `not-found.tsx` at dashboard root
+- [x] Add `not-found.tsx` at dashboard root
 - [x] Company `not-found.tsx` for unknown IDs
 - [x] Add `error.tsx` at dashboard root (recoverable errors)
 - [ ] Add `global-error.tsx` at app root
 - [ ] Breadcrumb component for nested routes
 - [ ] Mobile nav: collapsible tabs or bottom bar
+- [x] Command palette ⌘K (search companies, alerts, nav)
 - [ ] Keyboard shortcuts (g+o overview, g+s signals, etc.)
 
 ### Component architecture
@@ -93,7 +94,7 @@
 - [x] Overview links to signals + scenario pages
 - [ ] Skeleton components match bento card shapes exactly
 - [ ] Focus visible styles on all interactive elements
-- [ ] Skip-to-content link in shell
+- [x] Skip-to-content link in shell
 - [ ] Page transition animation between routes (subtle)
 
 ---
@@ -111,7 +112,7 @@
 - [ ] SWR or React Query dependency (evaluate vs raw fetch)
 - [ ] `useDashboard()` hook for client components
 - [ ] `useSignals()` hook with poll
-- [ ] Offline banner when `navigator.onLine === false`
+- [x] Offline banner when `navigator.onLine === false`
 - [ ] Retry with exponential backoff on fetch failure
 
 ### Signals page depth
@@ -134,7 +135,7 @@
 - [x] `CompaniesPageClient` with controlled table state
 - [ ] Pagination (25 per page)
 - [ ] Column visibility toggles
-- [ ] Tier filter (Tier 1 / 2 / 3)
+- [x] Tier filter (Tier 1 / Tier 2)
 - [ ] Score range slider filter
 - [ ] Export companies CSV
 - [ ] Bulk select + add to watchlist (UI only until auth)
@@ -149,16 +150,16 @@
 - [ ] Map hotspot click → alert or region filter
 
 ### Overview enhancements
-- [ ] Hero metrics refresh when poll updates (without full page reload)
-- [ ] Bento CVaR progress bar animates from API value
-- [ ] "Last updated" timestamp in hero eyebrow
+- [x] Hero metrics refresh when poll updates (without full page reload)
+- [x] Bento uses live snapshot from `LiveDataProvider` on poll
+- [x] "Last updated" timestamp in hero eyebrow (relative time)
 - [ ] Compact hero variant on non-overview routes (optional)
-- [ ] Overview section anchors (#alerts, #companies) for deep links
+- [x] Overview section anchors (#overview, #alerts, #companies, #signals, #scenario)
 
 ### Scenario workbench
-- [ ] `POST /api/scenarios/[id]/run` returns job id + result
-- [ ] Save simulation run to mock store history
-- [ ] Simulation history list below workbench
+- [x] `POST /api/scenarios/[id]/run` returns run result
+- [x] Save simulation run to mock store history (in-memory, last 10)
+- [x] Simulation history list below workbench (click to reopen)
 - [ ] Compare two scenarios side-by-side
 - [ ] Export simulation results CSV
 - [ ] Scenario parameters form (duration, severity slider)
@@ -170,8 +171,9 @@
 
 ### Company detail (`/companies/[id]`)
 - [ ] Score breakdown chart (5 factors with weights)
-- [ ] Linked alerts list for company
-- [ ] Linked signals affecting company
+- [x] Linked alerts list for company
+- [x] Linked signals affecting company
+- [x] Breadcrumbs on company page
 - [ ] Supplier graph mini visualization (React Flow)
 - [ ] Tier-1 / tier-2 supplier table
 - [ ] Historical risk score sparkline (30d)
@@ -188,7 +190,8 @@
 - [ ] Mapbox GL integration (optional, env token)
 
 ### Search & discovery
-- [ ] Global command palette (⌘K) — jump to company/signal/alert
+- [x] Global command palette (⌘K) — jump to company/signal/alert
+- [x] `GET /api/search` index endpoint
 - [ ] Recent items in command palette
 - [ ] Full-text search API mock
 
@@ -380,13 +383,14 @@
 | 2026-05-17 | Created `TODO.md`; starting Phase 1 client layer + signals/companies depth |
 | 2026-05-17 | Phase 1: LiveDataProvider, signal drawer/filters, companies search/sort, alert filter |
 | 2026-05-18 | README: live URLs + auto-deploy notes; latest prod deploy commit `4ee1124` |
+| 2026-05-18 | Live hero/bento, scenario API+history, ⌘K palette, company alerts/signals, tier filter |
 
 ---
 
 ## Current sprint (active)
 
-1. [ ] Hero metrics refresh from `LiveDataProvider.snapshot` on poll
-2. [ ] `POST /api/scenarios/[id]/run` + simulation history
-3. [ ] Global command palette (⌘K)
-4. [ ] Company profile: linked alerts + signals sections
-5. [ ] `not-found.tsx` at dashboard root
+1. [ ] Score breakdown chart on company profile
+2. [ ] Alert detail modal + acknowledge (mock PATCH)
+3. [ ] Signal 7d history chart on drawer
+4. [ ] Companies pagination (25/page)
+5. [ ] Map hotspot click → filter companies/alerts

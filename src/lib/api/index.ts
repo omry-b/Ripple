@@ -1,4 +1,5 @@
 import { mockStore } from "@/lib/mock/store";
+import { simulationRunStore } from "@/lib/mock/simulation-runs";
 import type {
   Alert,
   Company,
@@ -6,6 +7,7 @@ import type {
   DashboardSnapshot,
   Scenario,
   SignalStream,
+  SimulationRun,
   TickerItem,
 } from "@/types/domain";
 
@@ -43,4 +45,30 @@ export async function getAlert(id: string): Promise<Alert | null> {
 
 export async function getScenarios(): Promise<Scenario[]> {
   return mockStore.getScenarios();
+}
+
+export async function getScenario(id: string): Promise<Scenario | null> {
+  return mockStore.getScenario(id) ?? null;
+}
+
+export async function runScenario(id: string): Promise<SimulationRun | null> {
+  const scenario = mockStore.getScenario(id);
+  if (!scenario) return null;
+  return simulationRunStore.run(scenario);
+}
+
+export async function getSimulationRuns(): Promise<SimulationRun[]> {
+  return simulationRunStore.list();
+}
+
+export async function getAlertsForCompany(companyId: string): Promise<Alert[]> {
+  return mockStore.getAlertsForCompany(companyId);
+}
+
+export async function getSignalsForCompany(companyId: string): Promise<SignalStream[]> {
+  return mockStore.getSignalsForCompany(companyId);
+}
+
+export async function getSearchIndex() {
+  return mockStore.getSearchIndex();
 }

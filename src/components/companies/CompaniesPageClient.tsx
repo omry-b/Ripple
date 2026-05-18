@@ -15,12 +15,17 @@ type CompaniesPageClientProps = {
 export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageClientProps) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<CompanySortKey>("score");
+  const [tier, setTier] = useState<string>("all");
 
   const filtered = useMemo(() => {
     let list = companies;
 
     if (alertFilter) {
       list = list.filter((c) => alertFilter.affectedCompanyIds.includes(c.id));
+    }
+
+    if (tier !== "all") {
+      list = list.filter((c) => c.tier === tier);
     }
 
     const q = search.trim().toLowerCase();
@@ -41,7 +46,7 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           return b.score - a.score;
       }
     });
-  }, [companies, alertFilter, search, sort]);
+  }, [companies, alertFilter, search, sort, tier]);
 
   return (
     <>
@@ -65,6 +70,16 @@ export function CompaniesPageClient({ companies, alertFilter }: CompaniesPageCli
           onChange={(e) => setSearch(e.target.value)}
           aria-label="Search companies"
         />
+        <select
+          className="filter-select"
+          value={tier}
+          onChange={(e) => setTier(e.target.value)}
+          aria-label="Filter by tier"
+        >
+          <option value="all">All tiers</option>
+          <option value="Tier 1">Tier 1</option>
+          <option value="Tier 2">Tier 2</option>
+        </select>
         <select
           className="filter-select"
           value={sort}

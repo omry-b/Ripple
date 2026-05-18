@@ -35,7 +35,12 @@ export function NavHeader() {
           );
         })}
       </div>
-      <LiveStatus asOf={asOf} isRefreshing={isRefreshing} />
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <kbd className="nav-kbd" title="Command palette">
+          ⌘K
+        </kbd>
+        <LiveStatus asOf={asOf} isRefreshing={isRefreshing} />
+      </div>
     </nav>
   );
 }
