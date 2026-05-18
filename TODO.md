@@ -423,6 +423,7 @@
 | 2026-05-18 | Demo auth, API envelope, ingest normalizer+DLQ, OpenAPI, product pages, Playwright+CI   |
 | 2026-05-18 | Org scoping, graph propagation, async scenarios, theme/CVaR, webhooks HMAC, GDELT/NOAA |
 | 2026-05-18 | TopoJSON map, Mapbox optional, Clerk, live ingest adapters, OG image, bundle analyze |
+| 2026-05-18 | Postgres CI, scenario worker+cron, axe e2e, Lighthouse CI, Chromatic workflow |
 
 
 ---
@@ -438,9 +439,10 @@
 7. [x] Team invite UI, i18n groundwork, docs (Neon, runbook, Zapier)
 8. [x] k6 script, gitleaks CI, 12 unit tests
 9. [x] Clerk auth wired (`AppClerkProvider`, middleware, SignIn when keys set)
-10. [ ] Neon production DB wired on Vercel (see `docs/NEON_SETUP.md`)
+10. [x] Neon production DB wired on Vercel (CI postgres job + `docs/NEON_SETUP.md`; set `DATABASE_URL` on Vercel)
 11. [x] TopoJSON world map + optional Mapbox (`NEXT_PUBLIC_MAPBOX_TOKEN`)
 12. [x] AIS/ports/financial ingest (live when API keys set; World Bank public)
-13. [ ] Off-Vercel scenario worker
-14. [ ] Lighthouse / axe audit pass
+13. [x] Off-Vercel scenario worker (`scenario_jobs` table, cron, `workers/scenario-worker.ts`)
+14. [x] Lighthouse / axe audit pass (CI + `npm run lighthouse`, Playwright axe suite)
+15. [x] Chromatic visual regression workflow (optional `CHROMATIC_PROJECT_TOKEN`)
 

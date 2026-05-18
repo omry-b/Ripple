@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: Params) {
     asyncMode || (body && typeof body === "object" && (body as { async?: boolean }).async);
 
   if (wantsAsync) {
-    const job = enqueueScenarioJob(id, options);
+    const job = await enqueueScenarioJob(id, options);
     return jsonData({ job }, 202);
   }
 

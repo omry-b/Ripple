@@ -10,6 +10,7 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:seed": "tsx scripts/seed.ts",
+    "db:verify": "tsx scripts/db-verify.ts",
     "db:studio": "drizzle-kit studio",
     "ingest": "curl -s -X POST http://localhost:3000/api/ingest/run | jq",
     "storybook": "storybook dev -p 6006",
@@ -17,22 +18,29 @@
     "test": "vitest run --project unit",
     "test:unit": "vitest run --project unit",
     "test:e2e": "playwright test",
-    "analyze": "ANALYZE=true npm run build"
+    "analyze": "ANALYZE=true npm run build",
+    "lighthouse": "node scripts/lighthouse-audit.mjs",
+    "worker:scenario": "tsx workers/scenario-worker.ts",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@clerk/nextjs": "^7.3.5",
     "@playwright/test": "^1.60.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "chrome-launcher": "^1.2.1",
     "d3-geo": "^3.1.1",
     "drizzle-orm": "^0.45.2",
+    "lighthouse": "^13.3.0",
     "lucide-react": "^1.16.0",
     "mapbox-gl": "^3.23.1",
     "next": "16.2.6",
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "wait-on": "^9.0.10"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
@@ -52,6 +60,7 @@
     "@types/topojson-client": "^3.1.5",
     "@vitest/browser-playwright": "^4.1.6",
     "@vitest/coverage-v8": "^4.1.6",
+    "chromatic": "^16.10.1",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",

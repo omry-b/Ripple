@@ -13,6 +13,8 @@ import type {
   DashboardSnapshot,
   Hotspot,
   RiskLevel,
+  ScenarioRunOptions,
+  SimulationRun,
 } from "@/types/domain";
 
 export const organizations = pgTable("organizations", {
@@ -93,6 +95,20 @@ export const scenarios = pgTable("scenarios", {
   profile: jsonb("profile").$type<number[]>().notNull(),
   impacts: jsonb("impacts").$type<string[]>().notNull(),
   organizationId: text("organization_id").references(() => organizations.id),
+});
+
+export const scenarioJobs = pgTable("scenario_jobs", {
+  id: text("id").primaryKey(),
+  scenarioId: text("scenario_id")
+    .notNull()
+    .references(() => scenarios.id),
+  status: text("status").notNull(),
+  options: jsonb("options").$type<ScenarioRunOptions>(),
+  result: jsonb("result").$type<SimulationRun>(),
+  error: text("error"),
+  organizationId: text("organization_id").references(() => organizations.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
 });
 
 export const simulationRuns = pgTable("simulation_runs", {
