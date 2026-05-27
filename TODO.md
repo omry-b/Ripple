@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-18 (Postgres readings, notifications, alert resolve; manual-only list below)
+> **Last updated:** 2026-05-18 (edge cron worker + MANUAL_SETUP; you wire credentials)
 
 ---
 
@@ -456,10 +456,12 @@
 20. [x] Ingest scorer — readings → `applyReadingsToStreams` in pipeline + mock score state
 21. [x] Overview section anchors jump nav (`SectionJumpNav`)
 22. [x] README GitHub Actions CI status badge
-23. [ ] **Manual:** Vercel env (`DATABASE_URL`, `CRON_SECRET`, optional Clerk/Mapbox keys) + disable deployment protection + custom domain
+23. [ ] **Manual:** Follow [docs/MANUAL_SETUP.md](./docs/MANUAL_SETUP.md) — Vercel env, DO Postgres, CF worker deploy
 24. [x] Postgres: persist `signal_readings` + apply scorer on ingest
 25. [x] Notifications: Resend email, PagerDuty, org webhooks; alert resolve + ack webhooks
 26. [x] Watchlist digest frequency UI (localStorage until server prefs)
+27. [x] Edge wiring: `/api/ingest/internal`, `/api/ingest/batch`, `workers/cloudflare` cron
+28. [ ] **Manual:** `wrangler deploy` + `CRON_SECRET` on CF (see MANUAL_SETUP)
 
 ---
 
@@ -472,7 +474,8 @@ These cannot be completed in the repo without your accounts or infra:
 | Vercel Production env vars | Set in [Vercel dashboard](https://vercel.com/omry-2596s-projects/ripple) |
 | Deployment protection off | Vercel → Settings → Deployment Protection |
 | Custom domain / stable alias | Vercel → Domains |
-| Neon `DATABASE_URL` + `npm run db:push` + `db:seed` | Connect Neon, run once against production DB |
+| DO `DATABASE_URL` + `npm run db:push` + `db:seed` | [MANUAL_SETUP.md](./docs/MANUAL_SETUP.md) |
+| Cloudflare `wrangler deploy` + `CRON_SECRET` | [workers/cloudflare](../workers/cloudflare/) |
 | Clerk Organizations invites | Requires Clerk project + org billing |
 | `CHROMATIC_PROJECT_TOKEN` | Optional visual regression |
 | Third-party API keys | `AIS_API_KEY`, `PORTS_API_KEY`, `MAPBOX`, etc. — adapters already stub→live |

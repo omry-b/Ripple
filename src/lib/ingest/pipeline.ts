@@ -109,3 +109,48 @@ export async function runIngestPipeline(
     deadLetterCount: listDeadLetters().length,
   };
 }
+
+/** Apply pre-normalized edge events (e.g. from Cloudflare Queue consumer). */
+export async function runIngestFromEvents(
+  events: NormalizedIngestEvent[],
+  meta?: { source?: string }
+): Promise<{
+  totalEvents: number;
+  readingsNormalized: number;
+  streamsRescored: number;
+  snapshotRefreshed: boolean;
+}> {
+  const data = await getDataSource();
+  const source = meta?.source ?? "edge-batch";
+
+  if (events.length > 0) {
+    await data.recordIngestRun({
+      id: `ingest-${source}-${Date.now()}`,
+      adapter: source,
+      status: "completed",
+      startedAt: new Date().toISOString(),
+      finishedAt: new Date().toISOString(),
+      eventsIngested: events.length,
+      message: `Batch from ${source}`,
+    });
+  }
+
+  const readings = normalizeEventsToReadings(events);
+  const streamsRescored = await refreshScoresFromReadings(readings);
+
+  let snapshotRefreshed = false;
+  try {
+    await data.refreshSnapshot();
+    invalidateSnapshotCache();
+    snapshotRefreshed = true;
+  } catch {
+    /* mock */
+  }
+
+  return {
+    totalEvents: events.length,
+    readingsNormalized: readings.length,
+    streamsRescored,
+    snapshotRefreshed,
+  };
+}

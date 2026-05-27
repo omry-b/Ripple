@@ -1,0 +1,16 @@
+name = "ripple-cron"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+# Set production URL in dashboard or: wrangler secret put APP_URL
+[vars]
+APP_URL = "https://ripple-omry-2596s-projects.vercel.app"
+
+# CRON_SECRET → wrangler secret put CRON_SECRET
+
+[triggers]
+crons = [
+  "*/5 * * * *",
+  "0 */6 * * *",
+  "0 12 * * *",
+]

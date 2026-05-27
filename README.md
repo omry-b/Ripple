@@ -74,6 +74,13 @@ OpenAPI JSON: [`/api/openapi`](https://ripple-omry-2596s-projects.vercel.app/api
 
 Demo roles: set `DEMO_USER_ROLE` to `viewer`, `analyst`, or `admin` in `.env.local`. Optional `REQUIRE_AUTH_FOR_UI=true` redirects unauthenticated users to sign-in.
 
+## Production setup (you + credits)
+
+**Your manual steps (credentials, Vercel env, DO Postgres, Cloudflare cron):**  
+→ **[docs/MANUAL_SETUP.md](./docs/MANUAL_SETUP.md)**
+
+Architecture (CF + DO): [docs/DEPLOY_CLOUDFLARE_DO.md](./docs/DEPLOY_CLOUDFLARE_DO.md)
+
 ## Build log
 
 See [TODO.md](./TODO.md) for the full backlog and what’s shipped.
