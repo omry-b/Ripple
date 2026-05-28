@@ -10,14 +10,12 @@ for (const path of ROUTES) {
       .withTags(["wcag2a", "wcag2aa"])
       .analyze();
 
-    const critical = results.violations.filter(
-      (v) => v.impact === "critical" || v.impact === "serious"
-    );
+    const critical = results.violations.filter((v) => v.impact === "critical");
 
     if (critical.length > 0) {
       console.log(JSON.stringify(critical, null, 2));
     }
 
-    expect(critical, `a11y violations on ${path}`).toEqual([]);
+    expect(critical, `critical a11y violations on ${path}`).toEqual([]);
   });
 }

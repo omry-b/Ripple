@@ -2,7 +2,9 @@ import { test, expect } from "@playwright/test";
 
 test("navigates main dashboard routes", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("navigation")).toContainText("Ripple");
+  await expect(
+    page.getByRole("navigation", { name: "Main navigation" })
+  ).toContainText("Ripple");
   await page.getByRole("tab", { name: "Signals" }).click();
   await expect(page).toHaveURL(/\/signals/);
   await page.getByRole("tab", { name: "Scenario" }).click();

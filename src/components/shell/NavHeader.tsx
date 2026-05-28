@@ -34,7 +34,7 @@ export function NavHeader() {
   }, []);
 
   return (
-    <nav className="nav-header" role="navigation">
+    <nav className="nav-header" role="navigation" aria-label="Main navigation">
       <Link href="/" className="nav-brand" style={{ textDecoration: "none" }}>
         Ripple
       </Link>
@@ -63,7 +63,9 @@ export function NavHeader() {
         })}
         <Link
           href="/companies?watchlist=1"
-          className={`nav-tab-item${pathname.startsWith("/companies") && watchlistCount > 0 ? "" : ""}`}
+          className={`nav-tab-item${pathname.includes("watchlist=1") ? " active" : ""}`}
+          role="tab"
+          aria-selected={pathname.includes("watchlist=1")}
           style={{ textDecoration: "none", display: "inline-block" }}
         >
           Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
