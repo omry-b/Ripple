@@ -4,7 +4,7 @@ compatibility_date = "2024-11-01"
 
 # Set production URL in dashboard or: wrangler secret put APP_URL
 [vars]
-APP_URL = "https://ripple-omry-2596s-projects.vercel.app"
+APP_URL = "https://ripple-ruby.vercel.app"
 
 # CRON_SECRET → wrangler secret put CRON_SECRET
 
