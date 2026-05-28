@@ -4,6 +4,39 @@
   color: #18181b;
 }
 
+[data-theme="light"] .ripple-app::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(59, 130, 246, 0.08), transparent 55%),
+    #f4f4f5;
+}
+
+[data-theme="light"] .ripple-app::after {
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+[data-theme="light"] .bento-card,
+[data-theme="light"] .workbench-card,
+[data-theme="light"] .stream-card,
+[data-theme="light"] .table-container {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #e4e4e7;
+}
+
+[data-theme="light"] .hero-display {
+  background: linear-gradient(135deg, #18181b 0%, #2563eb 50%, #18181b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+[data-theme="light"] .nav-brand {
+  background: linear-gradient(120deg, #18181b 0%, #2563eb 50%, #18181b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 [data-theme="light"] .nav-header {
   background: rgba(244, 244, 245, 0.92);
   border-bottom-color: #e4e4e7;

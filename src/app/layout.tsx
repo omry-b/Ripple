@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, DM_Mono } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { VercelInsights } from "@/components/shell/VercelInsights";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AppClerkProvider } from "@/components/providers/AppClerkProvider";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmMono = DM_Mono({
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} ${dmMono.variable}`} data-theme="dark">
+    <html lang="en" className={`${outfit.variable} ${jetbrainsMono.variable}`} data-theme="dark">
       <body>
         <AppClerkProvider>
           <ThemeProvider>{children}</ThemeProvider>

@@ -2,9 +2,6 @@ import { getDashboard } from "@/lib/api";
 import { NavHeader } from "@/components/shell/NavHeader";
 import { SignalTickerLive } from "@/components/shell/SignalTickerLive";
 import { PageEffects } from "@/components/shell/PageEffects";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 import { LiveDataProvider } from "@/context/LiveDataContext";
 import { RefreshBanner } from "@/components/shell/RefreshBanner";
 import { SkipToContent } from "@/components/shell/SkipToContent";
@@ -16,6 +13,9 @@ import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -26,17 +26,19 @@ export default async function DashboardLayout({
   return (
     <DemoAuthProvider>
       <LiveDataProvider initialDashboard={dashboard}>
-        <SkipToContent />
-      <DataModeBanner />
-      <OfflineBanner />
-      <NavHeader />
-      <RefreshBanner />
-      <SignalTickerLive />
-      <PageEffects />
-      <CommandPalette />
-      <KeyboardShortcuts />
-        <PageTransition>{children}</PageTransition>
-        <OnboardingTour />
+        <div className="ripple-app">
+          <SkipToContent />
+          <DataModeBanner />
+          <OfflineBanner />
+          <NavHeader />
+          <RefreshBanner />
+          <SignalTickerLive />
+          <PageEffects />
+          <CommandPalette />
+          <KeyboardShortcuts />
+          <PageTransition>{children}</PageTransition>
+          <OnboardingTour />
+        </div>
       </LiveDataProvider>
     </DemoAuthProvider>
   );
