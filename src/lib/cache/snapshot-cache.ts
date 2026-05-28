@@ -1,5 +1,6 @@
 import type { DashboardSnapshot } from "@/types/domain";
 import { kvDeleteSnapshot, kvGetSnapshot, kvSetSnapshot } from "@/lib/cache/kv-snapshot";
+import { isDatabaseConfigured } from "@/lib/db/client";
 
 const TTL_MS = 60_000;
 let memoryCache: { snapshot: DashboardSnapshot; expiresAt: number } | null = null;
@@ -7,6 +8,10 @@ let memoryCache: { snapshot: DashboardSnapshot; expiresAt: number } | null = nul
 export async function getCachedSnapshot(
   loader: () => Promise<DashboardSnapshot>
 ): Promise<DashboardSnapshot> {
+  if (isDatabaseConfigured()) {
+    return loader();
+  }
+
   const now = Date.now();
   if (memoryCache && memoryCache.expiresAt > now) {
     return memoryCache.snapshot;

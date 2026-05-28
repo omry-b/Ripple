@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Alert } from "@/types/domain";
 import { acknowledgeAlertApi, resolveAlertApi } from "@/lib/client/api";
 import { AlertCard } from "./AlertCard";
@@ -14,6 +14,10 @@ type AlertsSectionClientProps = {
 export function AlertsSectionClient({ initialAlerts }: AlertsSectionClientProps) {
   const [alerts, setAlerts] = useState(initialAlerts);
   const [selected, setSelected] = useState<Alert | null>(null);
+
+  useEffect(() => {
+    setAlerts(initialAlerts);
+  }, [initialAlerts]);
   const [acknowledging, setAcknowledging] = useState(false);
   const [resolving, setResolving] = useState(false);
 

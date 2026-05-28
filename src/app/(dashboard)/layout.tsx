@@ -1,7 +1,10 @@
-import { getDashboard, getTicker } from "@/lib/api";
+import { getDashboard } from "@/lib/api";
 import { NavHeader } from "@/components/shell/NavHeader";
-import { SignalTicker } from "@/components/shell/SignalTicker";
+import { SignalTickerLive } from "@/components/shell/SignalTickerLive";
 import { PageEffects } from "@/components/shell/PageEffects";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import { LiveDataProvider } from "@/context/LiveDataContext";
 import { RefreshBanner } from "@/components/shell/RefreshBanner";
 import { SkipToContent } from "@/components/shell/SkipToContent";
@@ -18,20 +21,17 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [dashboard, ticker] = await Promise.all([getDashboard(), getTicker()]);
+  const dashboard = await getDashboard();
 
   return (
     <DemoAuthProvider>
-      <LiveDataProvider
-        initialAsOf={dashboard.snapshot.asOf}
-        initialSnapshot={dashboard.snapshot}
-      >
+      <LiveDataProvider initialDashboard={dashboard}>
         <SkipToContent />
       <DataModeBanner />
       <OfflineBanner />
       <NavHeader />
       <RefreshBanner />
-      <SignalTicker items={ticker} />
+      <SignalTickerLive />
       <PageEffects />
       <CommandPalette />
       <KeyboardShortcuts />

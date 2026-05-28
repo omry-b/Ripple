@@ -1,6 +1,17 @@
+import { isDatabaseConfigured } from "@/lib/db/client";
+
 export const CACHE_PUBLIC_SHORT = {
   "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
 } as const;
+
+export const CACHE_DYNAMIC = {
+  "Cache-Control": "private, no-cache, no-store, must-revalidate",
+} as const;
+
+/** Postgres production: no CDN caching. Mock/demo: short public cache. */
+export function dataApiCacheHeaders(): HeadersInit {
+  return isDatabaseConfigured() ? CACHE_DYNAMIC : CACHE_PUBLIC_SHORT;
+}
 
 export function jsonOk<T extends Record<string, unknown>>(
   body: T,

@@ -1,6 +1,6 @@
 import type { Decorator } from "@storybook/react";
 import { LiveDataProvider } from "@/context/LiveDataContext";
-import { mockSnapshot } from "./fixtures";
+import { mockDashboard } from "./fixtures";
 
 export const withRippleShell: Decorator = (Story) => (
   <div
@@ -18,7 +18,7 @@ export const withRippleShell: Decorator = (Story) => (
 );
 
 export const withLiveData: Decorator = (Story) => (
-  <LiveDataProvider initialAsOf={mockSnapshot.asOf} initialSnapshot={mockSnapshot}>
+  <LiveDataProvider initialDashboard={mockDashboard}>
     <Story />
   </LiveDataProvider>
 );

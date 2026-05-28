@@ -14,14 +14,9 @@ type OverviewPageProps = {
 };
 
 export function OverviewPage({ data }: OverviewPageProps) {
-  const { snapshot: liveSnapshot } = useLiveData();
-  const snapshot = liveSnapshot ?? data.snapshot;
-
-  const liveData: DashboardPayload = {
-    ...data,
-    snapshot,
-    topCompaniesMini: data.topCompaniesMini,
-  };
+  const { dashboard: liveDashboard, snapshot: liveSnapshot } = useLiveData();
+  const liveData = liveDashboard ?? data;
+  const snapshot = liveSnapshot ?? liveData.snapshot;
 
   return (
     <main className="content-container" id="main-content">
@@ -38,12 +33,12 @@ export function OverviewPage({ data }: OverviewPageProps) {
       <span className="section-label" id="alerts">
         Active Alerts · {snapshot.openAlertsCount} Open
       </span>
-      <AlertsSectionClient initialAlerts={data.alerts} />
+      <AlertsSectionClient initialAlerts={liveData.alerts} />
 
       <span className="section-label" id="companies">
         Company Exposure Ranking
       </span>
-      <CompanyExposureTable companies={data.companies} compact />
+      <CompanyExposureTable companies={liveData.companies} compact />
 
       <span className="section-label" id="signals">
         Live Signal Streams · {snapshot.activeStreamsCount} Active{" "}
@@ -51,7 +46,7 @@ export function OverviewPage({ data }: OverviewPageProps) {
           View all →
         </Link>
       </span>
-      <StreamGrid streams={data.streams.slice(0, 4)} linkToSignals />
+      <StreamGrid streams={liveData.streams.slice(0, 4)} linkToSignals />
 
       <span className="section-label" id="scenario">
         Scenario Workbench{" "}

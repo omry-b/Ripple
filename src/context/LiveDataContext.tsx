@@ -8,13 +8,16 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { DashboardSnapshot } from "@/types/domain";
+import { useRouter } from "next/navigation";
+import type { DashboardPayload, DashboardSnapshot, TickerItem } from "@/types/domain";
 import { DASHBOARD_POLL_MS } from "@/lib/constants";
-import { fetchSnapshot } from "@/lib/client/api";
+import { fetchDashboard } from "@/lib/client/api";
 
 type LiveDataContextValue = {
   asOf: string;
   snapshot: DashboardSnapshot | null;
+  dashboard: DashboardPayload | null;
+  ticker: TickerItem[];
   isRefreshing: boolean;
   lastError: string | null;
   refresh: () => Promise<void>;
@@ -23,37 +26,42 @@ type LiveDataContextValue = {
 const LiveDataContext = createContext<LiveDataContextValue | null>(null);
 
 type LiveDataProviderProps = {
-  initialAsOf: string;
-  initialSnapshot: DashboardSnapshot;
+  initialDashboard: DashboardPayload;
   children: React.ReactNode;
 };
 
-export function LiveDataProvider({
-  initialAsOf,
-  initialSnapshot,
-  children,
-}: LiveDataProviderProps) {
-  const [asOf, setAsOf] = useState(initialAsOf);
-  const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(initialSnapshot);
+export function LiveDataProvider({ initialDashboard, children }: LiveDataProviderProps) {
+  const router = useRouter();
+  const [dashboard, setDashboard] = useState<DashboardPayload>(initialDashboard);
+  const [asOf, setAsOf] = useState(initialDashboard.snapshot.asOf);
+  const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(initialDashboard.snapshot);
+  const [ticker, setTicker] = useState<TickerItem[]>(initialDashboard.ticker);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
+
+  const applyDashboard = useCallback((data: DashboardPayload) => {
+    setDashboard(data);
+    setAsOf(data.snapshot.asOf);
+    setSnapshot(data.snapshot);
+    setTicker(data.ticker);
+  }, []);
 
   const refresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      const data = await fetchSnapshot();
-      setAsOf(data.asOf);
-      setSnapshot(data.snapshot);
+      const data = await fetchDashboard();
+      applyDashboard(data);
       setLastError(null);
+      router.refresh();
     } catch (e) {
       setLastError(e instanceof Error ? e.message : "Refresh failed");
     } finally {
       setIsRefreshing(false);
     }
-  }, []);
+  }, [applyDashboard, router]);
 
   useEffect(() => {
-    const id = window.setInterval(refresh, DASHBOARD_POLL_MS);
+    const id = window.setInterval(() => void refresh(), DASHBOARD_POLL_MS);
     return () => window.clearInterval(id);
   }, [refresh]);
 
@@ -74,8 +82,8 @@ export function LiveDataProvider({
   }, [refresh]);
 
   const value = useMemo(
-    () => ({ asOf, snapshot, isRefreshing, lastError, refresh }),
-    [asOf, snapshot, isRefreshing, lastError, refresh]
+    () => ({ asOf, snapshot, dashboard, ticker, isRefreshing, lastError, refresh }),
+    [asOf, snapshot, dashboard, ticker, isRefreshing, lastError, refresh]
   );
 
   return (

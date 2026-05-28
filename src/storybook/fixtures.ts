@@ -1,4 +1,11 @@
-import type { Alert, Company, DashboardSnapshot, ScoreFactor, SignalStream } from "@/types/domain";
+import type {
+  Alert,
+  Company,
+  DashboardPayload,
+  DashboardSnapshot,
+  ScoreFactor,
+  SignalStream,
+} from "@/types/domain";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
 
 export const mockAlertCritical: Alert = {
@@ -125,4 +132,19 @@ export const mockSnapshot: DashboardSnapshot = {
       region: "APAC",
     },
   ],
+};
+
+export const mockDashboard: DashboardPayload = {
+  snapshot: mockSnapshot,
+  ticker: [
+    { label: "TSMC FAB", level: "critical" },
+    { label: "AIS LANE APAC", level: "elevated" },
+  ],
+  topCompaniesMini: [
+    { id: "apple", name: "Apple Inc.", score: 81, cvar: "$1.4B", delta7d: "+9" },
+  ],
+  alerts: [mockAlertCritical, mockAlertElevated],
+  companies: [mockCompany],
+  streams: mockStreams,
+  scenarios: [],
 };

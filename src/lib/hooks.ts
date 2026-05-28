@@ -1,48 +1,31 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { DashboardSnapshot, SignalStream } from "@/types/domain";
 import { useLiveData } from "@/context/LiveDataContext";
-import { fetchSignals } from "@/lib/client/api";
-import { DASHBOARD_POLL_MS } from "@/lib/constants";
 
 export function useDashboard() {
-  const { snapshot, asOf, isRefreshing, lastError, refresh } = useLiveData();
-  return { snapshot, asOf, isRefreshing, lastError, refresh };
+  const { snapshot, dashboard, asOf, isRefreshing, lastError, refresh } = useLiveData();
+  return { snapshot, dashboard, asOf, isRefreshing, lastError, refresh };
 }
 
 export function useSignals(initial: SignalStream[]) {
+  const { dashboard, asOf: liveAsOf, refresh: refreshDashboard } = useLiveData();
   const [signals, setSignals] = useState(initial);
-  const [asOf, setAsOf] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastError, setLastError] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      const data = await fetchSignals();
-      setSignals(data.signals);
-      setAsOf(data.asOf);
-      setLastError(null);
-    } catch (e) {
-      setLastError(e instanceof Error ? e.message : "Refresh failed");
-    } finally {
-      setIsRefreshing(false);
+  useEffect(() => {
+    if (dashboard?.streams) {
+      setSignals(dashboard.streams);
     }
-  }, []);
+  }, [dashboard]);
 
-  useEffect(() => {
-    const id = window.setInterval(() => void refresh(), DASHBOARD_POLL_MS);
-    return () => window.clearInterval(id);
-  }, [refresh]);
-
-  useEffect(() => {
-    const onFocus = () => void refresh();
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
-  }, [refresh]);
-
-  return { signals, asOf, isRefreshing, lastError, refresh };
+  return {
+    signals,
+    asOf: liveAsOf,
+    isRefreshing: false,
+    lastError: null,
+    refresh: refreshDashboard,
+  };
 }
 
 export function useRevealOnScroll(selector = ".reveal") {

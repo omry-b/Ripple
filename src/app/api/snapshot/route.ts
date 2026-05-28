@@ -1,7 +1,7 @@
 import { getScopedSnapshot } from "@/lib/api/scoped";
-import { CACHE_PUBLIC_SHORT, jsonData } from "@/lib/api/response";
+import { dataApiCacheHeaders, jsonData } from "@/lib/api/response";
 
 export async function GET(request: Request) {
   const snapshot = await getScopedSnapshot(request);
-  return jsonData({ snapshot }, 200, CACHE_PUBLIC_SHORT);
+  return jsonData({ snapshot }, 200, dataApiCacheHeaders());
 }

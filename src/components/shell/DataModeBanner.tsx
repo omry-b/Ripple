@@ -32,7 +32,8 @@ export function DataModeBanner() {
       ) : (
         <>
           Live · <strong>Postgres</strong> (DigitalOcean)
-          {dbOk ? " · connected" : " · checking DB…"} · Cloudflare crons active ·{" "}
+          {dbOk ? " · connected" : " · checking DB…"} · refreshes every 30s · Cloudflare
+          crons ·{" "}
           <Link href="/settings/system" className="demo-banner-link">
             system status
           </Link>
