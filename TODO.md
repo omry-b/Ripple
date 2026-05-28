@@ -456,12 +456,13 @@
 20. [x] Ingest scorer — readings → `applyReadingsToStreams` in pipeline + mock score state
 21. [x] Overview section anchors jump nav (`SectionJumpNav`)
 22. [x] README GitHub Actions CI status badge
-23. [ ] **Manual:** Follow [docs/MANUAL_SETUP.md](./docs/MANUAL_SETUP.md) — Vercel env, DO Postgres, CF worker deploy
+23. [x] **Manual:** Vercel env, DO Postgres, CF worker deploy (user completed)
 24. [x] Postgres: persist `signal_readings` + apply scorer on ingest
 25. [x] Notifications: Resend email, PagerDuty, org webhooks; alert resolve + ack webhooks
 26. [x] Watchlist digest frequency UI (localStorage until server prefs)
 27. [x] Edge wiring: `/api/ingest/internal`, `/api/ingest/batch`, `workers/cloudflare` cron
-28. [ ] **Manual:** `wrangler deploy` + `CRON_SECRET` on CF (see MANUAL_SETUP)
+28. [x] **Manual:** `wrangler deploy` + `CRON_SECRET` on CF
+29. [x] Production stack UI: `/settings/system`, `/api/ops/status`, RSS, Postgres contagion, live banner
 
 ---
 
@@ -483,7 +484,7 @@ These cannot be completed in the repo without your accounts or infra:
 | SQS / Inngest queue | Production-scale infra choice |
 | Lighthouse 90+ on cold `/` | Tune after deploy (images, fonts, edge cache) |
 | Figma ↔ code parity | Design process |
-| RSS feed endpoint | Planned; webhook + Slack wired |
+| RSS feed endpoint | [x] `/api/feed/rss` |
 
 Everything else in Phases 0–8 is implemented in code (demo/mock fallbacks where keys are unset).
 

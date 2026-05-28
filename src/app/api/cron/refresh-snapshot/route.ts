@@ -1,12 +1,9 @@
 import { refreshSnapshot } from "@/lib/api";
+import { authorizeServiceRequest } from "@/lib/auth/service-secret";
 
 export async function POST(request: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (secret) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${secret}`) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!authorizeServiceRequest(request)) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {

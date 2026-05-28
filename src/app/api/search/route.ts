@@ -38,9 +38,19 @@ export async function GET(request: Request) {
       searchText: "methodology scoring weights CVaR signals",
     };
 
+    const systemStatus = {
+      id: "system",
+      label: "System status",
+      sublabel: "Postgres, Cloudflare crons, ingest",
+      href: "/settings/system",
+      group: "Navigate" as const,
+      searchText: "ops health database cloudflare worker cron deploy",
+    };
+
     const all: SearchableItem[] = [
       ...navigation,
       methodology,
+      systemStatus,
       ...companies.map((c) => ({ ...c, searchText: c.sublabel })),
       ...alerts.map((a) => ({ ...a, searchText: a.sublabel })),
       ...index.signals.map((s) => ({ ...s, searchText: s.sublabel })),

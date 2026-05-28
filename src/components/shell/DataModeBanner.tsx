@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type HealthResponse = {
   dataMode: string;
-  database: string;
-  auth: string;
+  database?: { connected: boolean };
+  auth?: string;
 };
 
 export function DataModeBanner() {
@@ -20,19 +21,21 @@ export function DataModeBanner() {
 
   const mode = health?.dataMode ?? "mock";
   const isMock = mode === "mock";
+  const dbOk = health?.database?.connected === true;
 
   return (
     <div className={`demo-banner${isMock ? "" : " demo-banner-live"}`}>
       {isMock ? (
         <>
-          Demo data · in-memory mock store · set <code>DATABASE_URL</code> for Postgres
+          Demo data · in-memory mock · set <code>DATABASE_URL</code> on Vercel for Postgres
         </>
       ) : (
         <>
-          Live data mode · Postgres · auth: {health?.auth} ·{" "}
-          <a href="/api/health" style={{ color: "#3b82f6" }}>
-            system health
-          </a>
+          Live · <strong>Postgres</strong> (DigitalOcean)
+          {dbOk ? " · connected" : " · checking DB…"} · Cloudflare crons active ·{" "}
+          <Link href="/settings/system" style={{ color: "#93c5fd" }}>
+            system status
+          </Link>
         </>
       )}
     </div>

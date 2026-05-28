@@ -193,6 +193,12 @@ export function ScenarioWorkbench({
             />
             <span>Async job (submit → poll)</span>
           </label>
+          {useAsyncJob && (
+            <p className="watchlist-manager-hint scenario-async-hint">
+              Jobs save to Postgres; Cloudflare drains the queue every 5 minutes. Poll here
+              until complete, or check back shortly.
+            </p>
+          )}
           <label className="scenario-param">
             <span>Duration {durationDays} days</span>
             <input

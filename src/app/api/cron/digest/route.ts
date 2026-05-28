@@ -1,10 +1,9 @@
 import { getAlerts } from "@/lib/api";
 import { sendWatchlistDigest } from "@/lib/notifications/digest";
+import { authorizeServiceRequest } from "@/lib/auth/service-secret";
 
 export async function GET(request: Request) {
-  const auth = request.headers.get("authorization");
-  const secret = process.env.CRON_SECRET;
-  if (secret && auth !== `Bearer ${secret}`) {
+  if (!authorizeServiceRequest(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 

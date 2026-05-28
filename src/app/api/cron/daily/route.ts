@@ -2,16 +2,11 @@ import { refreshSnapshot } from "@/lib/api";
 import { sendWatchlistDigest } from "@/lib/notifications/digest";
 import { getAlerts } from "@/lib/api";
 import { drainScenarioJobQueue } from "@/lib/scenario/worker";
-
-function authorize(request: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return request.headers.get("authorization") === `Bearer ${secret}`;
-}
+import { authorizeServiceRequest } from "@/lib/auth/service-secret";
 
 /** Combined daily cron — Hobby-safe (single cron slot). Runs snapshot, digest, scenario drain. */
 export async function GET(request: Request) {
-  if (!authorize(request)) {
+  if (!authorizeServiceRequest(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 

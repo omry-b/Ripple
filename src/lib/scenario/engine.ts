@@ -5,7 +5,8 @@ import { getCvarMultiplier } from "@/lib/risk/cvar-config";
 
 export function runScenarioEngine(
   scenario: Scenario,
-  options?: ScenarioRunOptions
+  options?: ScenarioRunOptions,
+  contagionEntities?: string[]
 ): SimulationRun {
   const severity = (options?.severity ?? 100) / 100;
   const durationDays = options?.durationDays ?? 30;
@@ -25,7 +26,7 @@ export function runScenarioEngine(
     profile,
     impacts: [...scenario.impacts],
     lossDistribution: monteCarloLossBins(severity * cvarMult, scenario.id.length),
-    contagionEntities: contagionEntityNames(region).slice(0, 8),
+    contagionEntities: (contagionEntities ?? contagionEntityNames(region)).slice(0, 8),
     shock: {
       region,
       durationDays,

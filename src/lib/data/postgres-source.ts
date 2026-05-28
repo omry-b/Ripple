@@ -4,6 +4,7 @@ import { ensureSeeded, DEMO_ORG_ID, DEMO_USER_ID } from "@/lib/db/seed";
 import * as schema from "@/lib/db/schema";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { runScenarioEngine } from "@/lib/scenario/engine";
+import { resolveContagionEntityNames } from "@/lib/scenario/graph-propagation";
 import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
 import type {
   Alert,
@@ -261,7 +262,9 @@ export const postgresDataSource: RippleDataSource = {
   async runScenario(id, options) {
     const scenario = await this.getScenario(id);
     if (!scenario) return null;
-    const run = runScenarioEngine(scenario, options);
+    const region = options?.region ?? "APAC";
+    const contagion = await resolveContagionEntityNames(region);
+    const run = runScenarioEngine(scenario, options, contagion);
     const db = getDb();
     await db.insert(schema.simulationRuns).values({
       id: run.id,

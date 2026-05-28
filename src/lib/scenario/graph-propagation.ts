@@ -1,5 +1,6 @@
-import type { GeoRegion } from "@/types/domain";
+import type { Company, GeoRegion } from "@/types/domain";
 import { getSuppliersForCompany } from "@/lib/mock/suppliers";
+import { getDataSource } from "@/lib/data";
 import { mockStore } from "@/lib/mock/store";
 
 export type PropagationNode = {
@@ -9,18 +10,13 @@ export type PropagationNode = {
   region: GeoRegion;
 };
 
-/**
- * BFS walk over supplier edges from companies in the shocked region.
- */
-export function walkContagionGraph(
+export function walkContagionGraphFromCompanies(
+  companies: Company[],
   region: GeoRegion,
   maxHops = 3,
   maxNodes = 8
 ): PropagationNode[] {
-  const seeds = mockStore
-    .getCompanies()
-    .filter((c) => c.region === region)
-    .slice(0, 3);
+  const seeds = companies.filter((c) => c.region === region).slice(0, 3);
 
   const seen = new Set<string>();
   const queue: PropagationNode[] = [];
@@ -61,8 +57,33 @@ export function walkContagionGraph(
   return result.sort((a, b) => a.hops - b.hops || a.name.localeCompare(b.name));
 }
 
-export function contagionEntityNames(region: GeoRegion): string[] {
-  return walkContagionGraph(region).map((n) =>
+/** BFS from companies in the shocked region (uses live data source). */
+export async function walkContagionGraph(
+  region: GeoRegion,
+  maxHops = 3,
+  maxNodes = 8
+): Promise<PropagationNode[]> {
+  const data = await getDataSource();
+  const companies = await data.getCompanies();
+  return walkContagionGraphFromCompanies(companies, region, maxHops, maxNodes);
+}
+
+export function contagionEntityNamesFromNodes(nodes: PropagationNode[]): string[] {
+  return nodes.map((n) =>
     n.hops === 0 ? n.name : `${n.name} (+${n.hops} hop${n.hops > 1 ? "s" : ""})`
   );
+}
+
+export async function resolveContagionEntityNames(
+  region: GeoRegion,
+  maxNodes = 8
+): Promise<string[]> {
+  const nodes = await walkContagionGraph(region, 3, maxNodes);
+  return contagionEntityNamesFromNodes(nodes);
+}
+
+/** Sync helper (mock companies) — prefer resolveContagionEntityNames in production. */
+export function contagionEntityNames(region: GeoRegion): string[] {
+  const nodes = walkContagionGraphFromCompanies(mockStore.getCompanies(), region);
+  return contagionEntityNamesFromNodes(nodes);
 }

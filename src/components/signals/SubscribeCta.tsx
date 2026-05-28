@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export function SubscribeCta() {
   const [status, setStatus] = useState<string | null>(null);
@@ -32,15 +33,15 @@ export function SubscribeCta() {
       <div>
         <span className="subscribe-cta-title">Stream to your stack</span>
         <p className="subscribe-cta-copy">
-          Register HMAC-signed webhooks below. Set <code>SLACK_WEBHOOK_URL</code>,{" "}
-          <code>RESEND_API_KEY</code>, or <code>PAGERDUTY_ROUTING_KEY</code> on the server for
-          outbound alerts and digests.
+          RSS for readers, webhooks for automation. Server alerts use{" "}
+          <code>SLACK_WEBHOOK_URL</code>, <code>RESEND_API_KEY</code>, or{" "}
+          <code>PAGERDUTY_ROUTING_KEY</code> on Vercel when configured.
         </p>
       </div>
       <div className="subscribe-cta-actions">
-        <button type="button" className="subscribe-cta-btn" disabled title="RSS feed planned">
+        <Link href="/api/feed/rss" className="subscribe-cta-btn" target="_blank" rel="noopener">
           RSS feed
-        </button>
+        </Link>
         <button
           type="button"
           className="subscribe-cta-btn primary"
