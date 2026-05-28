@@ -8,7 +8,12 @@ export function CompactMetricsStrip() {
   if (!snapshot) return null;
 
   return (
-    <div className="compact-metrics-strip" role="region" aria-label="Live risk summary">
+    <div
+      className="compact-metrics-strip tabular-nums"
+      role="region"
+      aria-label="Live risk summary"
+      aria-live="polite"
+    >
       <span className="compact-metric">
         Index <strong className="critical-accent">{snapshot.riskIndex.toFixed(1)}</strong>
       </span>

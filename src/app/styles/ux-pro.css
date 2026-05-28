@@ -1,0 +1,202 @@
+/**
+ * UI UX Pro Max — interaction, a11y, and data-dashboard patterns
+ * @see https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .bento-card {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .ticker-track {
+    animation: none !important;
+  }
+}
+
+/* Tabular figures for financial metrics (no layout shift) */
+.tabular-nums,
+.hero-metric,
+.compact-metric strong,
+.bento-val,
+.company-score-cell,
+.stream-score,
+.scenario-metric-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline text links — prefer class over raw hex in JSX */
+.text-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    color var(--ripple-duration-fast) var(--ripple-ease-out),
+    text-decoration-color var(--ripple-duration-fast);
+}
+
+.text-link:hover {
+  color: var(--color-accent-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text-link:focus-visible {
+  outline: none;
+  box-shadow: var(--ripple-focus-ring);
+}
+
+/* Clickable affordance */
+:where(
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  label[for],
+  .nav-tab-item,
+  .filter-export-btn,
+  .subscribe-cta-btn.primary,
+  .section-jump-link,
+  .alert-card-trigger,
+  .stream-card,
+  .cmdk-item
+) {
+  cursor: pointer;
+}
+
+:where(
+  button:not(:disabled),
+  .filter-export-btn,
+  .subscribe-cta-btn.primary,
+  .theme-toggle-btn,
+  .user-menu-trigger
+) {
+  min-height: var(--ripple-touch-min);
+}
+
+@media (max-width: 768px) {
+  .nav-tab-item {
+    min-height: var(--ripple-touch-min);
+  }
+}
+
+:where(
+  button:not(:disabled),
+  .filter-export-btn,
+  .subscribe-cta-btn,
+  .nav-tab-item,
+  .theme-toggle-btn,
+  .cvar-level-btn,
+  .section-jump-link
+):focus-visible {
+  outline: none;
+  box-shadow: var(--ripple-focus-ring);
+}
+
+/* Card interaction — subtle depth on hover (150–220ms) */
+.workbench-card {
+  transition:
+    border-color var(--ripple-duration-normal) var(--ripple-ease-out),
+    box-shadow var(--ripple-duration-normal) var(--ripple-ease-out),
+    transform var(--ripple-duration-fast) var(--ripple-ease-out);
+}
+
+.workbench-card:hover {
+  border-color: var(--ripple-border-strong);
+  box-shadow: var(--ripple-elevation-1);
+}
+
+.bento-card:hover {
+  box-shadow: var(--ripple-elevation-1);
+}
+
+/* Progressive loading shimmer */
+@keyframes ripple-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    var(--ripple-surface-raised) 0%,
+    #1a1a1a 50%,
+    var(--ripple-surface-raised) 100%
+  );
+  background-size: 200% 100%;
+  animation: ripple-shimmer 1.4s ease-in-out infinite;
+}
+
+.dashboard-loading {
+  padding-top: var(--ripple-space-6);
+}
+
+.skeleton-hero {
+  height: 120px;
+  border-radius: var(--ripple-radius-md);
+  margin-bottom: var(--ripple-space-6);
+  background: var(--ripple-surface-raised);
+  animation: ripple-shimmer 1.4s ease-in-out infinite;
+  background-size: 200% 100%;
+  background-image: linear-gradient(
+    90deg,
+    var(--ripple-surface-raised) 0%,
+    #1a1a1a 50%,
+    var(--ripple-surface-raised) 100%
+  );
+}
+
+/* Nav active state — clearer hierarchy */
+.nav-tab-item {
+  transition:
+    color var(--ripple-duration-fast) var(--ripple-ease-out),
+    background var(--ripple-duration-fast) var(--ripple-ease-out),
+    box-shadow var(--ripple-duration-fast);
+}
+
+.nav-tab-item:hover:not(.active) {
+  color: var(--ripple-text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-tab-item.active {
+  box-shadow: inset 0 0 0 1px var(--ripple-border-strong);
+}
+
+.filter-export-btn,
+.subscribe-cta-btn {
+  transition:
+    border-color var(--ripple-duration-fast) var(--ripple-ease-out),
+    color var(--ripple-duration-fast) var(--ripple-ease-out),
+    background var(--ripple-duration-fast);
+}
+
+.filter-export-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.subscribe-cta-btn.primary:hover {
+  background: rgba(59, 130, 246, 0.1);
+}

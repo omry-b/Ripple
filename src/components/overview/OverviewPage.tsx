@@ -42,7 +42,7 @@ export function OverviewPage({ data }: OverviewPageProps) {
 
       <span className="section-label" id="signals">
         Live Signal Streams · {snapshot.activeStreamsCount} Active{" "}
-        <Link href="/signals" style={{ color: "#3B82F6", textDecoration: "none", marginLeft: 8 }}>
+        <Link href="/signals" className="text-link" style={{ marginLeft: 8 }}>
           View all →
         </Link>
       </span>
@@ -50,7 +50,7 @@ export function OverviewPage({ data }: OverviewPageProps) {
 
       <span className="section-label" id="scenario">
         Scenario Workbench{" "}
-        <Link href="/scenario" style={{ color: "#3B82F6", textDecoration: "none", marginLeft: 8 }}>
+        <Link href="/scenario" className="text-link" style={{ marginLeft: 8 }}>
           Open workbench →
         </Link>
       </span>

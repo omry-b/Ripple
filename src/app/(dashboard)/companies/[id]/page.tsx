@@ -121,13 +121,14 @@ export default async function CompanyDetailPage({ params }: Props) {
 
         <span className="section-label">Actions</span>
         <section className="workbench-card">
-          <Link href="/signals" style={{ color: "#3B82F6", fontSize: 12, textDecoration: "none" }}>
+          <Link href="/signals" className="text-link" style={{ fontSize: 12 }}>
             View all signal streams →
           </Link>
           <br />
           <Link
             href="/scenario"
-            style={{ color: "#3B82F6", fontSize: 12, textDecoration: "none", marginTop: 8, display: "inline-block" }}
+            className="text-link"
+            style={{ fontSize: 12, marginTop: 8, display: "inline-block" }}
           >
             Run scenario simulation →
           </Link>

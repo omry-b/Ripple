@@ -24,7 +24,7 @@ export default function DashboardError({
         <button type="button" className="reset-workbench-btn" onClick={reset}>
           Try again
         </button>
-        <Link href="/" style={{ color: "#3B82F6", fontSize: 12, alignSelf: "center" }}>
+        <Link href="/" className="text-link" style={{ fontSize: 12, alignSelf: "center" }}>
           Back to overview
         </Link>
       </div>
