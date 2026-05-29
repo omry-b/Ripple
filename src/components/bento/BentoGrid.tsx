@@ -92,9 +92,9 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
           {snapshot.cvar95Display}
         </div>
         <div className="card-subtitle">{snapshot.cvarDeltaLabel}</div>
-        <div className="progress-bar-bg">
+        <div className="progress-bar-bg cvar-progress-track">
           <div
-            className="progress-bar-fill"
+            className="progress-bar-fill cvar-progress-fill"
             style={{ width: `${snapshot.cvarProgressPercent}%` }}
           />
         </div>

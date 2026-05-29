@@ -70,14 +70,14 @@ export function StreamGrid({
                 className={`stream-score ${stream.level === "critical" ? "critical-text" : stream.level === "elevated" ? "elevated-text" : "normal-text"}`}
               >
                 {stream.score}
-                <span style={{ fontSize: 9, color: "#404040" }}>/100</span>
+                <span className="stream-score-denom">/100</span>
               </span>
             </div>
             <svg
               width="100%"
               height="20"
               viewBox="0 0 100 20"
-              style={{ display: "block", margin: "6px 0" }}
+              className="stream-sparkline"
               role="img"
               aria-label={`${stream.name} 7-day sparkline, score ${stream.score}`}
             >

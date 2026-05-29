@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/shell/PageHeader";
+import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import Link from "next/link";
 
 const DEMO_MEMBERS = [
@@ -7,45 +8,58 @@ const DEMO_MEMBERS = [
   { email: "admin@ripple.demo", role: "admin", status: "Active" },
 ];
 
+export const metadata = { title: "Team — Ripple" };
+
 export default function TeamSettingsPage() {
   return (
-    <div className="content-container">
+    <>
       <PageHeader
         title="Team"
         subtitle="Invite colleagues and manage roles (demo — wire Clerk Organizations for production)."
       />
-      <section className="workbench-card team-settings-card">
-        <h3 className="supplier-tier-title">Members</h3>
-        <ul className="team-member-list">
-          {DEMO_MEMBERS.map((m) => (
-            <li key={m.email} className="team-member-row">
-              <span>{m.email}</span>
-              <span className="team-member-role">{m.role}</span>
-              <span className="team-member-status">{m.status}</span>
-            </li>
-          ))}
-        </ul>
-        <form className="team-invite-form" action="#">
-          <label htmlFor="invite-email">Invite by email</label>
-          <div className="team-invite-row">
-            <input id="invite-email" type="email" placeholder="colleague@company.com" />
-            <select aria-label="Role for invite">
-              <option value="viewer">Viewer</option>
-              <option value="analyst">Analyst</option>
-              <option value="admin">Admin</option>
-            </select>
-            <button type="submit" className="filter-export-btn">
-              Send invite
-            </button>
-          </div>
+      <main className="content-container">
+        <Breadcrumbs
+          items={[
+            { label: "Overview", href: "/" },
+            { label: "Team" },
+          ]}
+        />
+        <section className="workbench-card team-settings-card">
+          <h3 className="supplier-tier-title">Members</h3>
+          <ul className="team-member-list">
+            {DEMO_MEMBERS.map((m) => (
+              <li key={m.email} className="team-member-row">
+                <span>{m.email}</span>
+                <span className="team-member-role">{m.role}</span>
+                <span className="team-member-status">{m.status}</span>
+              </li>
+            ))}
+          </ul>
+          <form className="team-invite-form" action="#">
+            <label htmlFor="invite-email">Invite by email</label>
+            <div className="team-invite-row">
+              <input id="invite-email" type="email" placeholder="colleague@company.com" />
+              <select aria-label="Role for invite">
+                <option value="viewer">Viewer</option>
+                <option value="analyst">Analyst</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button type="submit" className="welcome-cta-primary team-invite-submit">
+                Send invite
+              </button>
+            </div>
+            <p className="watchlist-manager-hint">
+              Invites are a UI placeholder until Clerk Organizations is configured.
+            </p>
+          </form>
           <p className="watchlist-manager-hint">
-            Invites are a UI placeholder until Clerk Organizations is configured.
+            <Link href="/sign-in" className="text-link">
+              Sign in
+            </Link>{" "}
+            with demo roles via the user menu.
           </p>
-        </form>
-        <p className="watchlist-manager-hint">
-          <Link href="/sign-in">Sign in</Link> with demo roles via the user menu.
-        </p>
-      </section>
-    </div>
+        </section>
+      </main>
+    </>
   );
 }

@@ -30,7 +30,7 @@ export default async function EmbedPage() {
       </div>
       <footer className="embed-widget-footer">
         <a
-          href="https://ripple-omry-2596s-projects.vercel.app"
+          href={process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-ruby.vercel.app"}
           target="_blank"
           rel="noopener noreferrer"
         >

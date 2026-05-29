@@ -9,25 +9,25 @@ export const metadata = {
 
 export default function SystemSettingsPage() {
   return (
-    <div className="content-container">
-      <Breadcrumbs
-        items={[
-          { label: "Overview", href: "/" },
-          { label: "System" },
-        ]}
-      />
+    <>
       <PageHeader
         title="System status"
         subtitle="Postgres on DigitalOcean · timers on Cloudflare · app on Vercel"
       />
-      <p className="watchlist-manager-hint" style={{ marginBottom: 16 }}>
-        <Link href="/api/health">/api/health</Link>
-        {" · "}
-        <Link href="/api/ops/status">/api/ops/status</Link>
-        {" · "}
-        <Link href="/api/feed/rss">RSS feed</Link>
-      </p>
-      <SystemStatusPanel />
-    </div>
+      <main className="content-container">
+        <Breadcrumbs
+          items={[
+            { label: "Overview", href: "/" },
+            { label: "System" },
+          ]}
+        />
+        <nav className="system-quick-links" aria-label="Quick API links">
+          <Link href="/api/health">Health</Link>
+          <Link href="/api/ops/status">Ops status</Link>
+          <Link href="/api/feed/rss">RSS feed</Link>
+        </nav>
+        <SystemStatusPanel />
+      </main>
+    </>
   );
 }

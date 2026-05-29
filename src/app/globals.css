@@ -2,6 +2,7 @@
 @import "./styles/tokens.css";
 @import "./styles/ux-pro.css";
 @import "./styles/ripple-aesthetic.css";
+@import "./styles/ripple-components.css";
 @import "./styles/theme.css";
 
 * {
