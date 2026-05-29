@@ -3,9 +3,14 @@ export interface Env {
   CRON_SECRET: string;
 }
 
-async function callRipple(env: Env, path: string): Promise<Response> {
+async function callRipple(env: Env, path: string, init?: RequestInit): Promise<Response> {
   return fetch(`${env.APP_URL.replace(/\/$/, "")}${path}`, {
-    headers: { Authorization: `Bearer ${env.CRON_SECRET}` },
+    method: init?.method ?? "GET",
+    ...init,
+    headers: {
+      Authorization: `Bearer ${env.CRON_SECRET}`,
+      ...(init?.headers ?? {}),
+    },
   });
 }
 
@@ -20,12 +25,14 @@ export default {
     ctx.waitUntil(
       (async () => {
         if (cron === "*/5 * * * *") {
-          const res = await callRipple(env, "/api/cron/scenario-worker");
-          console.log("scenario-worker", res.status, await res.text());
+          const scenario = await callRipple(env, "/api/cron/scenario-worker");
+          console.log("scenario-worker", scenario.status, await scenario.text());
+          const snapshot = await callRipple(env, "/api/cron/snapshot-refresh");
+          console.log("snapshot-refresh", snapshot.status, await snapshot.text());
           return;
         }
         if (cron === "0 */6 * * *") {
-          const res = await callRipple(env, "/api/ingest/internal");
+          const res = await callRipple(env, "/api/ingest/internal", { method: "POST" });
           console.log("ingest/internal", res.status, await res.text());
           return;
         }

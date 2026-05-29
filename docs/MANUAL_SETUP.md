@@ -69,6 +69,51 @@ Expect `"connected": true` when Postgres is wired.
 
 ---
 
+## Troubleshooting: dashboard shows **Stale** (not Live)
+
+The nav **Live / Stale** pill compares `snapshot.asOf` in Postgres to the current time (5‑minute window). Polling every 30s only helps if the snapshot row and `/api/dashboard` are healthy.
+
+### Quick diagnosis
+
+```bash
+curl -s https://YOUR_APP.vercel.app/api/health | jq '.dataMode, .database'
+curl -s https://YOUR_APP.vercel.app/api/ops/status | jq '.snapshot.asOf, .recentIngest[0:3]'
+curl -s -o /dev/null -w "%{http_code}\n" https://YOUR_APP.vercel.app/api/dashboard
+```
+
+| Symptom | Likely cause |
+|--------|----------------|
+| `dataMode: "mock"` | `DATABASE_URL` not set on Vercel Production — redeploy after adding it |
+| `snapshot.asOf` hours old | Ingest never finished or snapshot not refreshed |
+| `recentIngest` all `running` | Ingest crashed mid-run (fixed in app: ingest run upsert) |
+| `/api/dashboard` → `500` | Broken scenarios payload or DB error — check Vercel function logs |
+
+### Unstick production now (same `CRON_SECRET` as Vercel)
+
+```bash
+export APP_URL="https://ripple-ruby.vercel.app"
+export CRON_SECRET="your-secret"
+
+# 1) Recompute KPI snapshot (updates asOf)
+curl -s -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/snapshot-refresh" | jq
+
+# 2) Run full ingest (scores + snapshot)
+curl -s -X POST -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/ingest/internal" | jq
+
+# 3) Confirm
+curl -s "$APP_URL/api/ops/status" | jq '.snapshot.asOf'
+```
+
+### Keep it fresh automatically
+
+1. **Vercel:** `DATABASE_URL`, `CRON_SECRET`, `NEXT_PUBLIC_APP_URL` on Production → **Redeploy**.
+2. **Cloudflare worker** (`workers/cloudflare`): `wrangler secret put CRON_SECRET`, `wrangler deploy` — schedules:
+   - Every **5 min** → scenario worker + **snapshot refresh**
+   - Every **6 h** → full ingest (`POST /api/ingest/internal`)
+3. Hard-refresh the browser; the banner should say **Live · Postgres**.
+
+---
+
 ### 4. Cloudflare — DNS + cron worker (15 min)
 
 **A. DNS (if you have a custom domain)**

@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import type { DashboardPayload, DashboardSnapshot, TickerItem } from "@/types/domain";
 import { DASHBOARD_POLL_MS } from "@/lib/constants";
-import { fetchDashboard } from "@/lib/client/api";
+import { fetchDashboard, fetchSnapshot } from "@/lib/client/api";
 
 type LiveDataContextValue = {
   asOf: string;
@@ -53,12 +53,25 @@ export function LiveDataProvider({ initialDashboard, children }: LiveDataProvide
       applyDashboard(data);
       setLastError(null);
       router.refresh();
-    } catch (e) {
-      setLastError(e instanceof Error ? e.message : "Refresh failed");
+    } catch (dashboardError) {
+      try {
+        const { snapshot, asOf } = await fetchSnapshot();
+        setSnapshot(snapshot);
+        setAsOf(asOf);
+        if (dashboard) {
+          setDashboard({ ...dashboard, snapshot });
+        }
+        setLastError(null);
+        router.refresh();
+      } catch {
+        setLastError(
+          dashboardError instanceof Error ? dashboardError.message : "Refresh failed"
+        );
+      }
     } finally {
       setIsRefreshing(false);
     }
-  }, [applyDashboard, router]);
+  }, [applyDashboard, dashboard, router]);
 
   useEffect(() => {
     const id = window.setInterval(() => void refresh(), DASHBOARD_POLL_MS);

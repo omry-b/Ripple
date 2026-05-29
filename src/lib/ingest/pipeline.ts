@@ -1,6 +1,7 @@
 import { getDataSource } from "@/lib/data";
 import { invalidateSnapshotCache } from "@/lib/cache/snapshot-cache";
 import { listDeadLetters, pushDeadLetter } from "@/lib/ingest/dead-letter";
+import { reconcileStaleIngestRuns } from "@/lib/ingest/reconcile-runs";
 import { normalizeEventsToReadings } from "@/lib/ingest/normalizer";
 import { refreshScoresFromReadings } from "@/lib/ingest/score-refresh";
 import { INGEST_ADAPTERS, getAdapter } from "./registry";
@@ -23,6 +24,7 @@ export type IngestPipelineResult = {
 export async function runIngestPipeline(
   adapterNames?: string[]
 ): Promise<IngestPipelineResult> {
+  await reconcileStaleIngestRuns();
   const data = await getDataSource();
   const adapters = adapterNames?.length
     ? (adapterNames.map((n) => getAdapter(n)).filter(Boolean) as typeof INGEST_ADAPTERS)

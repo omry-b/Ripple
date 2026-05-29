@@ -69,13 +69,15 @@ function rowToAlert(row: typeof schema.alerts.$inferSelect): Alert {
 }
 
 function rowToScenario(row: typeof schema.scenarios.$inferSelect): Scenario {
+  const profile = Array.isArray(row.profile) ? row.profile : [];
+  const impacts = Array.isArray(row.impacts) ? row.impacts : [];
   return {
     id: row.id,
     name: row.name,
     subtitle: row.subtitle,
-    preview: row.preview,
-    profile: row.profile,
-    impacts: row.impacts,
+    preview: row.preview ?? "",
+    profile,
+    impacts,
   };
 }
 
@@ -106,14 +108,26 @@ export const postgresDataSource: RippleDataSource = {
 
   async getDashboard() {
     await ensureSeeded();
-    const [snapshot, ticker, companies, alerts, streams, scenarios] = await Promise.all([
-      this.getSnapshot(),
-      this.getTicker(),
-      this.getCompanies(),
-      this.getAlerts(),
-      this.getSignals(),
-      this.getScenarios(),
-    ]);
+    const db = getDb();
+
+    const [snapshot, tickerRows, companyRows, alertRows, streamRows, scenarioRows] =
+      await Promise.all([
+        loadSnapshotPayload(),
+        db.select().from(schema.tickerItems).orderBy(schema.tickerItems.sortOrder),
+        db.select().from(schema.companies).orderBy(desc(schema.companies.score)),
+        db.select().from(schema.alerts),
+        db.select().from(schema.signalStreams),
+        db.select().from(schema.scenarios),
+      ]);
+
+    const companies = companyRows.map(rowToCompany);
+    const alerts = alertRows.map(rowToAlert);
+    const streams = streamRows.map(rowToSignal);
+    const scenarios = scenarioRows.map(rowToScenario);
+    const ticker = tickerRows.map((r) => ({
+      label: r.label,
+      level: r.level as TickerItem["level"],
+    }));
 
     return {
       snapshot,
@@ -123,7 +137,7 @@ export const postgresDataSource: RippleDataSource = {
         name: c.name,
         score: c.score,
         cvar: c.cvar,
-        delta7d: c.delta7d.replace(/\s/g, ""),
+        delta7d: String(c.delta7d ?? "").replace(/\s/g, ""),
       })),
       alerts,
       companies,
@@ -449,15 +463,26 @@ export const postgresDataSource: RippleDataSource = {
 
   async recordIngestRun(run) {
     const db = getDb();
-    await db.insert(schema.ingestRuns).values({
-      id: run.id,
-      adapter: run.adapter,
-      status: run.status,
-      startedAt: new Date(run.startedAt),
-      finishedAt: run.finishedAt ? new Date(run.finishedAt) : null,
-      eventsIngested: run.eventsIngested,
-      message: run.message ?? null,
-    });
+    await db
+      .insert(schema.ingestRuns)
+      .values({
+        id: run.id,
+        adapter: run.adapter,
+        status: run.status,
+        startedAt: new Date(run.startedAt),
+        finishedAt: run.finishedAt ? new Date(run.finishedAt) : null,
+        eventsIngested: run.eventsIngested,
+        message: run.message ?? null,
+      })
+      .onConflictDoUpdate({
+        target: schema.ingestRuns.id,
+        set: {
+          status: run.status,
+          finishedAt: run.finishedAt ? new Date(run.finishedAt) : null,
+          eventsIngested: run.eventsIngested,
+          message: run.message ?? null,
+        },
+      });
   },
 
   async getWebhookSubscriptions(orgId) {
