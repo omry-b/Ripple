@@ -12,6 +12,7 @@ import { DataModeBanner } from "@/components/shell/DataModeBanner";
 import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { AppFooter } from "@/components/shell/AppFooter";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -37,6 +38,7 @@ export default async function DashboardLayout({
           <CommandPalette />
           <KeyboardShortcuts />
           <PageTransition>{children}</PageTransition>
+          <AppFooter />
           <OnboardingTour />
         </div>
       </LiveDataProvider>

@@ -37,7 +37,7 @@ export function OnboardingTour() {
         <Link href="/methodology" className="filter-export-btn" onClick={dismiss}>
           Read methodology
         </Link>
-        <button type="button" className="filter-export-btn" onClick={dismiss}>
+        <button type="button" className="welcome-cta-primary onboarding-primary" onClick={dismiss}>
           Got it
         </button>
       </div>
