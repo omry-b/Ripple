@@ -1,7 +1,7 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-18 (edge cron worker + MANUAL_SETUP; you wire credentials)
+> **Last updated:** 2026-05-28 (secondary pages polish, ripple-components.css, system status pills)
 
 ---
 
