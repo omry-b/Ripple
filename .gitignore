@@ -49,3 +49,11 @@ test-results/
 # Local production ops (secrets) — never commit
 scripts/prod-ops.local.sh
 scripts/.prod-credentials
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
