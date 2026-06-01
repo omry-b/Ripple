@@ -91,18 +91,6 @@ function rowToScenario(row: typeof schema.scenarios.$inferSelect): Scenario {
 
 async function loadSnapshotPayload(): Promise<DashboardSnapshot> {
   const db = getDb();
-  const [row] = await db
-    .select()
-    .from(schema.dashboardSnapshots)
-    .where(eq(schema.dashboardSnapshots.id, "latest"))
-    .limit(1);
-  if (row) {
-    return {
-      ...row.payload,
-      hotspots: row.payload.hotspots.map(normalizeHotspotGeo),
-    };
-  }
-
   const [companyRows, alertRows, streamRows] = await Promise.all([
     db.select().from(schema.companies),
     db.select().from(schema.alerts),
@@ -110,12 +98,16 @@ async function loadSnapshotPayload(): Promise<DashboardSnapshot> {
   ]);
 
   const ingestEvents = await loadRecentIngestEvents(200);
-  return aggregateSnapshot({
+  const snapshot = aggregateSnapshot({
     companies: companyRows.map(rowToCompany),
     alerts: alertRows.map(rowToAlert),
     streams: streamRows.map(rowToSignal),
     ingestEvents,
   });
+  return {
+    ...snapshot,
+    hotspots: snapshot.hotspots.map(normalizeHotspotGeo),
+  };
 }
 
 export const postgresDataSource: RippleDataSource = {
