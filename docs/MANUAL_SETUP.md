@@ -42,6 +42,8 @@ Save the output as **`CRON_SECRET`** — you’ll use the same value in Vercel a
 3. **Deployment Protection:** Settings → Deployment Protection → allow **public** access to Production (or you’ll see a Vercel login wall).
 4. **Redeploy** Production after env vars change.
 
+**Builds:** Vercel runs `npm run build` only (see `vercel.json`). Do **not** add `db:push` to the build — it connects to production Postgres during compile, hits connection limits, and fails with `Pulling schema from database...` / exit 1. Run migrations locally instead (step 3 below).
+
 ---
 
 ### 3. DigitalOcean — Managed Postgres (15 min)
@@ -89,6 +91,14 @@ curl -s -o /dev/null -w "%{http_code}\n" https://YOUR_APP.vercel.app/api/dashboa
 | `/api/dashboard` → `500` | Broken scenarios payload or DB error — check Vercel function logs |
 
 ### Unstick production now (same `CRON_SECRET` as Vercel)
+
+Copy `scripts/prod-ops.example.sh` → `scripts/prod-ops.local.sh` (gitignored), fill secrets, then:
+
+```bash
+bash scripts/prod-ops.local.sh
+```
+
+Or run manually:
 
 ```bash
 export APP_URL="https://ripple-ruby.vercel.app"
