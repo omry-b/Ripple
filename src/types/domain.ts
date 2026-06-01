@@ -107,7 +107,13 @@ export type CommandItem = {
 };
 
 export type Hotspot = {
+  /** WGS84 longitude — source of truth for map position */
+  lng: number;
+  /** WGS84 latitude */
+  lat: number;
+  /** Projected SVG x (Natural Earth), filled at render or snapshot refresh */
   cx: number;
+  /** Projected SVG y */
   cy: number;
   level: RiskLevel;
   alertId: string;

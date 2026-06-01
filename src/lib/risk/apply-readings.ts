@@ -38,7 +38,13 @@ export function applyReadingsToStreams(
     const level = riskLevelFromScore(nextScore);
     const history7d = [...stream.history7d.slice(-6), nextScore];
 
-    return { ...stream, score: nextScore, level, history7d };
+    return {
+      ...stream,
+      score: nextScore,
+      level,
+      history7d,
+      time: "just now",
+    };
   });
 }
 

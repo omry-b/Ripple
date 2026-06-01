@@ -25,6 +25,8 @@ export const gdeltAdapter: IngestAdapter = {
         adapter: "gdelt" as const,
         occurredAt: a.seendate ?? new Date().toISOString(),
         signalId: "geo",
+        lng: 121.0,
+        lat: 24.5,
         severity: 55 + (i % 3) * 10,
         summary: a.title ?? "Geopolitical mention",
       }));
@@ -45,6 +47,8 @@ export const gdeltAdapter: IngestAdapter = {
             adapter: "gdelt",
             occurredAt: new Date().toISOString(),
             signalId: "geo",
+            lng: 121.0,
+            lat: 24.5,
             severity: 65,
             summary: "Simulated escalation mention velocity in Taiwan Strait",
           },

@@ -14,7 +14,8 @@ type MapboxRiskMapProps = {
 
 export function MapboxRiskMap({ hotspots, onHotspotClick }: MapboxRiskMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<{ remove: () => void } | null>(null);
+  const mapRef = useRef<import("mapbox-gl").Map | null>(null);
+  const markersRef = useRef<import("mapbox-gl").Marker[]>([]);
   const [failed, setFailed] = useState(false);
   const [hovered, setHovered] = useState<Hotspot | null>(null);
 
@@ -32,17 +33,21 @@ export function MapboxRiskMap({ hotspots, onHotspotClick }: MapboxRiskMapProps) 
         if (cancelled || !containerRef.current) return;
 
         mapboxgl.accessToken = token;
-        const map = new mapboxgl.Map({
-          container: containerRef.current,
-          style: "mapbox://styles/mapbox/dark-v11",
-          center: [120, 25],
-          zoom: 1.2,
-          attributionControl: false,
-        });
+        const map =
+          mapRef.current ??
+          new mapboxgl.Map({
+            container: containerRef.current,
+            style: "mapbox://styles/mapbox/dark-v11",
+            center: [118, 22],
+            zoom: 2.2,
+            attributionControl: false,
+          });
 
         mapRef.current = map;
 
-        map.on("load", () => {
+        const placeMarkers = () => {
+          for (const m of markersRef.current) m.remove();
+          markersRef.current = [];
           for (const h of hotspots) {
             const el = document.createElement("button");
             el.type = "button";
@@ -52,9 +57,15 @@ export function MapboxRiskMap({ hotspots, onHotspotClick }: MapboxRiskMapProps) 
             el.onclick = () => onHotspotClick?.(h);
             el.onmouseenter = () => setHovered(h);
             el.onmouseleave = () => setHovered(null);
-            new mapboxgl.Marker({ element: el }).setLngLat(hotspotToLngLat(h)).addTo(map);
+            const marker = new mapboxgl.Marker({ element: el })
+              .setLngLat(hotspotToLngLat(h))
+              .addTo(map);
+            markersRef.current.push(marker);
           }
-        });
+        };
+
+        if (map.loaded()) placeMarkers();
+        else map.once("load", placeMarkers);
       } catch {
         if (!cancelled) setFailed(true);
       }
@@ -62,10 +73,17 @@ export function MapboxRiskMap({ hotspots, onHotspotClick }: MapboxRiskMapProps) 
 
     return () => {
       cancelled = true;
+    };
+  }, [token, hotspots, onHotspotClick, failed]);
+
+  useEffect(() => {
+    return () => {
+      for (const m of markersRef.current) m.remove();
+      markersRef.current = [];
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [token, hotspots, onHotspotClick, failed]);
+  }, []);
 
   if (!token || failed) {
     return <WorldTopoMap hotspots={hotspots} onHotspotClick={onHotspotClick} />;
@@ -76,8 +94,15 @@ export function MapboxRiskMap({ hotspots, onHotspotClick }: MapboxRiskMapProps) 
       {hovered && (
         <div className="map-tooltip map-tooltip-mapbox">
           <span className="map-tooltip-label">{hovered.label}</span>
-          <Link href={`/companies?alert=${hovered.alertId}`} className="map-tooltip-link">
-            View exposure →
+          <Link
+            href={
+              hovered.alertId.startsWith("signal-")
+                ? "/signals"
+                : `/companies?alert=${hovered.alertId}`
+            }
+            className="map-tooltip-link"
+          >
+            {hovered.alertId.startsWith("signal-") ? "View signals →" : "View exposure →"}
           </Link>
         </div>
       )}

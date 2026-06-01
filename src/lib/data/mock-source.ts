@@ -1,4 +1,5 @@
 import { mockStore } from "@/lib/mock/store";
+import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
 import { simulationRunStore } from "@/lib/mock/simulation-runs";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
@@ -44,7 +45,14 @@ export const mockDataSource: RippleDataSource = {
     if (!company) return [];
     return getScoreFactorsForCompany(companyId, company.score);
   },
-  refreshSnapshot: () => Promise.resolve(mockStore.getSnapshot()),
+  refreshSnapshot: async () => {
+    const snapshot = aggregateSnapshot({
+      companies: await mockStore.getCompanies(),
+      alerts: await mockStore.getAlerts(),
+      streams: await mockStore.getSignals(),
+    });
+    return snapshot;
+  },
 
   getWatchlists: async (userId) => watchlists.get(userId) ?? [],
   createWatchlist: async (userId, name) => {

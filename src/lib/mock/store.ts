@@ -9,6 +9,8 @@ import type {
   TickerItem,
 } from "@/types/domain";
 import { alertState } from "@/lib/mock/alert-state";
+import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
+import { buildTickerFromAlertsAndStreams } from "@/lib/geo/hotspots";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
 import { regionForCompanyId } from "@/lib/mock/regions";
@@ -271,47 +273,11 @@ const SCENARIOS: Scenario[] = [
 ];
 
 function buildSnapshot(): DashboardSnapshot {
-  return {
-    asOf: new Date().toISOString(),
-    riskIndex: 67.4,
-    exposedCompanies: 47,
-    trackedCompanies: 847,
-    cvar95BaselineB: 2.1,
-    cvar95Display: "$2.1B",
-    cvarDeltaLabel: "↑ $400M above 30-day baseline",
-    cvarProgressPercent: 67,
-    liveSignalsCount: 214,
-    signalsDeltaLabel: "+12 past 24h · 3 elevated",
-    elevatedSignals24h: 3,
-    openAlertsCount: alertState.list().filter((a) => a.status === "open").length,
-    activeStreamsCount: 7,
-    hotspots: [
-      {
-        cx: 220,
-        cy: 55,
-        level: "critical",
-        alertId: "taiwan",
-        label: "Taiwan Strait",
-        region: "APAC",
-      },
-      {
-        cx: 205,
-        cy: 80,
-        level: "elevated",
-        alertId: "sea-port",
-        label: "SEA Ports",
-        region: "APAC",
-      },
-      {
-        cx: 145,
-        cy: 40,
-        level: "elevated",
-        alertId: "tsmc-signal",
-        label: "TSMC Signal",
-        region: "APAC",
-      },
-    ],
-  };
+  return aggregateSnapshot({
+    companies: ALL_COMPANIES,
+    alerts: alertState.list(),
+    streams: STREAMS.map((s) => ({ ...s })),
+  });
 }
 
 export const mockStore = {
@@ -320,10 +286,12 @@ export const mockStore = {
   },
 
   getDashboard(): DashboardPayload {
+    const alerts = alertState.list();
+    const streams = applyIngestScoreOverrides(STREAMS);
     const snapshot = buildSnapshot();
     return {
       snapshot,
-      ticker: TICKER,
+      ticker: buildTickerFromAlertsAndStreams(alerts, streams),
       topCompaniesMini: ALL_COMPANIES.slice(0, 3).map((c) => ({
         id: c.id,
         name: c.name,
@@ -331,9 +299,9 @@ export const mockStore = {
         cvar: c.cvar,
         delta7d: c.delta7d.replace(/\s/g, ""),
       })),
-      alerts: alertState.list(),
+      alerts,
       companies: ALL_COMPANIES,
-      streams: applyIngestScoreOverrides(STREAMS),
+      streams,
       scenarios: SCENARIOS,
     };
   },
@@ -377,7 +345,10 @@ export const mockStore = {
   },
 
   getTicker(): TickerItem[] {
-    return TICKER;
+    return buildTickerFromAlertsAndStreams(
+      alertState.list(),
+      applyIngestScoreOverrides(STREAMS)
+    );
   },
 
   getScenario(id: string): Scenario | undefined {

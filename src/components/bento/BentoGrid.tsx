@@ -42,8 +42,14 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
     [hotspots, legend]
   );
 
-  const onHotspotClick = (h: Hotspot) =>
-    router.push(`/companies?region=${encodeURIComponent(h.region)}`);
+  const onHotspotClick = (h: Hotspot) => {
+    const alertParam = h.alertId.startsWith("signal-")
+      ? ""
+      : `alert=${encodeURIComponent(h.alertId)}`;
+    const regionParam = `region=${encodeURIComponent(h.region)}`;
+    const query = alertParam ? `${alertParam}&${regionParam}` : regionParam;
+    router.push(`/companies?${query}`);
+  };
 
   return (
     <section className="bento-grid">

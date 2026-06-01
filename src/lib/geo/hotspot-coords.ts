@@ -1,8 +1,8 @@
 import type { Hotspot } from "@/types/domain";
+import { normalizeHotspotGeo } from "./hotspots";
 
-/** Map SVG hotspot coords (300×150) to approximate lng/lat. */
+/** WGS84 coordinates for Mapbox markers. */
 export function hotspotToLngLat(h: Hotspot): [number, number] {
-  const lng = (h.cx / 300) * 360 - 180;
-  const lat = 90 - (h.cy / 150) * 180;
-  return [lng, lat];
+  const n = normalizeHotspotGeo(h);
+  return [n.lng, n.lat];
 }

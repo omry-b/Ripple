@@ -2,28 +2,34 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { geoPath, geoNaturalEarth1 } from "d3-geo";
+import { geoPath, geoNaturalEarth1, type GeoProjection } from "d3-geo";
 import { feature } from "topojson-client";
 import type { Topology } from "topojson-specification";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { Hotspot } from "@/types/domain";
 import { LEVEL_COLOR } from "@/types/domain";
+import {
+  MAP_HEIGHT,
+  MAP_WIDTH,
+  normalizeHotspotGeo,
+  projectHotspotsToSvg,
+} from "@/lib/geo/hotspots";
 
 type WorldTopoMapProps = {
   hotspots: Hotspot[];
   onHotspotClick?: (hotspot: Hotspot) => void;
 };
 
-const WIDTH = 300;
-const HEIGHT = 150;
-
 export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
   const [hovered, setHovered] = useState<Hotspot | null>(null);
   const [landPaths, setLandPaths] = useState<string | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [projection, setProjection] = useState<GeoProjection | null>(null);
 
-  const projection = useMemo(() => geoNaturalEarth1().translate([WIDTH / 2, HEIGHT / 2]), []);
-  const pathGen = useMemo(() => geoPath(projection), [projection]);
+  const pathGen = useMemo(
+    () => (projection ? geoPath(projection) : null),
+    [projection]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -38,9 +44,13 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
           topology,
           topology.objects.countries as never
         ) as unknown as FeatureCollection<Geometry>;
-        projection.fitSize([WIDTH, HEIGHT], countries);
-        const d = pathGen(countries);
-        if (!cancelled) setLandPaths(d ?? "");
+        const proj = geoNaturalEarth1().translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
+        proj.fitSize([MAP_WIDTH, MAP_HEIGHT], countries);
+        const d = geoPath(proj)(countries);
+        if (!cancelled) {
+          setProjection(() => proj);
+          setLandPaths(d ?? "");
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       }
@@ -48,7 +58,13 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
     return () => {
       cancelled = true;
     };
-  }, [pathGen, projection]);
+  }, []);
+
+  const plottedHotspots = useMemo(() => {
+    const normalized = hotspots.map(normalizeHotspotGeo);
+    if (!projection) return normalized;
+    return projectHotspotsToSvg(projection, normalized);
+  }, [hotspots, projection]);
 
   return (
     <div className="map-wrap">
@@ -56,42 +72,48 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
         <div
           className="map-tooltip"
           style={{
-            left: `${(hovered.cx / WIDTH) * 100}%`,
-            top: `${(hovered.cy / HEIGHT) * 100}%`,
+            left: `${(hovered.cx / MAP_WIDTH) * 100}%`,
+            top: `${(hovered.cy / MAP_HEIGHT) * 100}%`,
           }}
         >
           <span className="map-tooltip-level" style={{ color: LEVEL_COLOR[hovered.level] }}>
             {hovered.level.toUpperCase()}
           </span>
           <span className="map-tooltip-label">{hovered.label}</span>
-          <span className="map-tooltip-hint">Click to filter {hovered.region}</span>
+          <span className="map-tooltip-hint">Click to view exposure</span>
           <Link
-            href={`/companies?alert=${hovered.alertId}`}
+            href={
+              hovered.alertId.startsWith("signal-")
+                ? "/signals"
+                : `/companies?alert=${hovered.alertId}`
+            }
             className="map-tooltip-link"
             onClick={(e) => e.stopPropagation()}
           >
-            View alert exposure →
+            {hovered.alertId.startsWith("signal-")
+              ? "View signal stream →"
+              : "View alert exposure →"}
           </Link>
         </div>
       )}
       <svg
         className="map-container map-container-topo"
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
         aria-label="World map with supply chain risk hotspots"
       >
-        <rect width={WIDTH} height={HEIGHT} fill="#0D0D0D" />
-        {landPaths ? (
+        <rect width={MAP_WIDTH} height={MAP_HEIGHT} fill="#0D0D0D" />
+        {landPaths && pathGen ? (
           <path d={landPaths} className="map-land-mesh" fill="#1a1a1a" stroke="#2a2a2a" strokeWidth={0.4} />
         ) : loadError ? (
-          <text x={WIDTH / 2} y={HEIGHT / 2} textAnchor="middle" fill="#525252" fontSize={10}>
+          <text x={MAP_WIDTH / 2} y={MAP_HEIGHT / 2} textAnchor="middle" fill="#525252" fontSize={10}>
             Map unavailable
           </text>
         ) : (
-          <text x={WIDTH / 2} y={HEIGHT / 2} textAnchor="middle" fill="#525252" fontSize={10}>
+          <text x={MAP_WIDTH / 2} y={MAP_HEIGHT / 2} textAnchor="middle" fill="#525252" fontSize={10}>
             Loading map…
           </text>
         )}
-        {hotspots.map((h) => (
+        {plottedHotspots.map((h) => (
           <g
             key={h.alertId}
             className={onHotspotClick ? "map-hotspot-interactive" : undefined}
@@ -115,11 +137,11 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
             tabIndex={onHotspotClick ? 0 : undefined}
             aria-label={
               onHotspotClick
-                ? `${h.label} — ${h.level} risk. Click to filter ${h.region}.`
+                ? `${h.label} — ${h.level} risk at ${h.lat.toFixed(1)}°, ${h.lng.toFixed(1)}°. Click for exposure.`
                 : undefined
             }
           >
-            <title>{h.label}</title>
+            <title>{`${h.label} (${h.lat.toFixed(1)}°N, ${h.lng.toFixed(1)}°E)`}</title>
             <circle
               cx={h.cx}
               cy={h.cy}

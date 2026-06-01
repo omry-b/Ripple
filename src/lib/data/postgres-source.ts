@@ -6,6 +6,7 @@ import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { runScenarioEngine } from "@/lib/scenario/engine";
 import { resolveContagionEntityNames } from "@/lib/scenario/graph-propagation";
 import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
+import { buildTickerFromAlertsAndStreams, normalizeHotspotGeo } from "@/lib/geo/hotspots";
 import type {
   Alert,
   Company,
@@ -88,7 +89,12 @@ async function loadSnapshotPayload(): Promise<DashboardSnapshot> {
     .from(schema.dashboardSnapshots)
     .where(eq(schema.dashboardSnapshots.id, "latest"))
     .limit(1);
-  if (row) return row.payload;
+  if (row) {
+    return {
+      ...row.payload,
+      hotspots: row.payload.hotspots.map(normalizeHotspotGeo),
+    };
+  }
 
   const [companyRows, alertRows, streamRows] = await Promise.all([
     db.select().from(schema.companies),
@@ -153,15 +159,8 @@ export const postgresDataSource: RippleDataSource = {
 
   async getTicker() {
     await ensureSeeded();
-    const db = getDb();
-    const rows = await db
-      .select()
-      .from(schema.tickerItems)
-      .orderBy(schema.tickerItems.sortOrder);
-    return rows.map((r) => ({
-      label: r.label,
-      level: r.level as TickerItem["level"],
-    }));
+    const [alerts, streams] = await Promise.all([this.getAlerts(), this.getSignals()]);
+    return buildTickerFromAlertsAndStreams(alerts, streams);
   },
 
   async getSignals() {
