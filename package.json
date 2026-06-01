@@ -16,6 +16,8 @@
     "ingest": "curl -s -X POST http://localhost:3000/api/ingest/run | jq",
     "db:refresh-live": "tsx scripts/refresh-live.ts",
     "prod:ops": "bash scripts/prod-ops.local.sh",
+    "firebase:setup": "bash scripts/setup-firebase.sh",
+    "firebase:push-env": "node scripts/push-firebase-env-to-vercel.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run --project unit",
