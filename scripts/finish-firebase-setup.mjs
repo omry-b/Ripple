@@ -67,13 +67,15 @@ async function ensureServiceAccountKey() {
   }
 
   console.log(`→ Creating key for ${adminSa.email}…`);
-  const key = await api(
-    `iam.googleapis.com/v1/${adminSa.name}/keys`,
-    {
-      method: "POST",
-      body: { keyAlgorithm: "KEY_ALG_RSA_2048", privateKeyType: "TYPE_GOOGLE_CREDENTIALS_FILE" },
-    }
-  );
+  const keyRequest = {
+    keyAlgorithm: "KEY_ALG_RSA_2048",
+    privateKeyType: "TYPE_GOOGLE_CREDENTIALS_FILE",
+  };
+  const key = await api(`iam.googleapis.com/v1/${adminSa.name}/keys`, {
+    method: "POST",
+    // gitleaks:allow — IAM API enum values, not a secret
+    body: keyRequest,
+  });
 
   const decoded = Buffer.from(key.privateKeyData, "base64").toString("utf8");
   writeFileSync(SA_PATH, decoded, { mode: 0o600 });

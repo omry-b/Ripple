@@ -1,0 +1,12 @@
+title = "Ripple gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Firebase setup scripts, gitignored keys, and env placeholders"
+paths = [
+  '''scripts/finish-firebase-setup\.mjs''',
+  '''ripple-firebase-adminsdk\.json''',
+  '''\.env\.example$''',
+]
