@@ -9,7 +9,10 @@ import { execSync, spawnSync } from "node:child_process";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const PROJECT_ID = "ripple-risk-omry";
-const VERCEL_HOST = "ripple-omry-2596s-projects.vercel.app";
+const VERCEL_HOSTS = [
+  "ripple-ruby.vercel.app",
+  "ripple-omry-2596s-projects.vercel.app",
+];
 const ENV_PATH = "/tmp/ripple-firebase-env.txt";
 const SA_PATH = join(ROOT, "ripple-firebase-adminsdk.json");
 
@@ -86,7 +89,7 @@ async function ensureAuthorizedDomains() {
   const current = config.authorizedDomains ?? [];
   const needed = [
     "localhost",
-    VERCEL_HOST,
+    ...VERCEL_HOSTS,
     `${PROJECT_ID}.firebaseapp.com`,
     `${PROJECT_ID}.web.app`,
   ];

@@ -6,7 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const csp =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://api.mapbox.com; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: blob: https://*.googleapis.com https://*.firebaseio.com; worker-src 'self' blob:; frame-src https://accounts.google.com https://*.firebaseapp.com;";
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://api.mapbox.com; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: blob: https://*.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; worker-src 'self' blob:; frame-src 'self' https://accounts.google.com https://*.google.com https://*.firebaseapp.com https://apis.google.com;";
 
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },

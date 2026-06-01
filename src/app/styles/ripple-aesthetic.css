@@ -1104,6 +1104,28 @@
   margin-bottom: 16px;
 }
 
+.auth-error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.35);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.auth-error-dismiss {
+  margin-left: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #fca5a5;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+
 .auth-alt-link {
   display: block;
   text-align: center;

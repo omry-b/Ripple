@@ -9,24 +9,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Firebase Admin not configured" }, { status: 503 });
   }
 
-  const body = (await request.json()) as { idToken?: string };
-  if (!body.idToken) {
-    return NextResponse.json({ error: "idToken required" }, { status: 400 });
+  try {
+    const body = (await request.json()) as { idToken?: string };
+    if (!body.idToken) {
+      return NextResponse.json({ error: "idToken required" }, { status: 400 });
+    }
+
+    const sessionCookie = await getFirebaseAdminAuth().createSessionCookie(body.idToken, {
+      expiresIn: SESSION_MAX_AGE_MS,
+    });
+
+    const res = NextResponse.json({ ok: true, asOf: new Date().toISOString() });
+    res.cookies.set(FIREBASE_SESSION_COOKIE, sessionCookie, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: SESSION_MAX_AGE_MS / 1000,
+      path: "/",
+    });
+    return res;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Session creation failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const sessionCookie = await getFirebaseAdminAuth().createSessionCookie(body.idToken, {
-    expiresIn: SESSION_MAX_AGE_MS,
-  });
-
-  const res = NextResponse.json({ ok: true, asOf: new Date().toISOString() });
-  res.cookies.set(FIREBASE_SESSION_COOKIE, sessionCookie, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: SESSION_MAX_AGE_MS / 1000,
-    path: "/",
-  });
-  return res;
 }
 
 export async function DELETE() {
