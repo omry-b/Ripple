@@ -8,14 +8,14 @@ const DEMO_MEMBERS = [
   { email: "admin@ripple.demo", role: "admin", status: "Active" },
 ];
 
-export const metadata = { title: "Team  -  Ripple" };
+export const metadata = { title: "Ripple | Team" };
 
 export default function TeamSettingsPage() {
   return (
     <>
       <PageHeader
         title="Team"
-        subtitle="Invite colleagues and manage roles (demo  -  wire Clerk Organizations for production)."
+        subtitle="Invite colleagues and manage roles (demo wire Clerk Organizations for production)."
       />
       <main className="content-container">
         <Breadcrumbs

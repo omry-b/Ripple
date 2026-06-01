@@ -6,7 +6,7 @@ function hash(s: string): number {
   return Math.abs(h);
 }
 
-/** GDELT DOC API - falls back to stub when network or parsing fails. */
+/** GDELT DOC API falls back to stub when network or parsing fails. */
 export const gdeltAdapter: IngestAdapter = {
   name: "gdelt",
   description: "Geopolitical event index (GDELT DOC 2.0)",

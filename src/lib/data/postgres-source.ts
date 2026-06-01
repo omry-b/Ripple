@@ -5,7 +5,10 @@ import * as schema from "@/lib/db/schema";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { runScenarioEngine } from "@/lib/scenario/engine";
 import { resolveContagionEntityNames } from "@/lib/scenario/graph-propagation";
-import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
+import {
+  aggregateSnapshot,
+  scoreCompaniesForPayload,
+} from "@/lib/risk/snapshot-aggregator";
 import { normalizeHotspotGeo } from "@/lib/geo/hotspots";
 import {
   buildTickerFromAllSources,
@@ -132,9 +135,12 @@ export const postgresDataSource: RippleDataSource = {
         db.select().from(schema.scenarios),
       ]);
 
-    const companies = companyRows.map(rowToCompany);
     const alerts = alertRows.map(rowToAlert);
     const streams = streamRows.map(rowToSignal);
+    const companies = scoreCompaniesForPayload(
+      companyRows.map(rowToCompany),
+      streams
+    );
     const scenarios = scenarioRows.map(rowToScenario);
     const ticker = tickerRows.map((r) => ({
       label: r.label,

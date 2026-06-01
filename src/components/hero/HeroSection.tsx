@@ -18,7 +18,7 @@ const HERO_STATS = [
   },
   {
     id: "counter-cvar-hero",
-    label: "CVaR₉₅ Baseline",
+    label: "Portfolio CVaR",
     accent: "critical-accent" as const,
     format: (v: number) => `$${v.toFixed(1)}B`,
     prefix: "",
@@ -40,7 +40,7 @@ export function HeroSection({ showWordmark = true }: HeroSectionProps) {
   const values = [
     snapshot.riskIndex,
     snapshot.exposedCompanies,
-    snapshot.cvar95BaselineB,
+    snapshot.portfolioCvarB,
     snapshot.liveSignalsCount,
   ];
 
@@ -58,7 +58,7 @@ export function HeroSection({ showWordmark = true }: HeroSectionProps) {
             <>
               <h1 className="hero-display">Ripple</h1>
               <p className="hero-tagline">
-                Live exposure, signal streams, and scenario stress  -  quantified for your supply
+                Live exposure, signal streams, and scenario stress quantified for your supply
                 chain portfolio.
               </p>
             </>

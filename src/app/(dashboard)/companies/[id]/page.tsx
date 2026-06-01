@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const company = await getCompany(id);
   return {
-    title: company ? `${company.name}  -  Ripple` : "Company  -  Ripple",
+    title: company ? `${company.name} Ripple` : "Company Ripple",
   };
 }
 

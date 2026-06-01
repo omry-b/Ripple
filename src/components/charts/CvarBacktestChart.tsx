@@ -14,7 +14,7 @@ export function CvarBacktestChart({ companyId }: CvarBacktestChartProps) {
         CVaR backtest (mock)
       </h3>
       <p className="watchlist-manager-hint">
-        Predicted vs realized weekly tail loss  -  placeholder until historical P&amp;L is wired.
+        Predicted vs realized weekly tail loss (historical P&amp;L pending).
       </p>
       <svg
         viewBox="0 0 320 120"

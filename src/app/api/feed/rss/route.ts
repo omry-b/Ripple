@@ -23,7 +23,7 @@ export async function GET() {
       .map(
         (s) => `
     <item>
-      <title>${escapeXml(s.name)}  -  score ${s.score}</title>
+      <title>${escapeXml(s.name)} score ${s.score}</title>
       <link>${base}/signals</link>
       <description>${escapeXml(s.description)}</description>
       <pubDate>${new Date().toUTCString()}</pubDate>

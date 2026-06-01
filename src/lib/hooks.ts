@@ -166,7 +166,7 @@ export function useSnapshotCounters(snapshot: DashboardSnapshot) {
   const key = snapshot.asOf;
   useAnimatedCounter("counter-index", snapshot.riskIndex, 1400, true, 100, key);
   useAnimatedCounter("counter-exposed", snapshot.exposedCompanies, 1600, false, 250, key);
-  useAnimatedCounter("counter-cvar-hero", snapshot.cvar95BaselineB, 1800, true, 400, key);
+  useAnimatedCounter("counter-cvar-hero", snapshot.portfolioCvarB, 1800, true, 400, key);
   useAnimatedCounter("counter-signals", snapshot.liveSignalsCount, 2000, false, 550, key);
   useAnimatedCounter("bento-val-signals", snapshot.liveSignalsCount, 2000, false, 600, key);
   useAnimatedCounter("bento-val-exposed", snapshot.exposedCompanies, 1600, false, 700, key);

@@ -4,7 +4,7 @@ import { Gauge, Radio, LineChart, GitBranch } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export const metadata = {
-  title: "Methodology  -  Ripple",
+  title: "Ripple | Methodology",
 };
 
 const SECTIONS: { icon: LucideIcon; title: string; body: string }[] = [

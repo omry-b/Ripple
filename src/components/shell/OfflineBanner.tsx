@@ -20,7 +20,7 @@ export function OfflineBanner() {
 
   return (
     <div className="offline-banner" role="status">
-      You are offline  -  data may be stale until connection returns.
+      You are offline. Data may be stale until your connection returns.
     </div>
   );
 }

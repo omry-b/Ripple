@@ -1,12 +1,5 @@
-import type { Alert, Company, SignalStream } from "@/types/domain";
+import type { Alert, SignalStream } from "@/types/domain";
 import type { PersistedIngestEvent } from "@/lib/ingest/sync-risk";
-
-export function formatCvarDeltaLabel(companies: Company[]): string {
-  const total = companies.reduce((s, c) => s + c.cvarUsd, 0);
-  const elevated = companies.filter((c) => c.score >= 50).length;
-  const b = total / 1e9;
-  return `Portfolio ${b.toFixed(1)}B CVaR · ${elevated} elevated names`;
-}
 
 export function formatSignalsDeltaLabel(
   streams: SignalStream[],

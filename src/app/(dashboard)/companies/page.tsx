@@ -8,7 +8,7 @@ import { DigestPreferences } from "@/components/watchlists/DigestPreferences";
 import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
-  title: "Companies  -  Ripple",
+  title: "Ripple | Companies",
 };
 
 type Props = {

@@ -23,7 +23,7 @@ export function CompactMetricsStrip() {
       </span>
       <span className="compact-metric-divider" />
       <span className="compact-metric">
-        CVaR <strong className="critical-accent">${snapshot.cvar95BaselineB.toFixed(1)}B</strong>
+        CVaR <strong className="critical-accent">${snapshot.portfolioCvarB.toFixed(1)}B</strong>
       </span>
       <span className="compact-metric-divider" />
       <span className="compact-metric">

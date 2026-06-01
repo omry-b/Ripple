@@ -9,7 +9,7 @@ const ENTRIES = [
   { date: "2026-05-17", title: "Multi-route dashboard, live polling, scenario API" },
 ];
 
-export const metadata = { title: "Changelog  -  Ripple" };
+export const metadata = { title: "Ripple | Changelog" };
 
 export default function ChangelogPage() {
   return (

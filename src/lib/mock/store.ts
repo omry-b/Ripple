@@ -9,7 +9,10 @@ import type {
   TickerItem,
 } from "@/types/domain";
 import { alertState } from "@/lib/mock/alert-state";
-import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
+import {
+  aggregateSnapshot,
+  scoreCompaniesForPayload,
+} from "@/lib/risk/snapshot-aggregator";
 import {
   buildTickerFromAllSources,
   loadRecentIngestEvents,
@@ -283,11 +286,12 @@ export const mockStore = {
     const alerts = alertState.list();
     const streams = applyIngestScoreOverrides(STREAMS);
     const ingestEvents = await loadRecentIngestEvents(80);
+    const companies = scoreCompaniesForPayload(ALL_COMPANIES, streams);
     const snapshot = await buildSnapshot();
     return {
       snapshot,
       ticker: buildTickerFromAllSources(alerts, streams, ingestEvents),
-      topCompaniesMini: ALL_COMPANIES.slice(0, 3).map((c) => ({
+      topCompaniesMini: companies.slice(0, 3).map((c) => ({
         id: c.id,
         name: c.name,
         score: c.score,
@@ -295,7 +299,7 @@ export const mockStore = {
         delta7d: c.delta7d.replace(/\s/g, ""),
       })),
       alerts,
-      companies: ALL_COMPANIES,
+      companies,
       streams,
       scenarios: SCENARIOS,
     };

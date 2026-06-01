@@ -248,7 +248,7 @@ export function ScenarioWorkbench({
                   <p className="scenario-preview">{scenario.preview}</p>
                 </div>
                 <button type="button" className="scenario-btn" disabled={running || !canRun}>
-                  {!canRun ? "Viewer  -  read only" : running ? "Running…" : "Run Simulation →"}
+                  {!canRun ? "Viewer (read only)" : running ? "Running…" : "Run Simulation →"}
                 </button>
               </div>
             ))}

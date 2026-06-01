@@ -107,7 +107,7 @@ export type CommandItem = {
 };
 
 export type Hotspot = {
-  /** WGS84 longitude  -  source of truth for map position */
+  /** WGS84 longitude source of truth for map position */
   lng: number;
   /** WGS84 latitude */
   lat: number;
@@ -135,6 +135,9 @@ export type DashboardSnapshot = {
   riskIndex: number;
   exposedCompanies: number;
   trackedCompanies: number;
+  /** Current portfolio tail risk (billions USD, live scored). */
+  portfolioCvarB: number;
+  /** 30-day rolling baseline tail risk (billions USD). */
   cvar95BaselineB: number;
   cvar95Display: string;
   cvarDeltaLabel: string;

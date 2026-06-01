@@ -137,7 +137,7 @@ export function WorldTopoMap({ hotspots, onHotspotClick }: WorldTopoMapProps) {
             tabIndex={onHotspotClick ? 0 : undefined}
             aria-label={
               onHotspotClick
-                ? `${h.label}  -  ${h.level} risk at ${h.lat.toFixed(1)}°, ${h.lng.toFixed(1)}°. Click for exposure.`
+                ? `${h.label}: ${h.level} risk at ${h.lat.toFixed(1)}°, ${h.lng.toFixed(1)}°. Click for exposure.`
                 : undefined
             }
           >

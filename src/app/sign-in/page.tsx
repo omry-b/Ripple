@@ -1,7 +1,7 @@
 import { SignInClient } from "./SignInClient";
 
 export const metadata = {
-  title: "Sign in  -  Ripple",
+  title: "Ripple | Sign in",
 };
 
 export default function SignInPage() {

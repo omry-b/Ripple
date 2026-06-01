@@ -1,7 +1,7 @@
 import { getSnapshot } from "@/lib/api";
 
 export const metadata = {
-  title: "Ripple Risk Index  -  Embed",
+  title: "Ripple Risk Index Embed",
   robots: "noindex",
 };
 

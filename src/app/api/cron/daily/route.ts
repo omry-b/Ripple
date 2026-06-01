@@ -4,7 +4,7 @@ import { getAlerts } from "@/lib/api";
 import { drainScenarioJobQueue } from "@/lib/scenario/worker";
 import { authorizeServiceRequest } from "@/lib/auth/service-secret";
 
-/** Combined daily cron  -  Hobby-safe (single cron slot). Runs snapshot, digest, scenario drain. */
+/** Combined daily cron Hobby-safe (single cron slot). Runs snapshot, digest, scenario drain. */
 export async function GET(request: Request) {
   if (!authorizeServiceRequest(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
