@@ -9,8 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { useAuth } from "@clerk/nextjs";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { useFirebaseAuth } from "@/context/FirebaseAuthContext";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import {
   getWatchlistIds,
   setWatchlistIds,
@@ -30,17 +30,17 @@ const WatchlistContext = createContext<WatchlistContextValue | null>(null);
 
 function WatchlistProviderInner({
   children,
-  clerkUserId,
+  firebaseUserId,
   authReady,
 }: {
   children: React.ReactNode;
-  clerkUserId: string | null;
+  firebaseUserId: string | null;
   authReady: boolean;
 }) {
   const [ids, setIds] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
   const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const effectiveUserId = clerkUserId;
+  const effectiveUserId = firebaseUserId;
 
   const syncToServer = useCallback(
     async (companyIds: string[]) => {
@@ -50,6 +50,7 @@ function WatchlistProviderInner({
         await fetch("/api/watchlists/default", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ companyIds }),
         });
       } catch {
@@ -76,7 +77,7 @@ function WatchlistProviderInner({
     if (effectiveUserId) {
       setIsSyncing(true);
       try {
-        const res = await fetch("/api/watchlists/default");
+        const res = await fetch("/api/watchlists/default", { credentials: "include" });
         if (res.ok) {
           const data = (await res.json()) as {
             watchlist: { companyIds: string[] };
@@ -142,12 +143,12 @@ function WatchlistProviderInner({
   );
 }
 
-function WatchlistProviderWithClerk({ children }: { children: React.ReactNode }) {
-  const { isSignedIn, userId, isLoaded } = useAuth();
+function WatchlistProviderWithFirebase({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useFirebaseAuth();
   return (
     <WatchlistProviderInner
-      clerkUserId={isSignedIn && userId ? userId : null}
-      authReady={isLoaded}
+      firebaseUserId={user?.uid ?? null}
+      authReady={!loading}
     >
       {children}
     </WatchlistProviderInner>
@@ -155,11 +156,11 @@ function WatchlistProviderWithClerk({ children }: { children: React.ReactNode })
 }
 
 export function WatchlistProvider({ children }: { children: React.ReactNode }) {
-  if (isClerkConfigured()) {
-    return <WatchlistProviderWithClerk>{children}</WatchlistProviderWithClerk>;
+  if (isFirebaseClientConfigured()) {
+    return <WatchlistProviderWithFirebase>{children}</WatchlistProviderWithFirebase>;
   }
   return (
-    <WatchlistProviderInner clerkUserId={null} authReady>
+    <WatchlistProviderInner firebaseUserId={null} authReady>
       {children}
     </WatchlistProviderInner>
   );

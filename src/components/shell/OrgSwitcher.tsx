@@ -1,7 +1,7 @@
 "use client";
 
 import { useDemoAuth } from "@/context/DemoAuthContext";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 
 const ORGS = [
   { id: "org_demo", label: "Ripple Demo Org" },
@@ -10,7 +10,7 @@ const ORGS = [
 ];
 
 export function OrgSwitcher() {
-  if (isClerkConfigured()) return null;
+  if (isFirebaseClientConfigured()) return null;
 
   const { organizationId, setOrganizationId } = useDemoAuth();
 

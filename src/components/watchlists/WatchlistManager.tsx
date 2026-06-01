@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { WatchlistRecord } from "@/lib/data/types";
 import { useWatchlist } from "@/context/WatchlistContext";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import Link from "next/link";
 
 const DIGEST_KEY = "ripple-watchlist-digest";
@@ -71,14 +71,14 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
       <p className="watchlist-manager-hint">
         {isSignedIn
           ? "Your watchlist syncs to your account when you star companies."
-          : isClerkConfigured()
+          : isFirebaseClientConfigured()
             ? (
                 <>
                   Sign in with Google to save watchlists across devices.{" "}
                   <Link href="/sign-in">Sign in</Link>
                 </>
               )
-            : "Stars are stored in this browser until Clerk auth is configured."}
+            : "Stars are stored in this browser until Firebase auth is configured."}
       </p>
       <div className="watchlist-create-row">
         <input

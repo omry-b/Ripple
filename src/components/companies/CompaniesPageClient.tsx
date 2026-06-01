@@ -10,7 +10,7 @@ import {
 } from "@/components/tables/CompanyExposureTable";
 import { exportCompaniesCsv } from "@/lib/export/entities";
 import { useWatchlist } from "@/context/WatchlistContext";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -105,7 +105,7 @@ export function CompaniesPageClient({
 
   return (
     <>
-      {isClerkConfigured() && !isSignedIn && (
+      {isFirebaseClientConfigured() && !isSignedIn && (
         <div className="alert-filter-banner">
           <span>
             Stars are saved in this browser only.{" "}

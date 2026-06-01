@@ -1061,8 +1061,15 @@
   padding: 48px var(--ripple-space-6);
 }
 
+.user-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .auth-card,
-.auth-clerk-wrap {
+.auth-firebase-wrap {
   width: 100%;
   max-width: 420px;
   padding: 40px;

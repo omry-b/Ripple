@@ -15,7 +15,7 @@ export default function TeamSettingsPage() {
     <>
       <PageHeader
         title="Team"
-        subtitle="Invite colleagues and manage roles (demo wire Clerk Organizations for production)."
+        subtitle="Invite colleagues and manage roles (team invites via Firebase Auth in production)."
       />
       <main className="content-container">
         <Breadcrumbs
@@ -49,7 +49,7 @@ export default function TeamSettingsPage() {
               </button>
             </div>
             <p className="watchlist-manager-hint">
-              Invites are a UI placeholder until Clerk Organizations is configured.
+              Invites are a UI placeholder until team management is wired to Firebase.
             </p>
           </form>
           <p className="watchlist-manager-hint">

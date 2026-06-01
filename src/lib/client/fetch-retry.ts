@@ -27,6 +27,7 @@ export async function fetchJsonWithRetry<T>(
     try {
       const res = await fetch(path, {
         cache: "no-store",
+        credentials: "include",
         ...init,
         headers: mergedHeaders,
       });

@@ -29,7 +29,7 @@ const TIERS = [
     price: "Custom",
     period: "",
     detail: "SSO · dedicated ingest · SLA",
-    features: ["Multi-org + Clerk", "Custom risk models", "VPC / on-prem", "Dedicated support"],
+    features: ["Multi-org + Firebase Auth", "Custom risk models", "VPC / on-prem", "Dedicated support"],
   },
 ];
 

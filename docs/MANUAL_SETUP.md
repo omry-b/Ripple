@@ -34,13 +34,25 @@ Save the output as **`CRON_SECRET`** — you’ll use the same value in Vercel a
 | `SLACK_WEBHOOK_URL` | Optional | Slack incoming webhook |
 | `PAGERDUTY_ROUTING_KEY` | Optional | PagerDuty Events API v2 routing key |
 | `WEBHOOK_SIGNING_SECRET` | Optional | `openssl rand -hex 24` |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Optional | Clerk dashboard |
-| `CLERK_SECRET_KEY` | Optional | Clerk dashboard |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Optional | Firebase console → Project settings → Web app |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Optional | Same web app config |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Optional | Same web app config |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Optional | Same web app config |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Optional | Firebase → Service accounts → Generate key (one-line JSON) |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | Optional | Mapbox |
 | `AIS_API_KEY` / `PORTS_API_KEY` | Optional | Live ingest (stubs without) |
 
-3. **Deployment Protection:** Settings → Deployment Protection → allow **public** access to Production (or you’ll see a Vercel login wall).
-4. **Redeploy** Production after env vars change.
+**Firebase Google sign-in (optional):** Without these vars the app runs in demo auth mode. To enable saved watchlists with Google:
+
+1. [Firebase console](https://console.firebase.google.com) → **Create project** (or use existing).
+2. **Build** → **Authentication** → **Get started** → **Sign-in method** → enable **Google**.
+3. **Project settings** → **Your apps** → **Web** (`</>`) → register app → copy the `firebaseConfig` values into the `NEXT_PUBLIC_FIREBASE_*` vars above.
+4. **Project settings** → **Service accounts** → **Generate new private key** → paste the JSON as a single line into `FIREBASE_SERVICE_ACCOUNT_JSON` on Vercel.
+5. **Authentication** → **Settings** → **Authorized domains** → add your Vercel hostname (e.g. `ripple-ruby.vercel.app`) and `localhost` for local dev.
+6. Redeploy after saving env vars. Sign in at `/sign-in` with **Continue with Google**.
+
+7. **Deployment Protection:** Settings → Deployment Protection → allow **public** access to Production (or you’ll see a Vercel login wall).
+8. **Redeploy** Production after env vars change.
 
 **Builds:** Vercel runs `npm run build` only (see `vercel.json`). Do **not** add `db:push` to the build — it connects to production Postgres during compile, hits connection limits, and fails with `Pulling schema from database...` / exit 1. Run migrations locally instead (step 3 below).
 
@@ -215,7 +227,7 @@ Not required for first production cut.
 | `RESEND_API_KEY` | Resend | Vercel |
 | `SLACK_WEBHOOK_URL` | Slack | Vercel |
 | `PAGERDUTY_ROUTING_KEY` | PagerDuty | Vercel |
-| Clerk keys | clerk.com | Vercel |
+| Firebase keys | [console.firebase.google.com](https://console.firebase.google.com) | Vercel |
 | Wrangler login | Cloudflare account | Your laptop (`wrangler deploy`) |
 | DO API token | DO dashboard (optional) | `doctl` / Terraform later |
 

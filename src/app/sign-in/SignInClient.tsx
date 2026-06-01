@@ -3,34 +3,31 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { MarketingShell } from "@/components/shell/MarketingShell";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 
-const ClerkSignIn = dynamic(
-  () => import("@/components/auth/ClerkSignIn").then((m) => m.ClerkSignIn),
+const FirebaseGoogleSignIn = dynamic(
+  () => import("@/components/auth/FirebaseGoogleSignIn").then((m) => m.FirebaseGoogleSignIn),
   { ssr: false }
 );
 
 export function SignInClient() {
-  const hasClerk = isClerkConfigured();
+  const hasFirebase = isFirebaseClientConfigured();
 
   return (
     <MarketingShell>
       <main className="auth-page">
-        {hasClerk ? (
-          <ClerkSignIn />
+        {hasFirebase ? (
+          <FirebaseGoogleSignIn />
         ) : (
           <div className="auth-card">
             <p className="welcome-eyebrow">Sign in</p>
             <h1 className="auth-title">Welcome back</h1>
             <p className="auth-lead">
-              Demo mode: use the dashboard directly, or add Clerk keys for Google sign-in and
-              saved watchlists.
+              Demo mode: use the dashboard directly, or add Firebase env vars for Google
+              sign-in and saved watchlists.
             </p>
             <Link href="/" className="welcome-cta-primary auth-cta">
               Continue to dashboard →
-            </Link>
-            <Link href="/sign-up" className="auth-alt-link">
-              Create an account
             </Link>
           </div>
         )}

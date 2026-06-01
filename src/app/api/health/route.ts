@@ -19,14 +19,14 @@ export async function GET() {
       latencyMs: dbPing.latencyMs,
       error: dbPing.error,
     },
-    auth: isAuthEnabled() ? "clerk" : "demo",
+    auth: isAuthEnabled() ? "firebase" : "demo",
     scenarioJobsQueued: queuedJobs,
     ingestAdapters: INGEST_ADAPTERS.map((a) => a.name),
     env: {
       mapbox: Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN),
       kv: Boolean(process.env.KV_REST_API_URL),
       slack: Boolean(process.env.SLACK_WEBHOOK_URL),
-      clerk: Boolean(process.env.CLERK_SECRET_KEY),
+      firebase: isAuthEnabled(),
     },
   });
 }

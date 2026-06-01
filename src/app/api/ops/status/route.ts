@@ -55,14 +55,14 @@ export async function GET() {
       message: r.message,
     })),
     ingestAdapters: INGEST_ADAPTERS.map((a) => a.name),
-    auth: isAuthEnabled() ? "clerk" : "demo",
+    auth: isAuthEnabled() ? "firebase" : "demo",
     integrations: {
       mapbox: Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN),
       kv: Boolean(process.env.KV_REST_API_URL),
       slack: Boolean(process.env.SLACK_WEBHOOK_URL),
       resend: Boolean(process.env.RESEND_API_KEY),
       pagerduty: Boolean(process.env.PAGERDUTY_ROUTING_KEY),
-      clerk: Boolean(process.env.CLERK_SECRET_KEY),
+      firebase: isAuthEnabled(),
     },
   });
 }

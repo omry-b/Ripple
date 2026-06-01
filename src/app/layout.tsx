@@ -3,7 +3,7 @@ import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { VercelInsights } from "@/components/shell/VercelInsights";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { AppClerkProvider } from "@/components/providers/AppClerkProvider";
+import { FirebaseAuthProvider } from "@/context/FirebaseAuthContext";
 
 const outfit = Outfit({
   variable: "--font-sans",
@@ -33,9 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} ${jetbrainsMono.variable}`} data-theme="dark">
       <body>
-        <AppClerkProvider>
+        <FirebaseAuthProvider>
           <ThemeProvider>{children}</ThemeProvider>
-        </AppClerkProvider>
+        </FirebaseAuthProvider>
         <VercelInsights />
       </body>
     </html>

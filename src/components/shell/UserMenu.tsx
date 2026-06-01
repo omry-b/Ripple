@@ -3,11 +3,11 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useDemoAuth } from "@/context/DemoAuthContext";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import type { UserRole } from "@/lib/auth/permissions";
 
-const ClerkUserMenu = dynamic(
-  () => import("./ClerkUserMenu").then((m) => m.ClerkUserMenu),
+const FirebaseUserMenu = dynamic(
+  () => import("./FirebaseUserMenu").then((m) => m.FirebaseUserMenu),
   { ssr: false, loading: () => null }
 );
 
@@ -58,8 +58,8 @@ function DemoUserMenu() {
 }
 
 export function UserMenu() {
-  if (isClerkConfigured()) {
-    return <ClerkUserMenu />;
+  if (isFirebaseClientConfigured()) {
+    return <FirebaseUserMenu />;
   }
   return <DemoUserMenu />;
 }

@@ -3,27 +3,27 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { MarketingShell } from "@/components/shell/MarketingShell";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 
-const ClerkSignUp = dynamic(
-  () => import("@/components/auth/ClerkSignUp").then((m) => m.ClerkSignUp),
+const FirebaseGoogleSignIn = dynamic(
+  () => import("@/components/auth/FirebaseGoogleSignIn").then((m) => m.FirebaseGoogleSignIn),
   { ssr: false }
 );
 
 export function SignUpClient() {
-  const hasClerk = isClerkConfigured();
+  const hasFirebase = isFirebaseClientConfigured();
 
   return (
     <MarketingShell>
       <main className="auth-page">
-        {hasClerk ? (
-          <ClerkSignUp />
+        {hasFirebase ? (
+          <FirebaseGoogleSignIn />
         ) : (
           <div className="auth-card">
             <p className="welcome-eyebrow">Get started</p>
             <h1 className="auth-title">Create account</h1>
             <p className="auth-lead">
-              Add Clerk keys on Vercel to enable Google sign-up and saved watchlists.
+              Add Firebase env vars on Vercel to enable Google sign-up and saved watchlists.
             </p>
             <Link href="/" className="welcome-cta-primary auth-cta">
               Continue in demo mode →

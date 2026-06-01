@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import { isFirebaseConfigured } from "@/lib/auth/firebase-config";
 import type { SessionUser } from "@/lib/auth/session";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import * as schema from "@/lib/db/schema";
@@ -7,7 +7,7 @@ import * as schema from "@/lib/db/schema";
 const DEFAULT_WATCHLIST_NAME = "My watchlist";
 
 export async function ensureUserRecord(user: SessionUser): Promise<void> {
-  if (!isClerkConfigured() || !isDatabaseConfigured()) return;
+  if (!isFirebaseConfigured() || !isDatabaseConfigured()) return;
   if (user.id === "user_demo") return;
 
   const db = getDb();
