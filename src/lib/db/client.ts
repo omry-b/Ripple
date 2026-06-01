@@ -14,7 +14,13 @@ export function getDb() {
     throw new Error("DATABASE_URL is not configured");
   }
   if (!db) {
-    client = postgres(process.env.DATABASE_URL!, { prepare: false });
+    // Serverless: one connection per isolate to avoid exhausting DO Postgres slots.
+    client = postgres(process.env.DATABASE_URL!, {
+      prepare: false,
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 15,
+    });
     db = drizzle(client, { schema });
   }
   return db;

@@ -24,7 +24,7 @@ function mapAdapterToSignal(adapter: string): string {
   const map: Record<string, string> = {
     ais: "ais",
     gdelt: "geo",
-    ports: "ports",
+    ports: "port",
     financial: "financial",
     weather: "weather",
   };
