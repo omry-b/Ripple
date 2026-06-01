@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-omry-2596s-projects.vercel.app"
   ),
-  title: "Ripple — Supply Chain Intelligence",
+  title: "Ripple  -  Supply Chain Intelligence",
   description: "Global supply chain risk intelligence dashboard",
 };
 

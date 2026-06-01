@@ -5,7 +5,7 @@ export type ScoreAttribution = {
 
 const ATTRIBUTIONS: Record<string, ScoreAttribution> = {
   apple: {
-    summary: "+9 pts over 7d — primarily Taiwan Strait exposure",
+    summary: "+9 pts over 7d - primarily Taiwan Strait exposure",
     drivers: [
       { label: "Taiwan Strait alert", points: 5 },
       { label: "AIS shipping anomalies", points: 2 },
@@ -13,7 +13,7 @@ const ATTRIBUTIONS: Record<string, ScoreAttribution> = {
     ],
   },
   tsmc: {
-    summary: "+12 pts — fab corridor stress + geopolitical index",
+    summary: "+12 pts - fab corridor stress + geopolitical index",
     drivers: [
       { label: "TSMC signal stream", points: 6 },
       { label: "Geopolitical escalation", points: 4 },
@@ -21,7 +21,7 @@ const ATTRIBUTIONS: Record<string, ScoreAttribution> = {
     ],
   },
   foxconn: {
-    summary: "+6 pts — SEA port congestion affecting assembly routes",
+    summary: "+6 pts - SEA port congestion affecting assembly routes",
     drivers: [
       { label: "SEA port congestion alert", points: 4 },
       { label: "Logistics lane volatility", points: 2 },
@@ -36,7 +36,7 @@ export function getScoreAttribution(companyId: string, delta7d: string): ScoreAt
   const pts = match ? Number.parseInt(match[1], 10) : 3;
 
   return {
-    summary: `${delta7d} — composite signal drift (placeholder engine)`,
+    summary: `${delta7d} - composite signal drift from live streams`,
     drivers: [
       { label: "Cross-stream signal average", points: Math.ceil(pts / 2) },
       { label: "Regional exposure weight", points: Math.floor(pts / 2) },

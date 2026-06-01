@@ -1,7 +1,7 @@
 import type { Company } from "@/types/domain";
 
 /**
- * Placeholder CVaR₉₅ — sums company CVaR USD for portfolio exposure.
+ * Placeholder CVaR₉₅  -  sums company CVaR USD for portfolio exposure.
  * Replace with Monte Carlo / copula model when risk engine is production-ready.
  */
 export function computePortfolioCvar95(companies: Company[]): {

@@ -10,7 +10,10 @@ import type {
 } from "@/types/domain";
 import { alertState } from "@/lib/mock/alert-state";
 import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
-import { buildTickerFromAlertsAndStreams } from "@/lib/geo/hotspots";
+import {
+  buildTickerFromAllSources,
+  loadRecentIngestEvents,
+} from "@/lib/ingest/sync-risk";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
 import { regionForCompanyId } from "@/lib/mock/regions";
@@ -131,19 +134,6 @@ const EXTENDED_COMPANIES: Omit<Company, "history30d" | "region">[] = Array.from(
 });
 
 const ALL_COMPANIES: Company[] = [...CORE_COMPANIES, ...EXTENDED_COMPANIES].map(enrichCompany);
-
-const TICKER: TickerItem[] = [
-  { label: "TAIWAN STRAIT", level: "critical" },
-  { label: "SEA PORT CONGESTION", level: "elevated" },
-  { label: "TSMC SIGNAL", level: "elevated" },
-  { label: "ROTTERDAM PORT", level: "normal" },
-  { label: "RED SEA ROUTING", level: "elevated" },
-  { label: "SHANGHAI PORT", level: "normal" },
-  { label: "BNSF FREIGHT", level: "normal" },
-  { label: "TYPHOON MAWAR", level: "elevated" },
-  { label: "CHIP LEAD TIMES", level: "elevated" },
-  { label: "SUEZ WATCH", level: "normal" },
-];
 
 const STREAMS: SignalStream[] = [
   {
@@ -272,26 +262,31 @@ const SCENARIOS: Scenario[] = [
   },
 ];
 
-function buildSnapshot(): DashboardSnapshot {
+async function buildSnapshot(): Promise<DashboardSnapshot> {
+  const alerts = alertState.list();
+  const streams = applyIngestScoreOverrides(STREAMS);
+  const ingestEvents = await loadRecentIngestEvents(200);
   return aggregateSnapshot({
     companies: ALL_COMPANIES,
-    alerts: alertState.list(),
-    streams: STREAMS.map((s) => ({ ...s })),
+    alerts,
+    streams,
+    ingestEvents,
   });
 }
 
 export const mockStore = {
-  getSnapshot(): DashboardSnapshot {
+  async getSnapshot(): Promise<DashboardSnapshot> {
     return buildSnapshot();
   },
 
-  getDashboard(): DashboardPayload {
+  async getDashboard(): Promise<DashboardPayload> {
     const alerts = alertState.list();
     const streams = applyIngestScoreOverrides(STREAMS);
-    const snapshot = buildSnapshot();
+    const ingestEvents = await loadRecentIngestEvents(80);
+    const snapshot = await buildSnapshot();
     return {
       snapshot,
-      ticker: buildTickerFromAlertsAndStreams(alerts, streams),
+      ticker: buildTickerFromAllSources(alerts, streams, ingestEvents),
       topCompaniesMini: ALL_COMPANIES.slice(0, 3).map((c) => ({
         id: c.id,
         name: c.name,
@@ -344,11 +339,11 @@ export const mockStore = {
     return SCENARIOS;
   },
 
-  getTicker(): TickerItem[] {
-    return buildTickerFromAlertsAndStreams(
-      alertState.list(),
-      applyIngestScoreOverrides(STREAMS)
-    );
+  async getTicker(): Promise<TickerItem[]> {
+    const alerts = alertState.list();
+    const streams = applyIngestScoreOverrides(STREAMS);
+    const ingestEvents = await loadRecentIngestEvents(80);
+    return buildTickerFromAllSources(alerts, streams, ingestEvents);
   },
 
   getScenario(id: string): Scenario | undefined {

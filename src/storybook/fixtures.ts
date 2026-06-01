@@ -7,6 +7,7 @@ import type {
   SignalStream,
 } from "@/types/domain";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
+import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
 
 export const mockAlertCritical: Alert = {
   id: "taiwan",
@@ -100,43 +101,16 @@ export const mockScoreFactors: ScoreFactor[] = [
   { key: "weather", label: "Weather & climate", weight: 10, contribution: 8 },
 ];
 
-export const mockSnapshot: DashboardSnapshot = {
-  asOf: new Date().toISOString(),
-  riskIndex: 67.4,
-  exposedCompanies: 47,
-  trackedCompanies: 847,
-  cvar95BaselineB: 2.1,
-  cvar95Display: "$2.1B",
-  cvarDeltaLabel: "↑ $400M above 30-day baseline",
-  cvarProgressPercent: 67,
-  liveSignalsCount: 214,
-  signalsDeltaLabel: "+12 past 24h",
-  elevatedSignals24h: 3,
-  openAlertsCount: 3,
-  activeStreamsCount: 7,
-  hotspots: [
-    {
-      lng: 121.0,
-      lat: 24.5,
-      cx: 0,
-      cy: 0,
-      level: "critical",
-      alertId: "taiwan",
-      label: "Taiwan Strait",
-      region: "APAC",
-    },
-    {
-      lng: 103.85,
-      lat: 1.29,
-      cx: 0,
-      cy: 0,
-      level: "elevated",
-      alertId: "sea-port",
-      label: "SEA Ports",
-      region: "APAC",
-    },
-  ],
-};
+const storyAlerts = [mockAlertCritical, mockAlertElevated];
+const storyCompanies = [mockCompany];
+const storyStreams = mockStreams;
+
+export const mockSnapshot: DashboardSnapshot = aggregateSnapshot({
+  companies: storyCompanies,
+  alerts: storyAlerts,
+  streams: storyStreams,
+  ingestEvents: [],
+});
 
 export const mockDashboard: DashboardPayload = {
   snapshot: mockSnapshot,

@@ -10,7 +10,7 @@ const ENDPOINTS = [
   { path: "/api/ingest/internal", desc: "Service-auth ingest (cron)" },
 ];
 
-export const metadata = { title: "API docs — Ripple" };
+export const metadata = { title: "API docs  -  Ripple" };
 
 export default function ApiDocsPage() {
   return (

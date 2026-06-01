@@ -117,7 +117,7 @@ export function SystemStatusPanel() {
         <h3 className="supplier-tier-title">Recent ingest runs</h3>
         {ops.recentIngest.length === 0 ? (
           <p className="watchlist-manager-hint">
-            No runs yet — next ingest fires on the 6-hour Cloudflare schedule, or trigger{" "}
+            No runs yet  -  next ingest fires on the 6-hour Cloudflare schedule, or trigger{" "}
             <Link href="/api-docs" className="text-link">
               POST /api/ingest/internal
             </Link>{" "}

@@ -13,7 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Companies: Story = {
   args: {
     title: "Company Exposure",
-    subtitle: "847 tracked · 47 currently exposed",
+    subtitle: "Tracked companies and exposure from live snapshot",
   },
 };
 

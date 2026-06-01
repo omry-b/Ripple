@@ -6,7 +6,7 @@ import { ScenarioPageClient } from "@/components/scenario/ScenarioPageClient";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 
 export const metadata = {
-  title: "Scenario Workbench — Ripple",
+  title: "Scenario Workbench  -  Ripple",
 };
 
 export default async function ScenarioPage() {

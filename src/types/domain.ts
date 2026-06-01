@@ -107,7 +107,7 @@ export type CommandItem = {
 };
 
 export type Hotspot = {
-  /** WGS84 longitude — source of truth for map position */
+  /** WGS84 longitude  -  source of truth for map position */
   lng: number;
   /** WGS84 latitude */
   lat: number;

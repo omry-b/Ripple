@@ -12,7 +12,7 @@ export function ScoreBreakdownChart({ factors, totalScore }: ScoreBreakdownChart
     <section className="workbench-card workbench-card--spaced">
       <div className="card-title">Risk score breakdown</div>
       <p className="prose-muted-sm">
-        Composite score {totalScore} — weighted factor contributions
+        Composite score {totalScore}  -  weighted factor contributions
       </p>
       <div className="score-breakdown-list">
         {factors.map((factor) => {

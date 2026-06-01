@@ -1,4 +1,4 @@
-/* Design tokens — 4px grid + financial dashboard semantics (ui-ux-pro-max) */
+/* Design tokens  -  4px grid + financial dashboard semantics (ui-ux-pro-max) */
 :root {
   --ripple-space-1: 4px;
   --ripple-space-2: 8px;
@@ -13,7 +13,7 @@
   --ripple-elevation-1: 0 4px 24px rgba(0, 0, 0, 0.35);
   --ripple-elevation-2: 0 8px 32px rgba(0, 0, 0, 0.45);
 
-  /* Surfaces — Dark Mode OLED / data-dense */
+  /* Surfaces  -  Dark Mode OLED / data-dense */
   --ripple-surface-base: #0a0a0a;
   --ripple-surface-raised: #0d0d0d;
   --ripple-surface-overlay: #141414;

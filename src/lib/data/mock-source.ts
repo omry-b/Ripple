@@ -1,5 +1,6 @@
 import { mockStore } from "@/lib/mock/store";
 import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
+import { loadRecentIngestEvents } from "@/lib/ingest/sync-risk";
 import { simulationRunStore } from "@/lib/mock/simulation-runs";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { buildScoreHistory30d } from "@/lib/mock/score-history";
@@ -19,9 +20,9 @@ const notes = new Map<string, string>();
 export const mockDataSource: RippleDataSource = {
   mode: "mock",
 
-  getDashboard: () => Promise.resolve(mockStore.getDashboard()),
-  getSnapshot: () => Promise.resolve(mockStore.getSnapshot()),
-  getTicker: () => Promise.resolve(mockStore.getTicker()),
+  getDashboard: () => mockStore.getDashboard(),
+  getSnapshot: () => mockStore.getSnapshot(),
+  getTicker: () => mockStore.getTicker(),
   getSignals: () => Promise.resolve(mockStore.getSignals()),
   getCompanies: () => Promise.resolve(mockStore.getCompanies()),
   getCompany: async (id) => mockStore.getCompany(id) ?? null,
@@ -46,12 +47,13 @@ export const mockDataSource: RippleDataSource = {
     return getScoreFactorsForCompany(companyId, company.score);
   },
   refreshSnapshot: async () => {
-    const snapshot = aggregateSnapshot({
+    const ingestEvents = await loadRecentIngestEvents(200);
+    return aggregateSnapshot({
       companies: await mockStore.getCompanies(),
       alerts: await mockStore.getAlerts(),
       streams: await mockStore.getSignals(),
+      ingestEvents,
     });
-    return snapshot;
   },
 
   getWatchlists: async (userId) => watchlists.get(userId) ?? [],

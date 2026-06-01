@@ -6,7 +6,11 @@ import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
 import { runScenarioEngine } from "@/lib/scenario/engine";
 import { resolveContagionEntityNames } from "@/lib/scenario/graph-propagation";
 import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
-import { buildTickerFromAlertsAndStreams, normalizeHotspotGeo } from "@/lib/geo/hotspots";
+import { normalizeHotspotGeo } from "@/lib/geo/hotspots";
+import {
+  buildTickerFromAllSources,
+  loadRecentIngestEvents,
+} from "@/lib/ingest/sync-risk";
 import type {
   Alert,
   Company,
@@ -102,10 +106,12 @@ async function loadSnapshotPayload(): Promise<DashboardSnapshot> {
     db.select().from(schema.signalStreams),
   ]);
 
+  const ingestEvents = await loadRecentIngestEvents(200);
   return aggregateSnapshot({
     companies: companyRows.map(rowToCompany),
     alerts: alertRows.map(rowToAlert),
     streams: streamRows.map(rowToSignal),
+    ingestEvents,
   });
 }
 
@@ -159,8 +165,12 @@ export const postgresDataSource: RippleDataSource = {
 
   async getTicker() {
     await ensureSeeded();
-    const [alerts, streams] = await Promise.all([this.getAlerts(), this.getSignals()]);
-    return buildTickerFromAlertsAndStreams(alerts, streams);
+    const [alerts, streams, ingestEvents] = await Promise.all([
+      this.getAlerts(),
+      this.getSignals(),
+      loadRecentIngestEvents(80),
+    ]);
+    return buildTickerFromAllSources(alerts, streams, ingestEvents);
   },
 
   async getSignals() {
@@ -368,10 +378,17 @@ export const postgresDataSource: RippleDataSource = {
   },
 
   async refreshSnapshot() {
+    const [companies, alerts, streams, ingestEvents] = await Promise.all([
+      this.getCompanies(),
+      this.getAlerts(),
+      this.getSignals(),
+      loadRecentIngestEvents(200),
+    ]);
     const snapshot = aggregateSnapshot({
-      companies: await this.getCompanies(),
-      alerts: await this.getAlerts(),
-      streams: await this.getSignals(),
+      companies,
+      alerts,
+      streams,
+      ingestEvents,
     });
     const db = getDb();
     const hotspots = snapshot.hotspots;

@@ -12,7 +12,7 @@ export function CompanyPrintButton({ companyName }: CompanyPrintButtonProps) {
         className="filter-export-btn"
         onClick={() => window.print()}
       >
-        Print report — {companyName}
+        Print report  -  {companyName}
       </button>
     </div>
   );

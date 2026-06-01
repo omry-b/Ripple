@@ -42,7 +42,7 @@ export function DigestPreferences() {
     <section className="workbench-card digest-prefs">
       <h3 className="supplier-tier-title">Email digest (preview)</h3>
       <p className="watchlist-manager-hint">
-        Placeholder UI — wire to notification service when auth is live.
+        Placeholder UI  -  wire to notification service when auth is live.
       </p>
       <label className="digest-toggle">
         <input

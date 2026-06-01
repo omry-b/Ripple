@@ -4,7 +4,7 @@ import { WelcomeDashboardPreview } from "@/components/marketing/WelcomeDashboard
 import { Radio, ShieldAlert, FlaskConical, LineChart, Zap, Globe2 } from "lucide-react";
 
 export const metadata = {
-  title: "Ripple — Supply chain risk intelligence",
+  title: "Ripple  -  Supply chain risk intelligence",
   description: "Live exposure, signals, CVaR, and scenario stress for global supply chains.",
 };
 
@@ -22,7 +22,7 @@ const FEATURES = [
   {
     icon: FlaskConical,
     title: "Scenario engine",
-    body: "What-if shocks propagate across supplier tiers — sync or async jobs drained by Cloudflare every five minutes.",
+    body: "What-if shocks propagate across supplier tiers  -  sync or async jobs drained by Cloudflare every five minutes.",
   },
   {
     icon: LineChart,
@@ -32,7 +32,7 @@ const FEATURES = [
   {
     icon: Zap,
     title: "Edge + API",
-    body: "RSS, webhooks, Slack, and Resend hooks when configured — plus OpenAPI for your stack.",
+    body: "RSS, webhooks, Slack, and Resend hooks when configured  -  plus OpenAPI for your stack.",
   },
   {
     icon: Globe2,
@@ -55,7 +55,7 @@ export default function WelcomePage() {
               <span className="welcome-headline-accent">P&amp;L</span>
             </h1>
             <p className="welcome-lead">
-              Ripple quantifies exposure across your supplier network — live signals, CVaR
+              Ripple quantifies exposure across your supplier network  -  live signals, CVaR
               baselines, open alerts, and Monte Carlo scenarios in one operations-grade
               dashboard.
             </p>
@@ -79,7 +79,7 @@ export default function WelcomePage() {
         <section className="welcome-features">
           <h2 className="welcome-section-title">Built for risk teams</h2>
           <p className="welcome-section-sub">
-            Financial-dashboard UX — dark, data-dense, and designed for decisions under
+            Financial-dashboard UX  -  dark, data-dense, and designed for decisions under
             uncertainty.
           </p>
           <div className="welcome-feature-grid">
@@ -98,7 +98,7 @@ export default function WelcomePage() {
         <section className="welcome-cta-banner">
           <div>
             <h2>Ready to stress-test your supply chain?</h2>
-            <p>Start with the live demo — Postgres-backed in production, mock mode locally.</p>
+            <p>Start with the live demo  -  Postgres-backed in production, mock mode locally.</p>
           </div>
           <Link href="/" className="welcome-cta-primary welcome-cta-lg">
             Launch Ripple →

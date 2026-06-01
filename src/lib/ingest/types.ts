@@ -6,7 +6,7 @@ export type NormalizedIngestEvent = {
   companyId?: string;
   severity: number;
   summary: string;
-  /** WGS84 — used for map anchors when creating stream-linked hotspots */
+  /** WGS84  -  used for map anchors when creating stream-linked hotspots */
   lng?: number;
   lat?: number;
   raw?: Record<string, unknown>;

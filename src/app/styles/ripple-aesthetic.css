@@ -1,5 +1,5 @@
 /**
- * Ripple visual overhaul — Financial dashboard + glass depth
+ * Ripple visual overhaul  -  Financial dashboard + glass depth
  * Aligned with ui-ux-pro-max (Dark OLED, data-dense, trust blue)
  */
 
@@ -40,7 +40,7 @@
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
 }
 
-/* —— Shell —— */
+/*  -  -  Shell  -  -  */
 .nav-header {
   height: 56px;
   padding: 0 var(--ripple-space-6);
@@ -111,7 +111,7 @@
   );
 }
 
-/* —— Hero —— */
+/*  -  -  Hero  -  -  */
 .hero-container.hero-panel {
   min-height: auto;
   border-bottom-color: rgba(255, 255, 255, 0.06);
@@ -239,7 +239,7 @@
   display: none;
 }
 
-/* —— Sections —— */
+/*  -  -  Sections  -  -  */
 .section-label {
   display: flex;
   align-items: center;
@@ -258,7 +258,7 @@
   flex-shrink: 0;
 }
 
-/* —— Cards —— */
+/*  -  -  Cards  -  -  */
 .bento-card,
 .workbench-card,
 .stream-card,
@@ -295,7 +295,7 @@
   letter-spacing: -0.03em;
 }
 
-/* —— Alerts atmosphere —— */
+/*  -  -  Alerts atmosphere  -  -  */
 .atmosphere-section {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(
@@ -317,7 +317,7 @@
   background: rgba(10, 10, 12, 0.95);
 }
 
-/* —— Page headers (sub-routes) —— */
+/*  -  -  Page headers (sub-routes)  -  -  */
 .page-header {
   padding: 40px var(--ripple-space-6) 32px;
   border-bottom: none;
@@ -352,7 +352,7 @@
   margin-top: var(--ripple-space-2);
 }
 
-/* —— Tables —— */
+/*  -  -  Tables  -  -  */
 .table-container thead {
   background: rgba(255, 255, 255, 0.04);
 }
@@ -367,7 +367,7 @@
   background: rgba(59, 130, 246, 0.06);
 }
 
-/* —— Stream grid —— */
+/*  -  -  Stream grid  -  -  */
 .stream-grid {
   gap: var(--ripple-space-3);
 }
@@ -377,7 +377,7 @@
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
 }
 
-/* —— Scenario —— */
+/*  -  -  Scenario  -  -  */
 .scenario-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -397,7 +397,7 @@
   background: rgba(59, 130, 246, 0.08);
 }
 
-/* —— Subscribe / CTA —— */
+/*  -  -  Subscribe / CTA  -  -  */
 .subscribe-cta {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.02));
   border: 1px solid rgba(59, 130, 246, 0.2);
@@ -411,7 +411,7 @@
   color: var(--ripple-text-primary);
 }
 
-/* —— Command palette —— */
+/*  -  -  Command palette  -  -  */
 .cmdk-panel {
   background: rgba(12, 12, 14, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -424,7 +424,7 @@
   background: rgba(59, 130, 246, 0.15);
 }
 
-/* —— Section jump —— */
+/*  -  -  Section jump  -  -  */
 .section-jump-nav {
   border-bottom-color: rgba(255, 255, 255, 0.06);
   padding-bottom: var(--ripple-space-3);
@@ -436,7 +436,7 @@
   background: rgba(59, 130, 246, 0.12);
 }
 
-/* —— Filter bar —— */
+/*  -  -  Filter bar  -  -  */
 .filter-bar {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -462,7 +462,7 @@
   color: #fff;
 }
 
-/* —— User menu —— */
+/*  -  -  User menu  -  -  */
 .user-menu-trigger {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.1);
@@ -474,7 +474,7 @@
   backdrop-filter: blur(16px);
 }
 
-/* —— Drawers / modals —— */
+/*  -  -  Drawers / modals  -  -  */
 .drawer-panel,
 .signal-drawer,
 .alert-modal-panel,
@@ -515,7 +515,7 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* —— Marketing shell —— */
+/*  -  -  Marketing shell  -  -  */
 .marketing-shell {
   min-height: 100dvh;
   display: flex;
@@ -608,7 +608,7 @@
   color: var(--color-accent-muted);
 }
 
-/* —— Welcome landing —— */
+/*  -  -  Welcome landing  -  -  */
 .welcome-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -948,7 +948,7 @@
   font-size: 14px;
 }
 
-/* —— Pricing —— */
+/*  -  -  Pricing  -  -  */
 .pricing-header {
   margin-bottom: 40px;
 }
@@ -1052,7 +1052,7 @@
   justify-content: center;
 }
 
-/* —— Auth —— */
+/*  -  -  Auth  -  -  */
 .auth-page {
   flex: 1;
   display: flex;
@@ -1109,7 +1109,7 @@
   color: var(--color-accent-muted);
 }
 
-/* —— App footer —— */
+/*  -  -  App footer  -  -  */
 .app-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding: var(--ripple-space-6);
@@ -1147,7 +1147,7 @@
   color: var(--color-accent-muted);
 }
 
-/* —— Breadcrumbs —— */
+/*  -  -  Breadcrumbs  -  -  */
 .breadcrumbs {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
@@ -1175,7 +1175,7 @@
   opacity: 0.4;
 }
 
-/* —— Methodology —— */
+/*  -  -  Methodology  -  -  */
 .methodology-grid {
   gap: var(--ripple-space-4);
 }
@@ -1207,7 +1207,7 @@
   color: var(--ripple-text-secondary);
 }
 
-/* —— Company profile —— */
+/*  -  -  Company profile  -  -  */
 .company-stat-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1223,7 +1223,7 @@
   gap: var(--ripple-space-3);
 }
 
-/* —— Scenario workbench —— */
+/*  -  -  Scenario workbench  -  -  */
 .scenario-btn {
   background: linear-gradient(135deg, #2563eb, #3b82f6);
   border: none;
@@ -1252,7 +1252,7 @@
   letter-spacing: -0.02em;
 }
 
-/* —— Onboarding —— */
+/*  -  -  Onboarding  -  -  */
 .onboarding-tour {
   background: rgba(12, 12, 14, 0.95);
   border: 1px solid rgba(59, 130, 246, 0.35);
@@ -1272,7 +1272,7 @@
   cursor: pointer;
 }
 
-/* —— Empty states —— */
+/*  -  -  Empty states  -  -  */
 .empty-state-panel {
   background: rgba(255, 255, 255, 0.02);
   border: 1px dashed rgba(255, 255, 255, 0.12);
@@ -1286,7 +1286,7 @@
   font-size: 15px;
 }
 
-/* —— Map legend —— */
+/*  -  -  Map legend  -  -  */
 .legend-item.legend-toggle {
   border-radius: 999px;
   padding: 4px 10px;
@@ -1303,7 +1303,7 @@
   gap: var(--ripple-space-2);
 }
 
-/* —— Embed widget —— */
+/*  -  -  Embed widget  -  -  */
 .embed-widget {
   background: var(--ripple-surface-base);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1316,7 +1316,7 @@
   border-radius: 10px;
 }
 
-/* —— Watchlist panels —— */
+/*  -  -  Watchlist panels  -  -  */
 .watchlist-panels {
   gap: var(--ripple-space-4);
 }

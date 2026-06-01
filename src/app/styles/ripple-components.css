@@ -1,8 +1,8 @@
 /**
- * Ripple — forms, tables, timelines, status chips, utilities
+ * Ripple  -  forms, tables, timelines, status chips, utilities
  */
 
-/* —— Forms —— */
+/*  -  -  Forms  -  -  */
 .ripple-input,
 .filter-search,
 .team-invite-row input,
@@ -59,7 +59,7 @@
   color: var(--ripple-text-secondary);
 }
 
-/* —— Status pills —— */
+/*  -  -  Status pills  -  -  */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -136,7 +136,7 @@
   background: rgba(34, 197, 94, 0.08);
 }
 
-/* —— Tables —— */
+/*  -  -  Tables  -  -  */
 .risk-table tbody tr {
   transition: background var(--ripple-duration-fast);
 }
@@ -155,7 +155,7 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* —— Score breakdown bars —— */
+/*  -  -  Score breakdown bars  -  -  */
 .score-factor-bar-track {
   height: 6px;
   border-radius: 999px;
@@ -182,7 +182,7 @@
   color: var(--ripple-text-secondary);
 }
 
-/* —— Stream / metric utilities —— */
+/*  -  -  Stream / metric utilities  -  -  */
 .stream-score-denom,
 .metric-denom {
   font-size: 9px;
@@ -242,7 +242,7 @@
   margin-top: var(--ripple-space-3);
 }
 
-/* —— Changelog timeline —— */
+/*  -  -  Changelog timeline  -  -  */
 .changelog-page {
   max-width: 720px;
 }
@@ -287,7 +287,7 @@
   line-height: 1.45;
 }
 
-/* —— API docs —— */
+/*  -  -  API docs  -  -  */
 .api-endpoint-grid {
   display: grid;
   gap: var(--ripple-space-3);
@@ -341,7 +341,7 @@
   flex-shrink: 0;
 }
 
-/* —— Error / empty pages —— */
+/*  -  -  Error / empty pages  -  -  */
 .error-page {
   padding: 64px var(--ripple-space-6);
   max-width: 560px;
@@ -425,7 +425,7 @@
   border-color: rgba(59, 130, 246, 0.35);
 }
 
-/* —— Methodology icons —— */
+/*  -  -  Methodology icons  -  -  */
 .methodology-card-header {
   display: flex;
   align-items: flex-start;
@@ -445,7 +445,7 @@
   flex-shrink: 0;
 }
 
-/* —— Embed premium —— */
+/*  -  -  Embed premium  -  -  */
 .embed-widget {
   min-height: 100dvh;
   padding: var(--ripple-space-4);
@@ -503,7 +503,7 @@
   text-decoration: underline;
 }
 
-/* —— Mobile nav glass —— */
+/*  -  -  Mobile nav glass  -  -  */
 .mobile-nav-drawer {
   background: rgba(10, 10, 12, 0.95) !important;
   backdrop-filter: blur(20px);
@@ -516,7 +516,7 @@
   padding: 12px 16px;
 }
 
-/* —— Progress / CVaR bar —— */
+/*  -  -  Progress / CVaR bar  -  -  */
 .cvar-progress-track {
   background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
@@ -529,7 +529,7 @@
   transition: width 0.5s var(--ripple-ease-out);
 }
 
-/* —— Map tooltip —— */
+/*  -  -  Map tooltip  -  -  */
 .map-tooltip {
   background: rgba(12, 12, 14, 0.95) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
@@ -539,7 +539,7 @@
   box-shadow: var(--ripple-elevation-2);
 }
 
-/* —— Team table —— */
+/*  -  -  Team table  -  -  */
 .team-member-row {
   border-bottom-color: rgba(255, 255, 255, 0.06) !important;
   transition: background var(--ripple-duration-fast);
@@ -561,7 +561,7 @@
   font-size: 11px;
 }
 
-/* —— Supplier tier —— */
+/*  -  -  Supplier tier  -  -  */
 .supplier-tier-title {
   font-size: 13px;
   font-weight: 700;
@@ -570,7 +570,7 @@
   color: var(--ripple-text-primary);
 }
 
-/* —— Page header in settings (compact) —— */
+/*  -  -  Page header in settings (compact)  -  -  */
 .page-header--inset {
   padding-left: 0;
   padding-right: 0;

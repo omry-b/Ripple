@@ -35,9 +35,9 @@ export function UserMenu() {
           </select>
         </label>
         <ul className="user-menu-perms">
-          <li>{permissions.runScenarios ? "✓" : "—"} Run scenarios</li>
-          <li>{permissions.acknowledgeAlerts ? "✓" : "—"} Acknowledge alerts</li>
-          <li>{permissions.manageWebhooks ? "✓" : "—"} Webhooks</li>
+          <li>{permissions.runScenarios ? "✓" : " - "} Run scenarios</li>
+          <li>{permissions.acknowledgeAlerts ? "✓" : " - "} Acknowledge alerts</li>
+          <li>{permissions.manageWebhooks ? "✓" : " - "} Webhooks</li>
         </ul>
         <Link href="/settings/system" className="user-menu-link">
           System status →

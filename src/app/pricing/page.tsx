@@ -33,7 +33,7 @@ const TIERS = [
   },
 ];
 
-export const metadata = { title: "Pricing — Ripple" };
+export const metadata = { title: "Pricing  -  Ripple" };
 
 export default function PricingPage() {
   return (
@@ -43,7 +43,7 @@ export default function PricingPage() {
           <p className="welcome-eyebrow">Transparent tiers</p>
           <h1 className="welcome-headline pricing-headline">Pricing</h1>
           <p className="welcome-lead">
-            Placeholder tiers for sales conversations — production runs on Growth stack today.
+            Placeholder tiers for sales conversations  -  production runs on Growth stack today.
           </p>
         </header>
         <div className="pricing-grid">

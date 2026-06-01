@@ -1,4 +1,6 @@
-import type { Alert, AlertStatus } from "@/types/domain";
+import type { Alert, AlertStatus, SignalStream } from "@/types/domain";
+import { eventTitle, severityToLevel } from "@/lib/ingest/geo-utils";
+import type { NormalizedIngestEvent } from "@/lib/ingest/types";
 
 const INITIAL: Alert[] = [
   {
@@ -40,7 +42,7 @@ const INITIAL: Alert[] = [
     statusLabel: "● ELEVATED EXPOSURE",
     title: "TSMC Financial Signal",
     detail:
-      "Distress model variance discovered—underlying earnings compression signals matching recruitment drawdowns.",
+      "Distress model variance discovered: underlying earnings compression signals matching recruitment drawdowns.",
     meta: "12 companies · CVaR₉₅ $0.3B · Tier 2 primarily",
     affectedCompanyIds: ["tsmc", "apple", "nvidia", "amd"],
     timeline: [
@@ -100,5 +102,30 @@ export const alertState = {
     if (idx === -1) return null;
     alerts[idx] = { ...alerts[idx], status };
     return alertState.get(id) ?? null;
+  },
+
+  mergeFromIngest(events: NormalizedIngestEvent[], streams: SignalStream[]): void {
+    for (const e of events) {
+      const level = severityToLevel(e.severity);
+      const signalId = e.signalId ?? e.adapter;
+      const stream = streams.find((s) => s.id === signalId);
+      const affected = stream?.relatedCompanyIds ?? [];
+      const row: Alert = {
+        id: e.id,
+        level,
+        status: "open",
+        statusLabel: level === "critical" ? "● CRITICAL STATE" : "● ELEVATED EXPOSURE",
+        title: eventTitle(e.summary, e.adapter),
+        detail: e.summary,
+        meta: `${e.adapter.toUpperCase()} · severity ${e.severity}`,
+        critical: level === "critical",
+        affectedCompanyIds: affected,
+        timeline: [{ at: e.occurredAt, event: `Ingest: ${e.adapter}` }],
+      };
+      const idx = alerts.findIndex((a) => a.id === e.id);
+      if (idx >= 0) alerts[idx] = row;
+      else alerts.unshift(row);
+    }
+    if (alerts.length > 120) alerts.length = 120;
   },
 };

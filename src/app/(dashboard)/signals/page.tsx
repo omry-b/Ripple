@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
-  title: "Signals — Ripple",
+  title: "Signals  -  Ripple",
 };
 
 export default async function SignalsPage() {

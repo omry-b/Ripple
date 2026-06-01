@@ -73,6 +73,21 @@ export const signalReadings = pgTable("signal_readings", {
   source: text("source").notNull(),
 });
 
+/** Live feed from worker ingest (map, ticker, dynamic alerts). */
+export const ingestEvents = pgTable("ingest_events", {
+  id: text("id").primaryKey(),
+  adapter: text("adapter").notNull(),
+  signalId: text("signal_id").notNull(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  severity: integer("severity").notNull(),
+  lng: real("lng").notNull(),
+  lat: real("lat").notNull(),
+  region: text("region").notNull(),
+  level: text("level").notNull(),
+  occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
+});
+
 export const alerts = pgTable("alerts", {
   id: text("id").primaryKey(),
   level: text("level").notNull(),

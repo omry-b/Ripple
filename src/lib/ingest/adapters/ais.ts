@@ -1,6 +1,6 @@
 import type { IngestAdapter } from "../types";
 
-/** AIS adapter — uses Datalastic when AIS_API_KEY is set. */
+/** AIS adapter  -  uses Datalastic when AIS_API_KEY is set. */
 export const aisAdapter: IngestAdapter = {
   name: "ais",
   description: "AIS vessel tracking & maritime lane anomalies",

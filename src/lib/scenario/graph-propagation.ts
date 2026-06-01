@@ -82,7 +82,7 @@ export async function resolveContagionEntityNames(
   return contagionEntityNamesFromNodes(nodes);
 }
 
-/** Sync helper (mock companies) — prefer resolveContagionEntityNames in production. */
+/** Sync helper (mock companies)  -  prefer resolveContagionEntityNames in production. */
 export function contagionEntityNames(region: GeoRegion): string[] {
   const nodes = walkContagionGraphFromCompanies(mockStore.getCompanies(), region);
   return contagionEntityNamesFromNodes(nodes);

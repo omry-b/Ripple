@@ -3,7 +3,7 @@ import type { SignalStream } from "@/types/domain";
 export { applyReadingsToStreams } from "@/lib/risk/apply-readings";
 
 /**
- * Legacy single-stream nudge — prefer applyReadingsToStreams via ingest pipeline.
+ * Legacy single-stream nudge  -  prefer applyReadingsToStreams via ingest pipeline.
  */
 export function scoreSignalStream(
   stream: SignalStream,

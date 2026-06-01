@@ -1,12 +1,18 @@
 import type { IngestAdapter } from "../types";
 
-/** GDELT DOC API — falls back to stub when network or parsing fails. */
+function hash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) h = (h + s.charCodeAt(i) * 31) | 0;
+  return Math.abs(h);
+}
+
+/** GDELT DOC API - falls back to stub when network or parsing fails. */
 export const gdeltAdapter: IngestAdapter = {
   name: "gdelt",
   description: "Geopolitical event index (GDELT DOC 2.0)",
   async fetch() {
     const query = encodeURIComponent("supply chain OR semiconductor OR taiwan strait");
-    const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${query}&mode=ArtList&maxrecords=5&format=json`;
+    const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${query}&mode=ArtList&maxrecords=25&format=json`;
 
     try {
       const res = await fetch(url, {
@@ -20,16 +26,21 @@ export const gdeltAdapter: IngestAdapter = {
       const articles = json.articles ?? [];
       if (articles.length === 0) throw new Error("No articles");
 
-      const events = articles.map((a, i) => ({
-        id: `gdelt-${Date.now()}-${i}`,
-        adapter: "gdelt" as const,
-        occurredAt: a.seendate ?? new Date().toISOString(),
-        signalId: "geo",
-        lng: 121.0,
-        lat: 24.5,
-        severity: 55 + (i % 3) * 10,
-        summary: a.title ?? "Geopolitical mention",
-      }));
+      const events = articles.map((a, i) => {
+        const title = a.title ?? "Geopolitical mention";
+        const lng = -170 + (hash(title) % 340);
+        const lat = -55 + (hash(title + String(i)) % 110);
+        return {
+          id: `gdelt-${Date.now()}-${i}`,
+          adapter: "gdelt" as const,
+          occurredAt: a.seendate ?? new Date().toISOString(),
+          signalId: "geo",
+          lng,
+          lat,
+          severity: 55 + (i % 3) * 10,
+          summary: title,
+        };
+      });
 
       return {
         adapter: "gdelt",

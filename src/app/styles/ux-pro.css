@@ -1,5 +1,5 @@
 /**
- * UI UX Pro Max — interaction, a11y, and data-dashboard patterns
+ * UI UX Pro Max  -  interaction, a11y, and data-dashboard patterns
  * @see https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
  */
 
@@ -42,7 +42,7 @@ html {
   font-variant-numeric: tabular-nums;
 }
 
-/* Inline text links — prefer class over raw hex in JSX */
+/* Inline text links  -  prefer class over raw hex in JSX */
 .text-link {
   color: var(--color-accent);
   text-decoration: none;
@@ -111,7 +111,7 @@ html {
   box-shadow: var(--ripple-focus-ring);
 }
 
-/* Card interaction — subtle depth on hover (150–220ms) */
+/* Card interaction  -  subtle depth on hover (150–220ms) */
 .workbench-card {
   transition:
     border-color var(--ripple-duration-normal) var(--ripple-ease-out),
@@ -168,7 +168,7 @@ html {
   );
 }
 
-/* Nav active state — clearer hierarchy */
+/* Nav active state  -  clearer hierarchy */
 .nav-tab-item {
   transition:
     color var(--ripple-duration-fast) var(--ripple-ease-out),

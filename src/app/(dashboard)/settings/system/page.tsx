@@ -4,7 +4,7 @@ import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import Link from "next/link";
 
 export const metadata = {
-  title: "System — Ripple",
+  title: "System  -  Ripple",
 };
 
 export default function SystemSettingsPage() {

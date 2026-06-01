@@ -109,7 +109,7 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
       <MetricCard
         cardId="bento-signals-card"
         title="Live Signals"
-        value={0}
+        value={snapshot.liveSignalsCount}
         id="bento-val-signals"
         subtitle={snapshot.signalsDeltaLabel}
       />
@@ -117,7 +117,7 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
       <MetricCard
         cardId="bento-exposed-card"
         title="Exposed"
-        value={0}
+        value={snapshot.exposedCompanies}
         id="bento-val-exposed"
         subtitle={`of ${snapshot.trackedCompanies} tracked`}
         accent="elevated"

@@ -3,7 +3,7 @@ export const OPENAPI_SPEC = {
   info: {
     title: "Ripple API",
     version: "0.1.0",
-    description: "Supply chain risk intelligence — demo/mock mode",
+    description: "Supply chain risk intelligence  -  demo/mock mode",
   },
   servers: [{ url: "/api" }],
   paths: {

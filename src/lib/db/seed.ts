@@ -14,7 +14,7 @@ export async function seedDatabase(): Promise<{ seeded: boolean; message: string
     return { seeded: false, message: "Database already seeded" };
   }
 
-  const dashboard = mockStore.getDashboard();
+  const dashboard = await mockStore.getDashboard();
   const snapshot = dashboard.snapshot;
 
   await db.insert(schema.organizations).values({

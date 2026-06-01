@@ -20,7 +20,7 @@ export function SubscribeCta() {
       const data = (await res.json()) as { signingSecret?: string; error?: string };
       setStatus(
         res.ok
-          ? `Webhook saved. Signing secret: ${data.signingSecret?.slice(0, 8) ?? "—"}…`
+          ? `Webhook saved. Signing secret: ${data.signingSecret?.slice(0, 8) ?? " - "}…`
           : data.error ?? "Failed"
       );
     } catch {

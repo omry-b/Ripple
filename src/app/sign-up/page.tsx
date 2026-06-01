@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MarketingShell } from "@/components/shell/MarketingShell";
 
-export const metadata = { title: "Sign up — Ripple" };
+export const metadata = { title: "Sign up  -  Ripple" };
 
 export default function SignUpPage() {
   return (

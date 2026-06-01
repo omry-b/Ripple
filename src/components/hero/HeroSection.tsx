@@ -58,7 +58,7 @@ export function HeroSection({ showWordmark = true }: HeroSectionProps) {
             <>
               <h1 className="hero-display">Ripple</h1>
               <p className="hero-tagline">
-                Live exposure, signal streams, and scenario stress — quantified for your supply
+                Live exposure, signal streams, and scenario stress  -  quantified for your supply
                 chain portfolio.
               </p>
             </>

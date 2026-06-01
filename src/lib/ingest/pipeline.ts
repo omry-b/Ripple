@@ -4,6 +4,7 @@ import { listDeadLetters, pushDeadLetter } from "@/lib/ingest/dead-letter";
 import { reconcileStaleIngestRuns } from "@/lib/ingest/reconcile-runs";
 import { normalizeEventsToReadings } from "@/lib/ingest/normalizer";
 import { refreshScoresFromReadings } from "@/lib/ingest/score-refresh";
+import { persistAndSyncIngestEvents } from "@/lib/ingest/sync-risk";
 import { INGEST_ADAPTERS, getAdapter } from "./registry";
 import type { IngestAdapterResult, NormalizedIngestEvent } from "./types";
 
@@ -90,6 +91,9 @@ export async function runIngestPipeline(
     }
   }
 
+  const streams = await data.getSignals();
+  await persistAndSyncIngestEvents(allEvents, streams);
+
   const readings = normalizeEventsToReadings(allEvents);
   const streamsRescored = await refreshScoresFromReadings(readings);
 
@@ -136,6 +140,9 @@ export async function runIngestFromEvents(
       message: `Batch from ${source}`,
     });
   }
+
+  const streams = await data.getSignals();
+  await persistAndSyncIngestEvents(events, streams);
 
   const readings = normalizeEventsToReadings(events);
   const streamsRescored = await refreshScoresFromReadings(readings);

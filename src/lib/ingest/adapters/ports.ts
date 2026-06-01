@@ -36,7 +36,7 @@ export const portsAdapter: IngestAdapter = {
 
     return {
       adapter: "ports",
-      message: apiKey ? "Port API failed — stub" : "PORTS_API_KEY not set — stub",
+      message: apiKey ? "Port API failed  -  stub" : "PORTS_API_KEY not set  -  stub",
       events: [
         {
           id: `port-${Date.now()}`,

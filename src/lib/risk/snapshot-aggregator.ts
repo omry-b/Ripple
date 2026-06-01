@@ -4,24 +4,31 @@ import type {
   DashboardSnapshot,
   SignalStream,
 } from "@/types/domain";
-import { countLiveSignals, mergeHotspots } from "@/lib/geo/hotspots";
+import type { PersistedIngestEvent } from "@/lib/ingest/sync-risk";
+import { mergeHotspots } from "@/lib/geo/hotspots";
+import {
+  countLiveSignals,
+  formatCvarDeltaLabel,
+  formatSignalsDeltaLabel,
+} from "@/lib/risk/snapshot-labels";
 
 type AggregateInput = {
   companies: Company[];
   alerts: Alert[];
   streams: SignalStream[];
+  ingestEvents?: PersistedIngestEvent[];
 };
 
 export function aggregateSnapshot(input: AggregateInput): DashboardSnapshot {
   const openAlerts = input.alerts.filter((a) => a.status === "open");
-  const criticalAlerts = openAlerts.filter((a) => a.level === "critical");
   const elevatedAlerts = openAlerts.filter((a) => a.level === "elevated");
+  const ingestEvents = input.ingestEvents ?? [];
 
   const exposed = input.companies.filter((c) => c.score >= 50).length;
   const cvarTotal = input.companies.reduce((sum, c) => sum + c.cvarUsd, 0);
   const cvarB = cvarTotal / 1e9;
 
-  const hotspots = mergeHotspots(openAlerts, input.streams);
+  const hotspots = mergeHotspots(openAlerts, input.streams, ingestEvents);
 
   const avgScore =
     input.companies.length > 0
@@ -32,13 +39,13 @@ export function aggregateSnapshot(input: AggregateInput): DashboardSnapshot {
     asOf: new Date().toISOString(),
     riskIndex: Math.round(avgScore * 10) / 10,
     exposedCompanies: exposed,
-    trackedCompanies: input.companies.length > 0 ? input.companies.length : 847,
+    trackedCompanies: input.companies.length,
     cvar95BaselineB: Math.round(cvarB * 10) / 10,
     cvar95Display: `$${cvarB.toFixed(1)}B`,
-    cvarDeltaLabel: "↑ aggregated from portfolio (placeholder engine)",
+    cvarDeltaLabel: formatCvarDeltaLabel(input.companies),
     cvarProgressPercent: Math.min(100, Math.round((cvarB / 5) * 100)),
     liveSignalsCount: countLiveSignals(input.streams),
-    signalsDeltaLabel: `+${elevatedAlerts.length} elevated · engine refresh`,
+    signalsDeltaLabel: formatSignalsDeltaLabel(input.streams, openAlerts, ingestEvents),
     elevatedSignals24h: elevatedAlerts.length,
     openAlertsCount: openAlerts.length,
     activeStreamsCount: input.streams.length,

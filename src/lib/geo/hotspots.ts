@@ -1,9 +1,11 @@
 import type { GeoProjection } from "d3-geo";
-import type { Alert, Hotspot, SignalStream, TickerItem } from "@/types/domain";
+import type { Alert, Hotspot, SignalStream } from "@/types/domain";
+import type { PersistedIngestEvent } from "@/lib/ingest/sync-risk";
 import { ALERT_GEO, DEFAULT_MAP_CENTER, SIGNAL_GEO, type GeoPoint } from "./alert-locations";
 
 export const MAP_WIDTH = 300;
 export const MAP_HEIGHT = 150;
+const MAX_MAP_HOTSPOTS = 48;
 
 function legacyCxToLng(cx: number): number {
   return (cx / MAP_WIDTH) * 360 - 180;
@@ -23,7 +25,6 @@ export function resolveGeoForAlert(alert: Alert): GeoPoint {
   );
 }
 
-/** Backfill lng/lat on hotspots loaded from older snapshot JSON (cx/cy only). */
 export function normalizeHotspotGeo(h: Hotspot): Hotspot {
   if (h.lng != null && h.lat != null && Number.isFinite(h.lng) && Number.isFinite(h.lat)) {
     return h;
@@ -39,68 +40,97 @@ export function normalizeHotspotGeo(h: Hotspot): Hotspot {
   };
 }
 
-export function buildHotspotsFromAlerts(alerts: Alert[]): Hotspot[] {
-  return alerts
-    .filter((a) => a.status === "open")
-    .slice(0, 8)
-    .map((a) => {
-      const geo = resolveGeoForAlert(a);
-      return {
-        lng: geo.lng,
-        lat: geo.lat,
-        cx: 0,
-        cy: 0,
-        level: a.level,
-        alertId: a.id,
-        label: a.title,
-        region: geo.region,
-      };
-    });
+function hotspotKey(h: { lng: number; lat: number; alertId: string }): string {
+  return `${h.alertId}:${Math.round(h.lng * 10)}:${Math.round(h.lat * 10)}`;
 }
 
-/** Supplement map with elevated/critical streams (post-ingest scores). */
-export function buildHotspotsFromStreams(
-  streams: SignalStream[],
-  existingAlertIds: Set<string>
-): Hotspot[] {
-  return streams
-    .filter((s) => s.level === "critical" || s.level === "elevated")
-    .filter((s) => !existingAlertIds.has(s.id))
-    .slice(0, 3)
-    .map((s) => {
-      const geo = SIGNAL_GEO[s.id] ?? DEFAULT_MAP_CENTER;
-      return {
-        lng: geo.lng,
-        lat: geo.lat,
-        cx: 0,
-        cy: 0,
-        level: s.level,
-        alertId: `signal-${s.id}`,
-        label: s.name,
-        region: geo.region,
-      };
-    });
-}
-
-export function mergeHotspots(alerts: Alert[], streams: SignalStream[]): Hotspot[] {
-  const fromAlerts = buildHotspotsFromAlerts(alerts);
-  const alertIds = new Set(fromAlerts.map((h) => h.alertId));
-  const fromStreams = buildHotspotsFromStreams(streams, alertIds);
-  const merged = [...fromAlerts, ...fromStreams];
-  if (merged.length > 0) return merged;
-  const fallback = ALERT_GEO.taiwan ?? DEFAULT_MAP_CENTER;
-  return [
-    {
-      lng: fallback.lng,
-      lat: fallback.lat,
+export function buildHotspotsFromIngestEvents(events: PersistedIngestEvent[]): Hotspot[] {
+  const seen = new Set<string>();
+  const out: Hotspot[] = [];
+  for (const e of events) {
+    if (e.level === "normal" || e.lng == null || e.lat == null) continue;
+    const key = hotspotKey({ lng: e.lng, lat: e.lat, alertId: e.id });
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      lng: e.lng,
+      lat: e.lat,
       cx: 0,
       cy: 0,
-      level: "critical",
-      alertId: "taiwan",
-      label: "Taiwan Strait",
-      region: fallback.region,
-    },
-  ];
+      level: e.level,
+      alertId: e.id,
+      label: e.summary.slice(0, 72),
+      region: e.region,
+    });
+  }
+  return out;
+}
+
+export function buildHotspotsFromAlerts(alerts: Alert[]): Hotspot[] {
+  const seen = new Set<string>();
+  const out: Hotspot[] = [];
+  for (const a of alerts) {
+    if (a.status !== "open") continue;
+    const geo = resolveGeoForAlert(a);
+    const key = hotspotKey({ lng: geo.lng, lat: geo.lat, alertId: a.id });
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      lng: geo.lng,
+      lat: geo.lat,
+      cx: 0,
+      cy: 0,
+      level: a.level,
+      alertId: a.id,
+      label: a.title,
+      region: geo.region,
+    });
+  }
+  return out;
+}
+
+export function buildHotspotsFromStreams(
+  streams: SignalStream[],
+  existingKeys: Set<string>
+): Hotspot[] {
+  const out: Hotspot[] = [];
+  for (const s of streams) {
+    if (s.level !== "critical" && s.level !== "elevated") continue;
+    const geo = SIGNAL_GEO[s.id] ?? DEFAULT_MAP_CENTER;
+    const alertId = `signal-${s.id}`;
+    const key = hotspotKey({ lng: geo.lng, lat: geo.lat, alertId });
+    if (existingKeys.has(key)) continue;
+    existingKeys.add(key);
+    out.push({
+      lng: geo.lng,
+      lat: geo.lat,
+      cx: 0,
+      cy: 0,
+      level: s.level,
+      alertId,
+      label: s.name,
+      region: geo.region,
+    });
+  }
+  return out;
+}
+
+export function mergeHotspots(
+  alerts: Alert[],
+  streams: SignalStream[],
+  ingestEvents: PersistedIngestEvent[] = []
+): Hotspot[] {
+  const fromIngest = buildHotspotsFromIngestEvents(ingestEvents);
+  const keys = new Set(fromIngest.map((h) => hotspotKey(h)));
+  const fromAlerts = buildHotspotsFromAlerts(alerts).filter((h) => {
+    const k = hotspotKey(h);
+    if (keys.has(k)) return false;
+    keys.add(k);
+    return true;
+  });
+  const fromStreams = buildHotspotsFromStreams(streams, keys);
+  const merged = [...fromIngest, ...fromAlerts, ...fromStreams];
+  return merged.slice(0, MAX_MAP_HOTSPOTS);
 }
 
 export function projectHotspotsToSvg(
@@ -117,29 +147,4 @@ export function projectHotspotsToSvg(
       cy: projected[1],
     };
   });
-}
-
-export function buildTickerFromAlertsAndStreams(
-  alerts: Alert[],
-  streams: SignalStream[]
-): TickerItem[] {
-  const items: TickerItem[] = [];
-  for (const a of alerts) {
-    if (a.status !== "open") continue;
-    items.push({ label: a.title.toUpperCase(), level: a.level });
-  }
-  for (const s of streams) {
-    if (s.level === "normal") continue;
-    items.push({ label: s.name.toUpperCase(), level: s.level });
-  }
-  if (items.length > 0) return items.slice(0, 14);
-  return [
-    { label: "TAIWAN STRAIT", level: "critical" },
-    { label: "AIS / SHIPPING", level: "critical" },
-  ];
-}
-
-export function countLiveSignals(streams: SignalStream[]): number {
-  const elevated = streams.filter((s) => s.level === "elevated" || s.level === "critical").length;
-  return streams.length * 12 + elevated * 8;
 }

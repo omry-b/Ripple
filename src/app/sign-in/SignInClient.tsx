@@ -19,7 +19,7 @@ export function SignInClient() {
             <p className="welcome-eyebrow">Sign in</p>
             <h1 className="auth-title">Welcome back</h1>
             <p className="auth-lead">
-              Demo mode — use the dashboard directly or set role and org in the user menu. Add{" "}
+              Demo mode  -  use the dashboard directly or set role and org in the user menu. Add{" "}
               <code>NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> for production auth.
             </p>
             <Link href="/" className="welcome-cta-primary auth-cta">
