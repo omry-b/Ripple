@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { authConfig, isAuthEnabled } from "./config";
 import { ensureUserRecord } from "./ensure-user";
+import { FIREBASE_SESSION_COOKIE } from "./constants";
 import { getFirebaseAdminAuth, isFirebaseAdminConfigured } from "@/lib/firebase/admin";
 
 export type SessionUser = {
@@ -10,7 +11,7 @@ export type SessionUser = {
   role: "viewer" | "analyst" | "admin";
 };
 
-export const FIREBASE_SESSION_COOKIE = "__firebase_session";
+export { FIREBASE_SESSION_COOKIE } from "./constants";
 
 async function sessionFromFirebaseToken(token: string): Promise<SessionUser | null> {
   if (!isFirebaseAdminConfigured()) return null;

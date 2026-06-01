@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { checkRateLimit } from "@/lib/api/rate-limit";
-import { FIREBASE_SESSION_COOKIE } from "@/lib/auth/session";
+import { FIREBASE_SESSION_COOKIE } from "@/lib/auth/constants";
 
 const PUBLIC_API_PREFIXES = [
   "/api/health",
