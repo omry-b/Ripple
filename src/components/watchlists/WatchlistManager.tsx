@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { WatchlistRecord } from "@/lib/data/types";
-import { getWatchlistIds, setWatchlistIds } from "@/lib/watchlist";
+import { useWatchlist } from "@/context/WatchlistContext";
+import { isClerkConfigured } from "@/lib/auth/clerk-config";
+import Link from "next/link";
 
 const DIGEST_KEY = "ripple-watchlist-digest";
 
@@ -11,6 +13,7 @@ type WatchlistManagerProps = {
 };
 
 export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerProps) {
+  const { ids, isSignedIn, addMany } = useWatchlist();
   const [lists, setLists] = useState<WatchlistRecord[]>([]);
   const [name, setName] = useState("My portfolio");
   const [loading, setLoading] = useState(false);
@@ -42,7 +45,7 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
     setMessage(null);
     try {
       const companyIds =
-        selectedCompanyIds.length > 0 ? selectedCompanyIds : getWatchlistIds();
+        selectedCompanyIds.length > 0 ? selectedCompanyIds : [...ids];
       const res = await fetch("/api/watchlists", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,7 +55,7 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
       const data = (await res.json()) as { watchlist: WatchlistRecord };
       setLists((prev) => [...prev, data.watchlist]);
       if (companyIds.length) {
-        setWatchlistIds(companyIds);
+        addMany(companyIds);
       }
       setMessage(`Created “${data.watchlist.name}” with ${data.watchlist.companyIds.length} companies.`);
     } catch {
@@ -66,7 +69,16 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
     <section className="workbench-card watchlist-manager">
       <h3 className="supplier-tier-title">Saved watchlists</h3>
       <p className="watchlist-manager-hint">
-        Server-backed lists for when auth is enabled. Local stars sync on create.
+        {isSignedIn
+          ? "Your watchlist syncs to your account when you star companies."
+          : isClerkConfigured()
+            ? (
+                <>
+                  Sign in with Google to save watchlists across devices.{" "}
+                  <Link href="/sign-in">Sign in</Link>
+                </>
+              )
+            : "Stars are stored in this browser until Clerk auth is configured."}
       </p>
       <div className="watchlist-create-row">
         <input

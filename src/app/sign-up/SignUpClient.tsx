@@ -5,32 +5,31 @@ import dynamic from "next/dynamic";
 import { MarketingShell } from "@/components/shell/MarketingShell";
 import { isClerkConfigured } from "@/lib/auth/clerk-config";
 
-const ClerkSignIn = dynamic(
-  () => import("@/components/auth/ClerkSignIn").then((m) => m.ClerkSignIn),
+const ClerkSignUp = dynamic(
+  () => import("@/components/auth/ClerkSignUp").then((m) => m.ClerkSignUp),
   { ssr: false }
 );
 
-export function SignInClient() {
+export function SignUpClient() {
   const hasClerk = isClerkConfigured();
 
   return (
     <MarketingShell>
       <main className="auth-page">
         {hasClerk ? (
-          <ClerkSignIn />
+          <ClerkSignUp />
         ) : (
           <div className="auth-card">
-            <p className="welcome-eyebrow">Sign in</p>
-            <h1 className="auth-title">Welcome back</h1>
+            <p className="welcome-eyebrow">Get started</p>
+            <h1 className="auth-title">Create account</h1>
             <p className="auth-lead">
-              Demo mode: use the dashboard directly, or add Clerk keys for Google sign-in and
-              saved watchlists.
+              Add Clerk keys on Vercel to enable Google sign-up and saved watchlists.
             </p>
             <Link href="/" className="welcome-cta-primary auth-cta">
-              Continue to dashboard →
+              Continue in demo mode →
             </Link>
-            <Link href="/sign-up" className="auth-alt-link">
-              Create an account
+            <Link href="/sign-in" className="auth-alt-link">
+              Already have an account? Sign in
             </Link>
           </div>
         )}

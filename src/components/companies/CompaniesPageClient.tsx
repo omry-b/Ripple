@@ -9,7 +9,8 @@ import {
   type CompanyColumnVisibility,
 } from "@/components/tables/CompanyExposureTable";
 import { exportCompaniesCsv } from "@/lib/export/entities";
-import { addToWatchlist, getWatchlistIds, toggleWatchlistId } from "@/lib/watchlist";
+import { useWatchlist } from "@/context/WatchlistContext";
+import { isClerkConfigured } from "@/lib/auth/clerk-config";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -40,14 +41,7 @@ export function CompaniesPageClient({
   const [page, setPage] = useState(1);
   const [columns, setColumns] = useState<CompanyColumnVisibility>(DEFAULT_COLUMN_VISIBILITY);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [watchlistIds, setWatchlistIds] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    const sync = () => setWatchlistIds(new Set(getWatchlistIds()));
-    sync();
-    window.addEventListener("ripple-watchlist-change", sync);
-    return () => window.removeEventListener("ripple-watchlist-change", sync);
-  }, []);
+  const { ids: watchlistIds, toggle: toggleWatchlist, addMany, isSignedIn } = useWatchlist();
 
   const filtered = useMemo(() => {
     let list = companies;
@@ -105,17 +99,21 @@ export function CompaniesPageClient({
   };
 
   const addSelectedToWatchlist = () => {
-    addToWatchlist([...selectedIds]);
+    addMany([...selectedIds]);
     setSelectedIds(new Set());
-  };
-
-  const toggleWatchlist = (id: string) => {
-    toggleWatchlistId(id);
-    setWatchlistIds(new Set(getWatchlistIds()));
   };
 
   return (
     <>
+      {isClerkConfigured() && !isSignedIn && (
+        <div className="alert-filter-banner">
+          <span>
+            Stars are saved in this browser only.{" "}
+            <Link href="/sign-in">Sign in with Google</Link> to sync your watchlist.
+          </span>
+        </div>
+      )}
+
       {watchlistOnly && (
         <div className="alert-filter-banner">
           <span>

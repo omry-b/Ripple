@@ -1,4 +1,5 @@
 import { authConfig, isAuthEnabled } from "./config";
+import { ensureUserRecord } from "./ensure-user";
 
 export type SessionUser = {
   id: string;
@@ -22,12 +23,14 @@ export async function getSessionUser(request?: Request): Promise<SessionUser> {
         roleMeta === "viewer" || roleMeta === "analyst" || roleMeta === "admin"
           ? roleMeta
           : authConfig.demoRole;
-      return {
+      const sessionUser: SessionUser = {
         id: userId,
         email: user.emailAddresses[0]?.emailAddress ?? authConfig.demoEmail,
-        organizationId: orgId ?? authConfig.demoOrgId,
+        organizationId: orgId ?? `personal_${userId}`,
         role,
       };
+      await ensureUserRecord(sessionUser);
+      return sessionUser;
     }
   }
 

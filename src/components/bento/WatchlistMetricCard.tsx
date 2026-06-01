@@ -1,25 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { MetricCard } from "@/components/bento/MetricCard";
-import { getWatchlistIds } from "@/lib/watchlist";
+import { useWatchlist } from "@/context/WatchlistContext";
 
 export function WatchlistMetricCard() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const sync = () => setCount(getWatchlistIds().length);
-    sync();
-    window.addEventListener("ripple-watchlist-change", sync);
-    return () => window.removeEventListener("ripple-watchlist-change", sync);
-  }, []);
+  const { ids, isSignedIn } = useWatchlist();
+  const count = ids.size;
 
   return (
     <MetricCard
       cardId="bento-watchlist-card"
       title="My watchlist"
       value={count}
-      subtitle={count === 0 ? "Star companies to track" : "Saved companies"}
+      subtitle={
+        count === 0
+          ? "Star companies to track"
+          : isSignedIn
+            ? "Synced to your account"
+            : "Saved in this browser"
+      }
       href="/companies?watchlist=1"
       id="bento-val-watchlist"
     />

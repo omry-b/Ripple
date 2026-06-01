@@ -11,5 +11,8 @@ export const authConfig = {
 };
 
 export function isAuthEnabled(): boolean {
-  return Boolean(process.env.CLERK_SECRET_KEY?.trim());
+  return Boolean(
+    process.env.CLERK_SECRET_KEY?.trim() &&
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim()
+  );
 }

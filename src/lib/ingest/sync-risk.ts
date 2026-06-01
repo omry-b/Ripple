@@ -148,32 +148,79 @@ function inferAffectedCompanies(
   return [];
 }
 
+const TICKER_MAX_ITEMS = 28;
+const TICKER_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+type TickerCandidate = {
+  label: string;
+  level: TickerItem["level"];
+  at: number;
+  priority: number;
+};
+
+function parseOccurredAt(iso?: string): number {
+  if (!iso) return 0;
+  const t = Date.parse(iso);
+  return Number.isFinite(t) ? t : 0;
+}
+
 export function buildTickerFromAllSources(
   alerts: Alert[],
   streams: SignalStream[],
-  ingestEvents: PersistedIngestEvent[]
+  ingestEvents: PersistedIngestEvent[],
+  nowMs: number = Date.now()
 ): TickerItem[] {
-  const items: TickerItem[] = [];
+  const candidates: TickerCandidate[] = [];
   const seen = new Set<string>();
 
-  const push = (label: string, level: TickerItem["level"]) => {
-    const key = label.slice(0, 48);
+  const push = (label: string, level: TickerItem["level"], at: number, priority: number) => {
+    const key = label.slice(0, 48).toLowerCase();
     if (seen.has(key)) return;
+    if (at > 0 && nowMs - at > TICKER_MAX_AGE_MS) return;
     seen.add(key);
-    items.push({ label, level });
+    candidates.push({ label: label.toUpperCase(), level, at, priority });
   };
 
-  for (const e of ingestEvents) {
+  const sortedIngest = [...ingestEvents].sort(
+    (a, b) => parseOccurredAt(b.occurredAt) - parseOccurredAt(a.occurredAt)
+  );
+  for (const e of sortedIngest) {
     if (e.level === "normal") continue;
-    push(eventTitle(e.summary, e.adapter).toUpperCase(), e.level);
+    push(
+      eventTitle(e.summary, e.adapter),
+      e.level,
+      parseOccurredAt(e.occurredAt),
+      e.level === "critical" ? 3 : 2
+    );
   }
-  for (const a of alerts) {
-    if (a.status !== "open") continue;
-    push(a.title.toUpperCase(), a.level);
+
+  const sortedAlerts = [...alerts]
+    .filter((a) => a.status === "open")
+    .sort((a, b) => {
+      const atA = parseOccurredAt(a.timeline?.[0]?.at);
+      const atB = parseOccurredAt(b.timeline?.[0]?.at);
+      return atB - atA;
+    });
+  for (const a of sortedAlerts) {
+    push(a.title, a.level, parseOccurredAt(a.timeline?.[0]?.at), a.level === "critical" ? 2 : 1);
   }
-  for (const s of streams) {
-    if (s.level === "normal") continue;
-    push(s.name.toUpperCase(), s.level);
+
+  const sortedStreams = [...streams]
+    .filter((s) => s.level !== "normal")
+    .sort((a, b) => b.score - a.score);
+  for (const s of sortedStreams) {
+    push(`${s.name} stream ${s.score}`, s.level, nowMs, 0);
+  }
+
+  candidates.sort((a, b) => b.priority - a.priority || b.at - a.at);
+
+  const items = candidates.slice(0, TICKER_MAX_ITEMS).map((c) => ({
+    label: c.label,
+    level: c.level,
+  }));
+
+  if (items.length === 0) {
+    return [{ label: "MONITORING LIVE FEEDS", level: "normal" as const }];
   }
 
   return items;

@@ -117,14 +117,14 @@ export const postgresDataSource: RippleDataSource = {
     await ensureSeeded();
     const db = getDb();
 
-    const [snapshot, tickerRows, companyRows, alertRows, streamRows, scenarioRows] =
+    const [snapshot, companyRows, alertRows, streamRows, scenarioRows, ingestEvents] =
       await Promise.all([
         loadSnapshotPayload(),
-        db.select().from(schema.tickerItems).orderBy(schema.tickerItems.sortOrder),
         db.select().from(schema.companies).orderBy(desc(schema.companies.score)),
         db.select().from(schema.alerts),
         db.select().from(schema.signalStreams),
         db.select().from(schema.scenarios),
+        loadRecentIngestEvents(120),
       ]);
 
     const alerts = alertRows.map(rowToAlert);
@@ -134,10 +134,7 @@ export const postgresDataSource: RippleDataSource = {
       streams
     );
     const scenarios = scenarioRows.map(rowToScenario);
-    const ticker = tickerRows.map((r) => ({
-      label: r.label,
-      level: r.level as TickerItem["level"],
-    }));
+    const ticker = buildTickerFromAllSources(alerts, streams, ingestEvents);
 
     return {
       snapshot,
@@ -429,11 +426,14 @@ export const postgresDataSource: RippleDataSource = {
     return result;
   },
 
-  async createWatchlist(userId, name) {
+  async createWatchlist(userId, name, id) {
     const db = getDb();
-    const id = `wl_${Date.now()}`;
-    await db.insert(schema.watchlists).values({ id, userId, name });
-    return { id, name, companyIds: [] };
+    const watchlistId = id ?? `wl_${Date.now()}`;
+    await db
+      .insert(schema.watchlists)
+      .values({ id: watchlistId, userId, name })
+      .onConflictDoNothing();
+    return { id: watchlistId, name, companyIds: [] };
   },
 
   async setWatchlistCompanies(watchlistId, companyIds) {

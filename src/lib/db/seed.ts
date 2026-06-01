@@ -91,13 +91,7 @@ export async function seedDatabase(): Promise<{ seeded: boolean; message: string
     }))
   );
 
-  await db.insert(schema.tickerItems).values(
-    dashboard.ticker.map((t, i) => ({
-      label: t.label,
-      level: t.level,
-      sortOrder: i,
-    }))
-  );
+  // Ticker is built live from ingest events, alerts, and streams (not seeded).
 
   await db.insert(schema.mapHotspots).values(
     snapshot.hotspots.map((h, i) => ({

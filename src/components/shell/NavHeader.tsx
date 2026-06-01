@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { NAV_ITEMS } from "@/lib/nav";
 import { LiveStatus } from "./LiveStatus";
 import { MobileNav } from "./MobileNav";
 import { useLiveData } from "@/context/LiveDataContext";
-import { getWatchlistIds } from "@/lib/watchlist";
+import { useWatchlist } from "@/context/WatchlistContext";
 import { UserMenu } from "@/components/shell/UserMenu";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { OrgSwitcher } from "@/components/shell/OrgSwitcher";
@@ -24,14 +23,8 @@ const NAV_ICONS: Record<string, React.ReactNode> = {
 export function NavHeader() {
   const pathname = usePathname();
   const { asOf, isRefreshing } = useLiveData();
-  const [watchlistCount, setWatchlistCount] = useState(0);
-
-  useEffect(() => {
-    const sync = () => setWatchlistCount(getWatchlistIds().length);
-    sync();
-    window.addEventListener("ripple-watchlist-change", sync);
-    return () => window.removeEventListener("ripple-watchlist-change", sync);
-  }, []);
+  const { ids: watchlistIds, isSyncing } = useWatchlist();
+  const watchlistCount = watchlistIds.size;
 
   return (
     <nav className="nav-header" role="navigation" aria-label="Main navigation">
@@ -69,6 +62,7 @@ export function NavHeader() {
           style={{ textDecoration: "none", display: "inline-block" }}
         >
           Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
+          {isSyncing ? " · syncing" : ""}
         </Link>
       </div>
       <div className="nav-actions">

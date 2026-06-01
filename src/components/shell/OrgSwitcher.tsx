@@ -1,6 +1,7 @@
 "use client";
 
 import { useDemoAuth } from "@/context/DemoAuthContext";
+import { isClerkConfigured } from "@/lib/auth/clerk-config";
 
 const ORGS = [
   { id: "org_demo", label: "Ripple Demo Org" },
@@ -9,6 +10,8 @@ const ORGS = [
 ];
 
 export function OrgSwitcher() {
+  if (isClerkConfigured()) return null;
+
   const { organizationId, setOrganizationId } = useDemoAuth();
 
   return (

@@ -1,12 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useDemoAuth } from "@/context/DemoAuthContext";
+import { isClerkConfigured } from "@/lib/auth/clerk-config";
 import type { UserRole } from "@/lib/auth/permissions";
+
+const ClerkUserMenu = dynamic(
+  () => import("./ClerkUserMenu").then((m) => m.ClerkUserMenu),
+  { ssr: false, loading: () => null }
+);
 
 const ROLES: UserRole[] = ["viewer", "analyst", "admin"];
 
-export function UserMenu() {
+function DemoUserMenu() {
   const { role, email, permissions, setRole } = useDemoAuth();
 
   return (
@@ -19,7 +26,7 @@ export function UserMenu() {
       </button>
       <div className="user-menu-panel" role="menu">
         <p className="user-menu-email">{email}</p>
-        <p className="user-menu-hint">Demo role (stored locally until Clerk)</p>
+        <p className="user-menu-hint">Demo mode. Sign in with Google to save watchlists.</p>
         <label className="user-menu-field">
           Role
           <select
@@ -35,20 +42,24 @@ export function UserMenu() {
           </select>
         </label>
         <ul className="user-menu-perms">
-          <li>{permissions.runScenarios ? "✓" : " - "} Run scenarios</li>
-          <li>{permissions.acknowledgeAlerts ? "✓" : " - "} Acknowledge alerts</li>
-          <li>{permissions.manageWebhooks ? "✓" : " - "} Webhooks</li>
+          <li>{permissions.runScenarios ? "✓" : "·"} Run scenarios</li>
+          <li>{permissions.acknowledgeAlerts ? "✓" : "·"} Acknowledge alerts</li>
+          <li>{permissions.manageWebhooks ? "✓" : "·"} Webhooks</li>
         </ul>
+        <Link href="/sign-in" className="user-menu-link">
+          Sign in with Google →
+        </Link>
         <Link href="/settings/system" className="user-menu-link">
           System status →
-        </Link>
-        <Link href="/settings/team" className="user-menu-link">
-          Team & invites →
-        </Link>
-        <Link href="/sign-in" className="user-menu-link">
-          Sign in page →
         </Link>
       </div>
     </div>
   );
+}
+
+export function UserMenu() {
+  if (isClerkConfigured()) {
+    return <ClerkUserMenu />;
+  }
+  return <DemoUserMenu />;
 }

@@ -83,7 +83,7 @@ export interface RippleDataSource {
   refreshSnapshot(): Promise<DashboardSnapshot>;
 
   getWatchlists(userId: string): Promise<WatchlistRecord[]>;
-  createWatchlist(userId: string, name: string): Promise<WatchlistRecord>;
+  createWatchlist(userId: string, name: string, id?: string): Promise<WatchlistRecord>;
   setWatchlistCompanies(watchlistId: string, companyIds: string[]): Promise<WatchlistRecord | null>;
 
   getIngestRuns(limit?: number): Promise<IngestRunRecord[]>;

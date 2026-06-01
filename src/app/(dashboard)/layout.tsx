@@ -11,6 +11,7 @@ import { KeyboardShortcuts } from "@/components/shell/KeyboardShortcuts";
 import { DataModeBanner } from "@/components/shell/DataModeBanner";
 import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
+import { WatchlistProvider } from "@/context/WatchlistContext";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { AppFooter } from "@/components/shell/AppFooter";
 
@@ -26,6 +27,7 @@ export default async function DashboardLayout({
 
   return (
     <DemoAuthProvider>
+      <WatchlistProvider>
       <LiveDataProvider initialDashboard={dashboard}>
         <div className="ripple-app">
           <SkipToContent />
@@ -42,6 +44,7 @@ export default async function DashboardLayout({
           <OnboardingTour />
         </div>
       </LiveDataProvider>
+      </WatchlistProvider>
     </DemoAuthProvider>
   );
 }

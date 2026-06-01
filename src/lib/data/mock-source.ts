@@ -57,9 +57,9 @@ export const mockDataSource: RippleDataSource = {
   },
 
   getWatchlists: async (userId) => watchlists.get(userId) ?? [],
-  createWatchlist: async (userId, name) => {
+  createWatchlist: async (userId, name, id) => {
     const list: WatchlistRecord = {
-      id: `wl_${Date.now()}`,
+      id: id ?? `wl_${Date.now()}`,
       name,
       companyIds: [],
     };
