@@ -49,7 +49,7 @@ export function CompanyExposureTable({
   const showWatchlist = Boolean(onToggleWatchlist);
 
   return (
-    <section className="table-container reveal">
+    <section className="table-container">
       <table className="risk-table">
         <thead>
           <tr className="table-header-row">

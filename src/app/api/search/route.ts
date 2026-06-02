@@ -51,7 +51,10 @@ export async function GET(request: Request) {
       ...navigation,
       methodology,
       systemStatus,
-      ...companies.map((c) => ({ ...c, searchText: c.sublabel })),
+      ...companies.map((c) => ({
+        ...c,
+        searchText: `${c.label} ${c.id} ${c.sublabel ?? ""}`,
+      })),
       ...alerts.map((a) => ({ ...a, searchText: a.sublabel })),
       ...index.signals.map((s) => ({ ...s, searchText: s.sublabel })),
     ];

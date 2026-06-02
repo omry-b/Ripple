@@ -119,7 +119,11 @@ export function CommandPalette() {
             }
           }}
         />
-        <p className="cmdk-hint">↑↓ navigate · Enter open · Esc close · ⌘K toggle · ? shortcuts</p>
+        <p className="cmdk-hint">
+          {query.trim()
+            ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} · ↑↓ navigate · Enter open`
+            : "↑↓ navigate · Enter open · Esc close · ⌘K toggle · ? shortcuts"}
+        </p>
         {showRecentHeader && (
           <p className="cmdk-section-label">Recent</p>
         )}

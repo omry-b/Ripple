@@ -372,6 +372,7 @@ export const mockStore = {
         sublabel: `Score ${c.score} · ${c.tier}`,
         href: `/companies/${c.id}`,
         group: "Company" as const,
+        searchText: `${c.name} ${c.id} ${c.tier} ${c.region}`,
       })),
       alerts: alertState.list().map((a) => ({
         id: a.id,

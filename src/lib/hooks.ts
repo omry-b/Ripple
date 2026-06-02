@@ -35,6 +35,7 @@ export function useRevealOnScroll(selector = ".reveal") {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
+            el.classList.add("is-visible");
             el.style.opacity = "1";
             el.style.transform = "translateY(0)";
             observer.unobserve(el);

@@ -66,7 +66,13 @@ export function CompaniesPageClient({
 
     const q = search.trim().toLowerCase();
     if (q) {
-      list = list.filter((c) => c.name.toLowerCase().includes(q));
+      list = list.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.id.toLowerCase().includes(q) ||
+          c.tier.toLowerCase().includes(q) ||
+          c.region.toLowerCase().includes(q)
+      );
     }
 
     return [...list].sort((a, b) => {

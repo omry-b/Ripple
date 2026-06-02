@@ -348,6 +348,7 @@ export const postgresDataSource: RippleDataSource = {
         sublabel: `Score ${c.score} · ${c.tier}`,
         href: `/companies/${c.id}`,
         group: "Company" as const,
+        searchText: `${c.name} ${c.id} ${c.tier} ${c.region}`,
       })),
       alerts: alerts.map((a) => ({
         id: a.id,
