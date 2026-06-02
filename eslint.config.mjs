@@ -15,6 +15,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "node_modules/**",
+    "storybook-static/**",
+    "workers/**",
+    "scripts/**",
+    "ripple-firebase-adminsdk.json",
   ]),
   ...storybook.configs["flat/recommended"]
 ]);

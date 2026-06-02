@@ -19,6 +19,7 @@ export type IngestPipelineResult = {
   readingsNormalized: number;
   streamsRescored: number;
   snapshotRefreshed: boolean;
+  snapshotRefreshError?: string;
   deadLetterCount: number;
 };
 
@@ -98,12 +99,13 @@ export async function runIngestPipeline(
   const streamsRescored = await refreshScoresFromReadings(readings);
 
   let snapshotRefreshed = false;
+  let snapshotRefreshError: string | undefined;
   try {
     await data.refreshSnapshot();
     invalidateSnapshotCache();
     snapshotRefreshed = true;
-  } catch {
-    /* mock mode always succeeds */
+  } catch (e) {
+    snapshotRefreshError = e instanceof Error ? e.message : "Snapshot refresh failed";
   }
 
   return {
@@ -112,6 +114,7 @@ export async function runIngestPipeline(
     readingsNormalized: readings.length,
     streamsRescored,
     snapshotRefreshed,
+    snapshotRefreshError,
     deadLetterCount: listDeadLetters().length,
   };
 }
@@ -125,6 +128,7 @@ export async function runIngestFromEvents(
   readingsNormalized: number;
   streamsRescored: number;
   snapshotRefreshed: boolean;
+  snapshotRefreshError?: string;
 }> {
   const data = await getDataSource();
   const source = meta?.source ?? "edge-batch";
@@ -148,12 +152,13 @@ export async function runIngestFromEvents(
   const streamsRescored = await refreshScoresFromReadings(readings);
 
   let snapshotRefreshed = false;
+  let snapshotRefreshError: string | undefined;
   try {
     await data.refreshSnapshot();
     invalidateSnapshotCache();
     snapshotRefreshed = true;
-  } catch {
-    /* mock */
+  } catch (e) {
+    snapshotRefreshError = e instanceof Error ? e.message : "Snapshot refresh failed";
   }
 
   return {
@@ -161,5 +166,6 @@ export async function runIngestFromEvents(
     readingsNormalized: readings.length,
     streamsRescored,
     snapshotRefreshed,
+    snapshotRefreshError,
   };
 }

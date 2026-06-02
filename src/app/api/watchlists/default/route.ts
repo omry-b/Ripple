@@ -1,9 +1,22 @@
 import { getDataSource } from "@/lib/data";
 import { defaultWatchlistId, ensureUserRecord } from "@/lib/auth/ensure-user";
 import { getSessionUser } from "@/lib/auth/session";
+import { isAuthEnabled } from "@/lib/auth/config";
+
+function requireSignedInUser(request: Request) {
+  return getSessionUser(request).then((user) => {
+    if (isAuthEnabled() && (user.id === "anonymous" || user.id === "user_demo")) {
+      return null;
+    }
+    return user;
+  });
+}
 
 export async function GET(request: Request) {
-  const user = await getSessionUser(request);
+  const user = await requireSignedInUser(request);
+  if (!user) {
+    return Response.json({ error: "Sign in required" }, { status: 401 });
+  }
   await ensureUserRecord(user);
   const data = await getDataSource();
   const watchlistId = defaultWatchlistId(user.id);
@@ -18,7 +31,10 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const user = await getSessionUser(request);
+  const user = await requireSignedInUser(request);
+  if (!user) {
+    return Response.json({ error: "Sign in required" }, { status: 401 });
+  }
   await ensureUserRecord(user);
   const body = (await request.json()) as { companyIds?: string[] };
   if (!body.companyIds) {

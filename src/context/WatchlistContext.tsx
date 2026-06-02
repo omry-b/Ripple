@@ -21,9 +21,11 @@ type WatchlistContextValue = {
   ids: Set<string>;
   isSignedIn: boolean;
   isSyncing: boolean;
+  syncError: string | null;
   toggle: (companyId: string) => void;
   addMany: (companyIds: string[]) => void;
   refresh: () => Promise<void>;
+  clearSyncError: () => void;
 };
 
 const WatchlistContext = createContext<WatchlistContextValue | null>(null);
@@ -39,6 +41,7 @@ function WatchlistProviderInner({
 }) {
   const [ids, setIds] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
   const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const effectiveUserId = firebaseUserId;
 
@@ -46,15 +49,24 @@ function WatchlistProviderInner({
     async (companyIds: string[]) => {
       if (!effectiveUserId) return;
       setIsSyncing(true);
+      setSyncError(null);
       try {
-        await fetch("/api/watchlists/default", {
+        const res = await fetch("/api/watchlists/default", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({ companyIds }),
         });
+        if (!res.ok) {
+          const body = (await res.json().catch(() => ({}))) as { error?: string };
+          const msg =
+            res.status === 401
+              ? "Session expired. Sign in again to sync your watchlist."
+              : body.error ?? `Sync failed (${res.status})`;
+          setSyncError(msg);
+        }
       } catch {
-        /* local cache remains */
+        setSyncError("Could not reach the server. Changes are saved locally.");
       } finally {
         setIsSyncing(false);
       }
@@ -76,6 +88,7 @@ function WatchlistProviderInner({
   const refresh = useCallback(async () => {
     if (effectiveUserId) {
       setIsSyncing(true);
+      setSyncError(null);
       try {
         const res = await fetch("/api/watchlists/default", { credentials: "include" });
         if (res.ok) {
@@ -87,14 +100,19 @@ function WatchlistProviderInner({
           setIds(new Set(serverIds));
           return;
         }
+        if (res.status === 401) {
+          setSyncError("Session expired. Sign in again to load your watchlist.");
+        }
       } catch {
-        /* fall through */
+        setSyncError("Could not load watchlist from server.");
       } finally {
         setIsSyncing(false);
       }
     }
     setIds(new Set(getWatchlistIds(effectiveUserId)));
   }, [effectiveUserId]);
+
+  const clearSyncError = useCallback(() => setSyncError(null), []);
 
   useEffect(() => {
     if (!authReady) return;
@@ -131,11 +149,13 @@ function WatchlistProviderInner({
       ids,
       isSignedIn: Boolean(effectiveUserId),
       isSyncing,
+      syncError,
       toggle,
       addMany,
       refresh,
+      clearSyncError,
     }),
-    [ids, effectiveUserId, isSyncing, toggle, addMany, refresh]
+    [ids, effectiveUserId, isSyncing, syncError, toggle, addMany, refresh, clearSyncError]
   );
 
   return (

@@ -8,7 +8,7 @@ const DEFAULT_WATCHLIST_NAME = "My watchlist";
 
 export async function ensureUserRecord(user: SessionUser): Promise<void> {
   if (!isFirebaseConfigured() || !isDatabaseConfigured()) return;
-  if (user.id === "user_demo") return;
+  if (user.id === "user_demo" || user.id === "anonymous") return;
 
   const db = getDb();
   const orgId = user.organizationId || `personal_${user.id}`;

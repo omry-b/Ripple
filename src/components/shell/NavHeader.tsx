@@ -23,7 +23,7 @@ const NAV_ICONS: Record<string, React.ReactNode> = {
 export function NavHeader() {
   const pathname = usePathname();
   const { asOf, isRefreshing } = useLiveData();
-  const { ids: watchlistIds, isSyncing } = useWatchlist();
+  const { ids: watchlistIds, isSyncing, syncError } = useWatchlist();
   const watchlistCount = watchlistIds.size;
 
   return (
@@ -62,8 +62,13 @@ export function NavHeader() {
           style={{ textDecoration: "none", display: "inline-block" }}
         >
           Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
-          {isSyncing ? " · syncing" : ""}
+          {isSyncing ? " · syncing" : syncError ? " · sync issue" : ""}
         </Link>
+        {syncError ? (
+          <span className="nav-sync-error" title={syncError} role="status">
+            !
+          </span>
+        ) : null}
       </div>
       <div className="nav-actions">
         <ThemeToggle />

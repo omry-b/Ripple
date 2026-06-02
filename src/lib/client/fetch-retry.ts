@@ -3,6 +3,7 @@ const MAX_DELAY_MS = 8000;
 
 function demoAuthHeaders(): HeadersInit {
   if (typeof window === "undefined") return {};
+  if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim()) return {};
   try {
     const role = localStorage.getItem("ripple-demo-role");
     const org = localStorage.getItem("ripple-demo-org");

@@ -14,7 +14,20 @@ const PUBLIC_API_PREFIXES = [
   "/api/search",
   "/api/openapi",
   "/api/auth/session",
+  "/api/ops/status",
 ];
+
+function mutationAuthRequired(): boolean {
+  if (process.env.REQUIRE_AUTH_FOR_MUTATIONS === "true") return true;
+  return Boolean(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim());
+}
+
+function hasClientSession(request: NextRequest): boolean {
+  return Boolean(
+    request.cookies.get(FIREBASE_SESSION_COOKIE)?.value ||
+      request.headers.get("x-ripple-user-id")
+  );
+}
 
 function applyRateLimit(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
@@ -49,11 +62,8 @@ function applyMutationAuth(request: NextRequest): NextResponse | null {
     pathname.startsWith("/api/") &&
     !PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p))
   ) {
-    const hasSession =
-      request.cookies.get(FIREBASE_SESSION_COOKIE)?.value ||
-      request.headers.get("x-ripple-user-id") ||
-      !process.env.REQUIRE_AUTH_FOR_MUTATIONS;
-    if (process.env.REQUIRE_AUTH_FOR_MUTATIONS === "true" && !hasSession) {
+    const hasSession = hasClientSession(request);
+    if (mutationAuthRequired() && !hasSession) {
       return NextResponse.json({ error: "Auth required" }, { status: 401 });
     }
   }
@@ -76,9 +86,7 @@ export default function rippleMiddleware(request: NextRequest) {
     !pathname.startsWith("/changelog") &&
     !pathname.startsWith("/api-docs")
   ) {
-    const hasSession =
-      request.cookies.get(FIREBASE_SESSION_COOKIE)?.value ||
-      request.headers.get("x-ripple-user-id");
+    const hasSession = hasClientSession(request);
     if (!hasSession) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }

@@ -13,6 +13,13 @@ export type SessionUser = {
 
 export { FIREBASE_SESSION_COOKIE } from "./constants";
 
+const ANONYMOUS_USER: SessionUser = {
+  id: "anonymous",
+  email: "",
+  organizationId: authConfig.demoOrgId,
+  role: "viewer",
+};
+
 async function sessionFromFirebaseToken(token: string): Promise<SessionUser | null> {
   if (!isFirebaseAdminConfigured()) return null;
   try {
@@ -24,7 +31,7 @@ async function sessionFromFirebaseToken(token: string): Promise<SessionUser | nu
     const sessionUser: SessionUser = {
       id: decoded.uid,
       email: decoded.email ?? authConfig.demoEmail,
-      organizationId: `personal_${decoded.uid}`,
+      organizationId: authConfig.demoOrgId,
       role: authConfig.demoRole,
     };
     await ensureUserRecord(sessionUser);
@@ -32,6 +39,22 @@ async function sessionFromFirebaseToken(token: string): Promise<SessionUser | nu
   } catch {
     return null;
   }
+}
+
+function demoUserFromHeaders(request?: Request): SessionUser {
+  const headers = request?.headers;
+  const roleHeader = headers?.get("x-ripple-role");
+  const role =
+    roleHeader === "viewer" || roleHeader === "analyst" || roleHeader === "admin"
+      ? roleHeader
+      : authConfig.demoRole;
+
+  return {
+    id: headers?.get("x-ripple-user-id") ?? authConfig.demoUserId,
+    email: headers?.get("x-ripple-user-email") ?? authConfig.demoEmail,
+    organizationId: headers?.get("x-ripple-org-id") ?? authConfig.demoOrgId,
+    role,
+  };
 }
 
 /**
@@ -50,20 +73,18 @@ export async function getSessionUser(request?: Request): Promise<SessionUser> {
     if (token) {
       const firebaseUser = await sessionFromFirebaseToken(token);
       if (firebaseUser) return firebaseUser;
+      if (process.env.NODE_ENV === "production") {
+        return ANONYMOUS_USER;
+      }
     }
+
+    const demoHeaders = request?.headers.get("x-ripple-user-id");
+    if (demoHeaders || process.env.NODE_ENV !== "production") {
+      return demoUserFromHeaders(request);
+    }
+
+    return ANONYMOUS_USER;
   }
 
-  const headers = request?.headers;
-  const roleHeader = headers?.get("x-ripple-role");
-  const role =
-    roleHeader === "viewer" || roleHeader === "analyst" || roleHeader === "admin"
-      ? roleHeader
-      : authConfig.demoRole;
-
-  return {
-    id: headers?.get("x-ripple-user-id") ?? authConfig.demoUserId,
-    email: headers?.get("x-ripple-user-email") ?? authConfig.demoEmail,
-    organizationId: headers?.get("x-ripple-org-id") ?? authConfig.demoOrgId,
-    role,
-  };
+  return demoUserFromHeaders(request);
 }
