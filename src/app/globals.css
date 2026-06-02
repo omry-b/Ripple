@@ -4,6 +4,7 @@
 @import "./styles/ripple-aesthetic.css";
 @import "./styles/ripple-components.css";
 @import "./styles/theme.css";
+@import "./styles/ripple-polish.css";
 
 * {
   box-sizing: border-box;
@@ -22,9 +23,9 @@ body {
 }
 
 .content-container {
-  max-width: 1200px;
+  max-width: var(--ripple-content-max, 1280px);
   margin: 0 auto;
-  padding: 0 24px 64px;
+  padding: 0 var(--ripple-space-6, 24px) 64px;
 }
 
 .section-label {

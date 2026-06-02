@@ -74,7 +74,7 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
             onClick={() => setLegend((l) => ({ ...l, critical: !l.critical }))}
             aria-pressed={legend.critical}
           >
-            <span className="legend-dot" style={{ background: "#EF4444" }} />
+            <span className="legend-dot legend-dot--critical" />
             Critical
           </button>
           <button
@@ -83,7 +83,7 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
             onClick={() => setLegend((l) => ({ ...l, elevated: !l.elevated }))}
             aria-pressed={legend.elevated}
           >
-            <span className="legend-dot" style={{ background: "#F59E0B" }} />
+            <span className="legend-dot legend-dot--elevated" />
             Elevated
           </button>
         </div>
@@ -140,26 +140,17 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
             {topCompanies.map((row) => (
               <tr key={row.id}>
                 <td>
-                  <Link
-                    href={`/companies/${row.id}`}
-                    style={{ color: "inherit", textDecoration: "none" }}
-                  >
+                  <Link href={`/companies/${row.id}`} className="table-row-link">
                     {row.name}
                   </Link>
                 </td>
                 <td
-                  className="num-col"
-                  style={{
-                    color: row.score >= 70 ? "#EF4444" : "#F59E0B",
-                    fontWeight: 600,
-                  }}
+                  className={`num-col ${row.score >= 70 ? "score-critical" : "score-elevated"}`}
                 >
                   {row.score}
                 </td>
                 <td className="num-col">{row.cvar}</td>
-                <td className="num-col" style={{ color: "#EF4444" }}>
-                  {row.delta7d}
-                </td>
+                <td className="num-col delta-negative">{row.delta7d}</td>
               </tr>
             ))}
           </tbody>

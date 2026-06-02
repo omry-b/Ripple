@@ -19,9 +19,9 @@ export function OverviewPage({ data }: OverviewPageProps) {
   const snapshot = liveSnapshot ?? liveData.snapshot;
 
   return (
-    <main className="content-container" id="main-content">
+    <main className="content-container dashboard-overview" id="main-content">
       <SectionJumpNav />
-      <span className="section-label" id="overview">
+      <span className="section-label section-label--primary" id="overview">
         Live Risk Overview
       </span>
       <BentoGrid
@@ -31,31 +31,35 @@ export function OverviewPage({ data }: OverviewPageProps) {
       />
 
       <span className="section-label" id="alerts">
-        Active Alerts · {snapshot.openAlertsCount} Open
+        Active Alerts
+        <span className="section-count">{snapshot.openAlertsCount} open</span>
       </span>
       <AlertsSectionClient initialAlerts={liveData.alerts} />
 
       <span className="section-label" id="companies">
         Company Exposure Ranking
+        <span className="section-count">{snapshot.trackedCompanies} tracked</span>
       </span>
       <CompanyExposureTable companies={liveData.companies} compact />
 
       <span className="section-label" id="signals">
-        Live Signal Streams · {snapshot.activeStreamsCount} Active{" "}
-        <Link href="/signals" className="text-link" style={{ marginLeft: 8 }}>
+        Live Signal Streams
+        <span className="section-count">{snapshot.activeStreamsCount} active</span>
+        <Link href="/signals" className="text-link">
           View all →
         </Link>
       </span>
       <StreamGrid streams={liveData.streams.slice(0, 4)} linkToSignals />
 
       <span className="section-label" id="scenario">
-        Scenario Workbench{" "}
-        <Link href="/scenario" className="text-link" style={{ marginLeft: 8 }}>
+        Scenario Workbench
+        <Link href="/scenario" className="text-link">
           Open workbench →
         </Link>
       </span>
       <p className="overview-hint">
-        Run what-if simulations on the Scenario page.
+        Run what-if simulations on the Scenario page to stress-test your portfolio against
+        geopolitical and supplier shocks.
       </p>
     </main>
   );

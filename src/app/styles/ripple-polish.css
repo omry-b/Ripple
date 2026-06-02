@@ -1,0 +1,445 @@
+/**
+ * Ripple polish — semantic utilities, motion, and layout cohesion.
+ * Loaded after ripple-aesthetic.css; overrides duplicates intentionally.
+ */
+
+:root {
+  --ripple-content-max: 1280px;
+  --ripple-space-8: 32px;
+  --ripple-glass: rgba(12, 12, 14, 0.72);
+  --ripple-glass-border: rgba(255, 255, 255, 0.09);
+  --ripple-glow-accent: rgba(59, 130, 246, 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ─── Layout rhythm ─── */
+.content-container,
+.page-header,
+.compact-metrics-strip {
+  max-width: var(--ripple-content-max);
+}
+
+.content-container {
+  padding-left: var(--ripple-space-6);
+  padding-right: var(--ripple-space-6);
+}
+
+.dashboard-overview {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * var(--ripple-space-6));
+  padding-top: 0;
+}
+
+.dashboard-overview > .section-jump-nav {
+  margin-bottom: var(--ripple-space-4);
+}
+
+/* ─── Semantic risk colors ─── */
+.text-critical {
+  color: var(--color-critical);
+}
+
+.text-elevated {
+  color: var(--color-elevated);
+}
+
+.text-accent {
+  color: var(--color-accent-muted);
+}
+
+.text-normal {
+  color: var(--color-normal);
+}
+
+.legend-dot--critical {
+  background: var(--color-critical);
+}
+
+.legend-dot--elevated {
+  background: var(--color-elevated);
+}
+
+.score-critical {
+  color: var(--color-critical);
+  font-weight: 600;
+}
+
+.score-elevated {
+  color: var(--color-elevated);
+  font-weight: 600;
+}
+
+.delta-negative {
+  color: var(--color-critical);
+}
+
+/* ─── Cards: unified lift on hover ─── */
+.bento-card,
+.stream-card-interactive,
+.scenario-card,
+.glass-card {
+  transition:
+    border-color var(--ripple-duration-normal) var(--ripple-ease-out),
+    box-shadow var(--ripple-duration-normal) var(--ripple-ease-out),
+    transform var(--ripple-duration-normal) var(--ripple-ease-out);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .bento-card:hover,
+  .stream-card-interactive:hover,
+  .scenario-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ─── Data typography (terminal feel) ─── */
+.mini-table,
+.risk-table {
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-table th,
+.risk-table th {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ripple-text-muted);
+}
+
+.mini-table td,
+.risk-table td {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+}
+
+.mini-table tbody tr,
+.risk-table tbody tr {
+  transition: background var(--ripple-duration-fast) ease;
+}
+
+.mini-table tbody tr:hover,
+.risk-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.mini-table .num-col,
+.risk-table .num-col {
+  text-align: right;
+}
+
+/* ─── Section labels & jump nav ─── */
+.section-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-top: var(--ripple-space-8);
+  margin-bottom: var(--ripple-space-3);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-3);
+}
+
+.section-label--primary {
+  margin-top: var(--ripple-space-4);
+}
+
+.section-label .section-count {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--color-accent-muted);
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.section-label .text-link {
+  margin-left: auto;
+}
+
+.section-label .section-count + .text-link {
+  margin-left: var(--ripple-space-2);
+}
+
+.section-jump-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-2);
+  position: sticky;
+  top: 56px;
+  z-index: var(--ripple-z-nav);
+  padding: var(--ripple-space-3) 0;
+  margin-bottom: var(--ripple-space-2);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.92) 0%,
+    rgba(8, 8, 10, 0.75) 70%,
+    transparent 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.section-jump-link {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ripple-text-muted);
+  border: 1px solid transparent;
+  transition:
+    color var(--ripple-duration-fast) ease,
+    background var(--ripple-duration-fast) ease,
+    border-color var(--ripple-duration-fast) ease;
+}
+
+.section-jump-link:hover {
+  color: var(--ripple-text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.section-jump-link.active,
+.section-jump-link[aria-current="true"] {
+  color: var(--color-accent-muted);
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.12);
+}
+
+/* ─── Hero stat pills ─── */
+.hero-stat-pill {
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color var(--ripple-duration-normal) ease,
+    box-shadow var(--ripple-duration-normal) ease;
+}
+
+.hero-stat-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity var(--ripple-duration-normal) ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .hero-stat-pill:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  .hero-stat-pill:hover::before {
+    opacity: 1;
+  }
+}
+
+.hero-metric {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Page header (sub-routes) ─── */
+.page-header {
+  max-width: var(--ripple-content-max);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.page-header-kicker {
+  display: inline-block;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-muted);
+  margin-bottom: var(--ripple-space-2);
+}
+
+/* ─── Links ─── */
+.text-link {
+  color: var(--color-accent-muted);
+  text-decoration: none;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  transition: color var(--ripple-duration-fast) ease;
+}
+
+.text-link:hover {
+  color: #bfdbfe;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.table-row-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--ripple-duration-fast) ease;
+}
+
+.table-row-link:hover {
+  color: var(--color-accent-muted);
+}
+
+/* ─── Filter bar & inputs ─── */
+.filter-search {
+  transition:
+    border-color var(--ripple-duration-fast) ease,
+    box-shadow var(--ripple-duration-fast) ease;
+}
+
+.filter-search:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.filter-bar {
+  backdrop-filter: blur(10px);
+}
+
+/* ─── Command palette ─── */
+.cmdk-panel {
+  border: 1px solid var(--ripple-glass-border);
+  box-shadow:
+    var(--ripple-elevation-2),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 80px rgba(59, 130, 246, 0.08);
+}
+
+.cmdk-item.active {
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+/* ─── Footer ─── */
+.app-footer {
+  margin-top: var(--ripple-space-8);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, transparent, rgba(8, 8, 10, 0.85));
+}
+
+.app-footer-inner {
+  max-width: var(--ripple-content-max);
+  margin: 0 auto;
+  padding: var(--ripple-space-6);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ripple-space-4);
+}
+
+.app-footer-brand {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, #fafafa, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-footer-meta {
+  color: var(--ripple-text-muted);
+  font-size: 12px;
+}
+
+.app-footer-nav {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-4);
+}
+
+.app-footer-nav a {
+  color: var(--ripple-text-secondary);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color var(--ripple-duration-fast) ease;
+}
+
+.app-footer-nav a:hover {
+  color: var(--color-accent-muted);
+}
+
+/* ─── Alerts section anchor ─── */
+#alerts + .atmosphere-section,
+#alerts + * {
+  scroll-margin-top: 120px;
+}
+
+[id="overview"],
+[id="alerts"],
+[id="companies"],
+[id="signals"],
+[id="scenario"] {
+  scroll-margin-top: 120px;
+}
+
+.overview-hint {
+  color: var(--ripple-text-muted);
+  font-size: 13px;
+  margin-top: var(--ripple-space-2);
+}
+
+/* ─── Nav brand subtle shimmer ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .nav-brand {
+    animation: navBrandShimmer 8s ease-in-out infinite;
+  }
+}
+
+@keyframes navBrandShimmer {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* ─── Bento grid first row emphasis ─── */
+.bento-grid {
+  margin-bottom: var(--ripple-space-2);
+}
+
+#bento-map-card {
+  box-shadow:
+    var(--ripple-elevation-2),
+    0 0 60px rgba(59, 130, 246, 0.06);
+}
+
+.card-title {
+  color: var(--ripple-text-primary);
+}
+
+.card-subtitle {
+  color: var(--ripple-text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.metric-display-large {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
