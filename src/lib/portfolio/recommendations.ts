@@ -89,7 +89,7 @@ const FALLBACK: Omit<Recommendation, "factorKey" | "factorLabel"> = {
 };
 
 export function dominantFactor(company: Company): ScoreFactor | null {
-  const factors = getScoreFactorsForCompany(company.id, company.score);
+  const factors = getScoreFactorsForCompany(company);
   if (factors.length === 0) return null;
   return factors.reduce((top, f) => (f.contribution > top.contribution ? f : top));
 }

@@ -42,7 +42,7 @@ export const mockDataSource: RippleDataSource = {
   getScoreFactors: async (companyId) => {
     const company = mockStore.getCompany(companyId);
     if (!company) return [];
-    return getScoreFactorsForCompany(companyId, company.score);
+    return getScoreFactorsForCompany(company);
   },
   refreshSnapshot: async () => {
     const ingestEvents = await loadRecentIngestEvents(200);

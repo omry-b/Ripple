@@ -368,7 +368,7 @@ export const mockStore = {
   getScoreFactors(companyId: string): ScoreFactor[] {
     const company = ALL_COMPANIES.find((c) => c.id === companyId);
     if (!company) return [];
-    return getScoreFactorsForCompany(companyId, company.score);
+    return getScoreFactorsForCompany(company);
   },
 
   getScenarios(): Scenario[] {

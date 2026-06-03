@@ -371,7 +371,7 @@ export const postgresDataSource: RippleDataSource = {
   async getScoreFactors(companyId) {
     const company = await this.getCompany(companyId);
     if (!company) return [];
-    return getScoreFactorsForCompany(companyId, company.score);
+    return getScoreFactorsForCompany(company);
   },
 
   async refreshSnapshot() {
