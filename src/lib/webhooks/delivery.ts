@@ -4,6 +4,7 @@ import { getDataSource } from "@/lib/data";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import * as schema from "@/lib/db/schema";
 import { signWebhookPayload } from "@/lib/webhooks/sign";
+import { isWebhookUrlDeliverable } from "@/lib/webhooks/url-guard";
 
 const subscriptionSecrets = new Map<string, string>();
 
@@ -50,6 +51,11 @@ export async function deliverWebhookToOrg(
 
   for (const sub of subs) {
     if (!sub.enabled || !sub.events.includes(event)) continue;
+    // SSRF guard at delivery time: re-validate + DNS-resolve to a public host.
+    if (!(await isWebhookUrlDeliverable(sub.url))) {
+      failed += 1;
+      continue;
+    }
     const secret = await resolveSigningSecret(sub.id);
     const signature = signWebhookPayload(secret, body, timestamp);
 

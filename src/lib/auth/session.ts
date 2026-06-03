@@ -43,7 +43,12 @@ async function sessionFromFirebaseToken(token: string): Promise<SessionUser | nu
 
 function demoUserFromHeaders(request?: Request): SessionUser {
   const headers = request?.headers;
-  const roleHeader = headers?.get("x-ripple-role");
+  // Never let a client-supplied header escalate privileges in production. The
+  // role/org-switch headers are a local-demo convenience only; in production the
+  // role is fixed to the server-configured default so a public visitor cannot
+  // self-assign "admin" (or pivot into another org) by sending a header.
+  const trustHeaders = process.env.NODE_ENV !== "production";
+  const roleHeader = trustHeaders ? headers?.get("x-ripple-role") : null;
   const role =
     roleHeader === "viewer" || roleHeader === "analyst" || roleHeader === "admin"
       ? roleHeader
@@ -52,7 +57,9 @@ function demoUserFromHeaders(request?: Request): SessionUser {
   return {
     id: headers?.get("x-ripple-user-id") ?? authConfig.demoUserId,
     email: headers?.get("x-ripple-user-email") ?? authConfig.demoEmail,
-    organizationId: headers?.get("x-ripple-org-id") ?? authConfig.demoOrgId,
+    organizationId: trustHeaders
+      ? headers?.get("x-ripple-org-id") ?? authConfig.demoOrgId
+      : authConfig.demoOrgId,
     role,
   };
 }

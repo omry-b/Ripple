@@ -2,6 +2,7 @@ import { getDataSource } from "@/lib/data";
 import { getSessionUser } from "@/lib/auth/session";
 import { generateWebhookSecret } from "@/lib/webhooks/sign";
 import { rememberSubscriptionSecret } from "@/lib/webhooks/delivery";
+import { checkWebhookUrl } from "@/lib/webhooks/url-guard";
 
 export async function GET(request: Request) {
   const user = await getSessionUser(request);
@@ -19,6 +20,12 @@ export async function POST(request: Request) {
   const body = (await request.json()) as { url?: string; events?: string[] };
   if (!body.url) {
     return Response.json({ error: "url is required" }, { status: 400 });
+  }
+
+  // SSRF guard: only allow public https endpoints (no internal/loopback targets).
+  const urlCheck = checkWebhookUrl(body.url);
+  if (!urlCheck.ok) {
+    return Response.json({ error: urlCheck.reason }, { status: 400 });
   }
 
   const data = await getDataSource();
