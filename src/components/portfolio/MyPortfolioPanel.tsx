@@ -6,6 +6,7 @@ import { useLiveData } from "@/context/LiveDataContext";
 import { usePortfolio } from "@/context/PortfolioContext";
 import { useWatchlist } from "@/context/WatchlistContext";
 import { buildPositions, computePortfolioMetrics } from "@/lib/portfolio/metrics";
+import { exportPortfolioReportCsv } from "@/lib/portfolio/export";
 import { formatCvarUsd } from "@/lib/risk/portfolio-metrics";
 import { riskLevelFromScore } from "@/lib/risk/levels";
 import { AnimatedValue } from "@/components/portfolio/AnimatedValue";
@@ -20,9 +21,13 @@ export function MyPortfolioPanel() {
     [dashboard, ids]
   );
 
+  const positions = useMemo(
+    () => buildPositions(companies, exposures),
+    [companies, exposures]
+  );
   const metrics = useMemo(
-    () => computePortfolioMetrics(buildPositions(companies, exposures), { severity: stressSeverity }),
-    [companies, exposures, stressSeverity]
+    () => computePortfolioMetrics(positions, { severity: stressSeverity }),
+    [positions, stressSeverity]
   );
 
   // Seed from the highest-risk companies actually in the served book, so the
@@ -76,9 +81,18 @@ export function MyPortfolioPanel() {
         <span className="card-title" style={{ marginBottom: 0 }}>
           My Portfolio · {metrics.positionCount} position{metrics.positionCount === 1 ? "" : "s"}
         </span>
-        <Link href="/companies?watchlist=1" className="text-link">
-          Manage →
-        </Link>
+        <div className="my-portfolio-head-actions">
+          <button
+            type="button"
+            className="filter-export-btn"
+            onClick={() => exportPortfolioReportCsv(positions, metrics)}
+          >
+            Export report
+          </button>
+          <Link href="/companies?watchlist=1" className="text-link">
+            Manage →
+          </Link>
+        </div>
       </div>
 
       <label className="portfolio-stress">

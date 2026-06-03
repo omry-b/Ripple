@@ -60,6 +60,11 @@
   margin-bottom: 14px;
   gap: 12px;
 }
+.my-portfolio-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
 .my-portfolio-mix {
   margin-top: 18px;
 }
