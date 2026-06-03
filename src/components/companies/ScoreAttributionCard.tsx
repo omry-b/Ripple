@@ -1,10 +1,11 @@
-import type { ScoreAttribution } from "@/lib/mock/score-attribution";
+import type { ScoreAttribution } from "@/lib/risk/attribution";
 
 type ScoreAttributionCardProps = {
   attribution: ScoreAttribution;
 };
 
 export function ScoreAttributionCard({ attribution }: ScoreAttributionCardProps) {
+  const sign = attribution.direction === "up" ? "+" : "−";
   return (
     <section className="workbench-card score-attribution-card">
       <h3 className="supplier-tier-title">Score change attribution</h3>
@@ -13,7 +14,14 @@ export function ScoreAttributionCard({ attribution }: ScoreAttributionCardProps)
         {attribution.drivers.map((d) => (
           <li key={d.label}>
             <span>{d.label}</span>
-            <span className="score-attribution-pts">+{d.points} pts</span>
+            <span
+              className={`score-attribution-pts${
+                attribution.direction === "down" ? " score-attribution-pts--down" : ""
+              }`}
+            >
+              {sign}
+              {d.points} pts
+            </span>
           </li>
         ))}
       </ul>

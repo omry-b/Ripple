@@ -6,8 +6,10 @@ import {
   getScoreFactors,
   getSignalsForCompany,
   getSuppliersForCompany,
-  getScoreAttribution,
+  getCompanies,
 } from "@/lib/api";
+import { computeScoreAttribution } from "@/lib/risk/attribution";
+import { computePeerComparison } from "@/lib/risk/peer-comparison";
 import { ScoreBreakdownChart } from "@/components/charts/ScoreBreakdownChart";
 import { RiskScoreSparkline } from "@/components/charts/RiskScoreSparkline";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -44,13 +46,17 @@ export default async function CompanyDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [alerts, signals, scoreFactors, suppliers, attribution] = await Promise.all([
+  const [alerts, signals, scoreFactors, suppliers, allCompanies] = await Promise.all([
     getAlertsForCompany(id),
     getSignalsForCompany(id),
     getScoreFactors(id),
     getSuppliersForCompany(id),
-    getScoreAttribution(id, company.delta7d),
+    getCompanies(),
   ]);
+
+  const attribution = computeScoreAttribution(company, scoreFactors, signals);
+  const peers = allCompanies.filter((c) => c.tier === company.tier && c.id !== company.id);
+  const peer = computePeerComparison(company, peers);
 
   return (
     <>
@@ -109,7 +115,7 @@ export default async function CompanyDetailPage({ params }: Props) {
         <ScoreAttributionCard attribution={attribution} />
 
         <span className="section-label">Sector peers</span>
-        <PeerComparisonCard company={company} />
+        <PeerComparisonCard company={company} peer={peer} />
 
         <CvarBacktestChart companyId={company.id} />
 

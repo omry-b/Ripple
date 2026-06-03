@@ -1,8 +1,9 @@
 import type { Company } from "@/types/domain";
-import { getPeerComparison } from "@/lib/mock/peer-stats";
+import type { PeerComparison } from "@/lib/risk/peer-comparison";
 
 type PeerComparisonCardProps = {
   company: Company;
+  peer: PeerComparison;
 };
 
 function formatUsd(n: number): string {
@@ -11,8 +12,7 @@ function formatUsd(n: number): string {
   return `$${n}`;
 }
 
-export function PeerComparisonCard({ company }: PeerComparisonCardProps) {
-  const peer = getPeerComparison(company.tier, company.score, company.cvarUsd);
+export function PeerComparisonCard({ company, peer }: PeerComparisonCardProps) {
   const deltaLabel =
     peer.scoreDelta >= 0 ? `+${peer.scoreDelta} vs median` : `${peer.scoreDelta} vs median`;
 

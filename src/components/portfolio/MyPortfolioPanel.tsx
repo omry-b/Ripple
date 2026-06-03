@@ -8,12 +8,13 @@ import { useWatchlist } from "@/context/WatchlistContext";
 import { buildPositions, computePortfolioMetrics } from "@/lib/portfolio/metrics";
 import { formatCvarUsd } from "@/lib/risk/portfolio-metrics";
 import { riskLevelFromScore } from "@/lib/risk/levels";
+import { AnimatedValue } from "@/components/portfolio/AnimatedValue";
 
 const STARTER_PORTFOLIO = ["apple", "tsmc", "foxconn", "samsung", "nvidia"];
 
 export function MyPortfolioPanel() {
   const { dashboard } = useLiveData();
-  const { ids, exposures, hasPortfolio } = usePortfolio();
+  const { ids, exposures, hasPortfolio, stressSeverity, setStressSeverity } = usePortfolio();
   const { addMany } = useWatchlist();
 
   const companies = useMemo(
@@ -22,8 +23,8 @@ export function MyPortfolioPanel() {
   );
 
   const metrics = useMemo(
-    () => computePortfolioMetrics(buildPositions(companies, exposures)),
-    [companies, exposures]
+    () => computePortfolioMetrics(buildPositions(companies, exposures), { severity: stressSeverity }),
+    [companies, exposures, stressSeverity]
   );
 
   if (!dashboard) return null;
@@ -72,27 +73,62 @@ export function MyPortfolioPanel() {
         </Link>
       </div>
 
+      <label className="portfolio-stress">
+        <span className="portfolio-stress-label">
+          Stress test
+          <strong className={stressSeverity === 100 ? "" : "portfolio-stress-active"}>
+            {stressSeverity === 100 ? " today" : ` ${stressSeverity}% severity`}
+          </strong>
+        </span>
+        <input
+          type="range"
+          min={50}
+          max={150}
+          step={5}
+          value={stressSeverity}
+          onChange={(e) => setStressSeverity(Number(e.target.value))}
+          aria-label="Portfolio stress severity"
+        />
+      </label>
+
       <div className="metric-tile-grid">
         <div className="metric-tile">
           <span className="metric-tile-label">My risk index</span>
-          <span className={`metric-tile-value ${myLevel}-accent`}>{metrics.riskIndex}</span>
+          <AnimatedValue
+            value={metrics.riskIndex}
+            className={`metric-tile-value ${myLevel}-accent`}
+          />
           <span className="metric-tile-foot metric-tile-foot--muted">
             exposure-weighted, 0–100
           </span>
         </div>
         <div className="metric-tile">
           <span className="metric-tile-label">My CVaR₉₅</span>
-          <span className="metric-tile-value critical-accent">{formatCvarUsd(metrics.cvarUsd)}</span>
+          <AnimatedValue
+            value={metrics.cvarUsd}
+            format={formatCvarUsd}
+            className="metric-tile-value critical-accent"
+          />
           <span className="metric-tile-foot metric-tile-foot--muted">tail loss, Monte Carlo</span>
         </div>
         <div className="metric-tile">
           <span className="metric-tile-label">Expected loss</span>
-          <span className="metric-tile-value">{formatCvarUsd(metrics.expectedLossUsd)}</span>
-          <span className="metric-tile-foot metric-tile-foot--muted">at current risk</span>
+          <AnimatedValue
+            value={metrics.expectedLossUsd}
+            format={formatCvarUsd}
+            className="metric-tile-value"
+          />
+          <span className="metric-tile-foot metric-tile-foot--muted">
+            {stressSeverity === 100 ? "at current risk" : `at ${stressSeverity}% stress`}
+          </span>
         </div>
         <div className="metric-tile">
           <span className="metric-tile-label">Total exposure</span>
-          <span className="metric-tile-value">{formatCvarUsd(metrics.totalExposureUsd)}</span>
+          <AnimatedValue
+            value={metrics.totalExposureUsd}
+            format={formatCvarUsd}
+            className="metric-tile-value"
+          />
           <span className="metric-tile-foot metric-tile-foot--muted">
             {metrics.atRiskCount} at-risk · {metrics.criticalCount} critical
           </span>

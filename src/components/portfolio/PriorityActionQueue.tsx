@@ -55,13 +55,13 @@ function ExposureInput({ action }: { action: PriorityAction }) {
 
 export function PriorityActionQueue() {
   const { dashboard } = useLiveData();
-  const { ids, exposures, hasPortfolio } = usePortfolio();
+  const { ids, exposures, hasPortfolio, stressSeverity } = usePortfolio();
 
   const actions = useMemo(() => {
     const companies = (dashboard?.companies ?? []).filter((c) => ids.has(c.id));
     const positions = buildPositions(companies, exposures);
-    return buildActionQueue(positions, dashboard?.alerts ?? [], 5);
-  }, [dashboard, ids, exposures]);
+    return buildActionQueue(positions, dashboard?.alerts ?? [], 5, stressSeverity);
+  }, [dashboard, ids, exposures, stressSeverity]);
 
   if (!dashboard || !hasPortfolio || actions.length === 0) return null;
 

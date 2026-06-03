@@ -25,6 +25,9 @@ type PortfolioContextValue = {
   /** True once the user holds at least one position. */
   hasPortfolio: boolean;
   setExposure: (companyId: string, exposureUsd: number | null) => void;
+  /** Shared "what-if" stress level (50–150%, 100 = today) applied across the portfolio view. */
+  stressSeverity: number;
+  setStressSeverity: (severity: number) => void;
 };
 
 const PortfolioContext = createContext<PortfolioContextValue | null>(null);
@@ -34,6 +37,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const watchlistIds = watchlist?.ids;
   const ids = useMemo(() => watchlistIds ?? new Set<string>(), [watchlistIds]);
   const [exposures, setExposuresState] = useState<ExposureMap>({});
+  const [stressSeverity, setStressSeverity] = useState(100);
 
   useEffect(() => {
     // Hydrate from localStorage on mount, then track cross-component changes.
@@ -55,8 +59,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       count: ids.size,
       hasPortfolio: ids.size > 0,
       setExposure,
+      stressSeverity,
+      setStressSeverity,
     }),
-    [ids, exposures, setExposure]
+    [ids, exposures, setExposure, stressSeverity]
   );
 
   return <PortfolioContext.Provider value={value}>{children}</PortfolioContext.Provider>;

@@ -120,18 +120,20 @@ function levelForScore(score: number): PriorityAction["level"] {
 export function buildActionQueue(
   positions: PortfolioPosition[],
   alerts: Alert[] = [],
-  limit = 5
+  limit = 5,
+  severity = 100
 ): PriorityAction[] {
   const alertedCompanyIds = new Set(
     alerts.filter((a) => a.status === "open").flatMap((a) => a.affectedCompanyIds)
   );
+  const severityFactor = severity / 100;
 
   return positions
     .map((p): PriorityAction => {
       const { company, exposureUsd } = p;
       const score = company.score;
       const hasOpenAlert = alertedCompanyIds.has(company.id);
-      const dollarsAtRisk = positionExpectedLossUsd(score, exposureUsd);
+      const dollarsAtRisk = positionExpectedLossUsd(score, exposureUsd, severityFactor);
       const priority = dollarsAtRisk * (hasOpenAlert ? 1.4 : 1);
       const level = levelForScore(score);
       const reason = hasOpenAlert

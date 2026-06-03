@@ -117,24 +117,56 @@ const CORE_COMPANIES: Omit<Company, "history30d" | "region">[] = [
   },
 ];
 
-const EXTENDED_COMPANIES: Omit<Company, "history30d" | "region">[] = Array.from({ length: 25 }, (_, i) => {
-  const n = i + 1;
-  const score = 28 + ((n * 7) % 45);
-  const tier = n % 3 === 0 ? "Tier 1" : "Tier 2";
-  const cvarUsd = Math.round((0.05 + (n % 10) * 0.03) * 1e9);
-  return {
-    id: `supplier-${n}`,
-    name: `SupplyCo ${n}`,
-    score,
-    tier,
-    cvar: `$${(cvarUsd / 1e9).toFixed(1)}B`,
-    cvarUsd,
-    delta7d: n % 2 === 0 ? `↑ +${n % 8}` : `↓ -${n % 4}`,
-    deltaTrend: n % 2 === 0 ? "bad" : "good",
-    contagionHops: 1 + (n % 3),
-    scoreLevel: score >= 60 ? "critical" : "elevated",
-  };
-});
+/** Real global supply-chain names so rankings, search, and watchlists read like a real book. */
+const EXTENDED_ROSTER: { id: string; name: string; tier: "Tier 1" | "Tier 2"; baseScore: number }[] = [
+  { id: "sk-hynix", name: "SK Hynix", tier: "Tier 2", baseScore: 61 },
+  { id: "micron", name: "Micron Technology", tier: "Tier 2", baseScore: 54 },
+  { id: "infineon", name: "Infineon Technologies", tier: "Tier 2", baseScore: 57 },
+  { id: "stmicro", name: "STMicroelectronics", tier: "Tier 2", baseScore: 50 },
+  { id: "nxp", name: "NXP Semiconductors", tier: "Tier 2", baseScore: 47 },
+  { id: "texas-instruments", name: "Texas Instruments", tier: "Tier 2", baseScore: 38 },
+  { id: "analog-devices", name: "Analog Devices", tier: "Tier 2", baseScore: 35 },
+  { id: "broadcom", name: "Broadcom", tier: "Tier 1", baseScore: 46 },
+  { id: "murata", name: "Murata Manufacturing", tier: "Tier 2", baseScore: 52 },
+  { id: "tdk", name: "TDK Corporation", tier: "Tier 2", baseScore: 44 },
+  { id: "sony-semi", name: "Sony Semiconductor", tier: "Tier 2", baseScore: 41 },
+  { id: "western-digital", name: "Western Digital", tier: "Tier 2", baseScore: 49 },
+  { id: "pegatron", name: "Pegatron", tier: "Tier 1", baseScore: 63 },
+  { id: "wistron", name: "Wistron", tier: "Tier 1", baseScore: 58 },
+  { id: "flex", name: "Flex Ltd.", tier: "Tier 1", baseScore: 51 },
+  { id: "jabil", name: "Jabil", tier: "Tier 1", baseScore: 43 },
+  { id: "nidec", name: "Nidec Corporation", tier: "Tier 2", baseScore: 39 },
+  { id: "bosch", name: "Robert Bosch", tier: "Tier 1", baseScore: 45 },
+  { id: "continental", name: "Continental AG", tier: "Tier 1", baseScore: 42 },
+  { id: "denso", name: "Denso", tier: "Tier 1", baseScore: 37 },
+  { id: "magna", name: "Magna International", tier: "Tier 1", baseScore: 33 },
+  { id: "maersk", name: "Maersk Logistics", tier: "Tier 1", baseScore: 56 },
+  { id: "kuehne-nagel", name: "Kuehne+Nagel", tier: "Tier 2", baseScore: 48 },
+  { id: "db-schenker", name: "DB Schenker", tier: "Tier 2", baseScore: 40 },
+  { id: "dhl-supply", name: "DHL Supply Chain", tier: "Tier 1", baseScore: 36 },
+];
+
+const EXTENDED_COMPANIES: Omit<Company, "history30d" | "region">[] = EXTENDED_ROSTER.map(
+  (entry, i) => {
+    const n = i + 1;
+    const score = entry.baseScore;
+    const cvarUsd = Math.round((0.05 + (n % 10) * 0.03) * 1e9);
+    const drift = (n * 7) % 11;
+    const worsening = n % 2 === 0;
+    return {
+      id: entry.id,
+      name: entry.name,
+      score,
+      tier: entry.tier,
+      cvar: `$${(cvarUsd / 1e9).toFixed(1)}B`,
+      cvarUsd,
+      delta7d: worsening ? `↑ +${1 + (drift % 7)}` : `↓ -${1 + (drift % 4)}`,
+      deltaTrend: worsening ? "bad" : "good",
+      contagionHops: 1 + (n % 3),
+      scoreLevel: score >= 60 ? "critical" : "elevated",
+    };
+  }
+);
 
 const ALL_COMPANIES: Company[] = [...CORE_COMPANIES, ...EXTENDED_COMPANIES].map(enrichCompany);
 

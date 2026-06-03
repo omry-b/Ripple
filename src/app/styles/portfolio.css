@@ -339,3 +339,39 @@
 .company-action-exposure {
   font-size: 18px;
 }
+
+/* ---- Stress slider ---- */
+.portfolio-stress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 18px;
+  padding: 10px 12px;
+  background: var(--ripple-surface-overlay, #141414);
+  border: 1px solid var(--ripple-border-subtle, #262626);
+  border-radius: var(--ripple-radius-sm, 8px);
+}
+.portfolio-stress-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ripple-text-muted, #737373);
+  white-space: nowrap;
+}
+.portfolio-stress-label strong {
+  color: var(--ripple-text-secondary, #a3a3a3);
+  font-weight: 500;
+}
+.portfolio-stress-label .portfolio-stress-active {
+  color: #f59e0b;
+}
+.portfolio-stress input[type="range"] {
+  flex: 1;
+  accent-color: #2563eb;
+}
+
+/* Attribution: easing (risk down) shows green */
+.score-attribution-pts--down {
+  color: #22c55e !important;
+}

@@ -103,9 +103,4 @@ export async function getSuppliersForCompany(companyId: string) {
   return getSuppliers(companyId);
 }
 
-export async function getScoreAttribution(companyId: string, delta7d: string) {
-  const { getScoreAttribution: getAttr } = await import("@/lib/mock/score-attribution");
-  return getAttr(companyId, delta7d);
-}
-
 export { getDataSourceMode } from "@/lib/data";

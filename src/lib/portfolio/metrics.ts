@@ -86,11 +86,12 @@ const EMPTY: PortfolioMetrics = {
 
 export function computePortfolioMetrics(
   positions: PortfolioPosition[],
-  options: { confidence?: 95 | 99; trials?: number } = {}
+  options: { confidence?: 95 | 99; trials?: number; severity?: number } = {}
 ): PortfolioMetrics {
   if (positions.length === 0) return EMPTY;
 
   const confidence = options.confidence ?? 95;
+  const severity = options.severity ?? 100;
   const totalExposureUsd = positions.reduce((s, p) => s + p.exposureUsd, 0);
 
   // Exposure-weighted average score → a portfolio-level risk index.
@@ -112,9 +113,9 @@ export function computePortfolioMetrics(
   const seed = `portfolio:${positions
     .map((p) => p.company.id)
     .sort()
-    .join(",")}:${confidence}`;
+    .join(",")}:${confidence}:${severity}`;
   const { positions: simPositions, config } = buildScenarioSimulation(companiesForSim, {
-    severity: 100,
+    severity,
     confidence,
     seed,
   });
