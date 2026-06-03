@@ -163,12 +163,14 @@ export function usePerspectiveTilt(
   }, [selector, intensity]);
 }
 
-export function useSnapshotCounters(snapshot: DashboardSnapshot) {
-  const key = snapshot.asOf;
-  useAnimatedCounter("counter-index", snapshot.riskIndex, 1400, true, 100, key);
-  useAnimatedCounter("counter-exposed", snapshot.exposedCompanies, 1600, false, 250, key);
-  useAnimatedCounter("counter-cvar-hero", snapshot.portfolioCvarB, 1800, true, 400, key);
-  useAnimatedCounter("counter-signals", snapshot.liveSignalsCount, 2000, false, 550, key);
-  useAnimatedCounter("bento-val-signals", snapshot.liveSignalsCount, 2000, false, 600, key);
-  useAnimatedCounter("bento-val-exposed", snapshot.exposedCompanies, 1600, false, 700, key);
+export function useSnapshotCounters(snapshot: DashboardSnapshot | null) {
+  // Null-safe so callers can invoke this unconditionally (before any early
+  // return) and keep hook order stable.
+  const key = snapshot?.asOf ?? "";
+  useAnimatedCounter("counter-index", snapshot?.riskIndex ?? 0, 1400, true, 100, key);
+  useAnimatedCounter("counter-exposed", snapshot?.exposedCompanies ?? 0, 1600, false, 250, key);
+  useAnimatedCounter("counter-cvar-hero", snapshot?.portfolioCvarB ?? 0, 1800, true, 400, key);
+  useAnimatedCounter("counter-signals", snapshot?.liveSignalsCount ?? 0, 2000, false, 550, key);
+  useAnimatedCounter("bento-val-signals", snapshot?.liveSignalsCount ?? 0, 2000, false, 600, key);
+  useAnimatedCounter("bento-val-exposed", snapshot?.exposedCompanies ?? 0, 1600, false, 700, key);
 }

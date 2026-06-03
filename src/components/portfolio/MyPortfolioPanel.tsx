@@ -10,8 +10,6 @@ import { formatCvarUsd } from "@/lib/risk/portfolio-metrics";
 import { riskLevelFromScore } from "@/lib/risk/levels";
 import { AnimatedValue } from "@/components/portfolio/AnimatedValue";
 
-const STARTER_PORTFOLIO = ["apple", "tsmc", "foxconn", "samsung", "nvidia"];
-
 export function MyPortfolioPanel() {
   const { dashboard } = useLiveData();
   const { ids, exposures, hasPortfolio, stressSeverity, setStressSeverity } = usePortfolio();
@@ -26,6 +24,16 @@ export function MyPortfolioPanel() {
     () => computePortfolioMetrics(buildPositions(companies, exposures), { severity: stressSeverity }),
     [companies, exposures, stressSeverity]
   );
+
+  // Seed from the highest-risk companies actually in the served book, so the
+  // sample portfolio always populates regardless of data source or org scope.
+  const startSample = () => {
+    const ids = [...(dashboard?.companies ?? [])]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5)
+      .map((c) => c.id);
+    if (ids.length > 0) addMany(ids);
+  };
 
   if (!dashboard) return null;
 
@@ -42,7 +50,7 @@ export function MyPortfolioPanel() {
             <button
               type="button"
               className="filter-export-btn portfolio-cta-primary"
-              onClick={() => addMany(STARTER_PORTFOLIO)}
+              onClick={startSample}
             >
               Start with a sample portfolio
             </button>

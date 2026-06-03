@@ -11,9 +11,9 @@ type HeroSectionProps = {
 };
 
 const HERO_STATS_FULL = [
-  { id: "counter-index", label: "Risk Index", accent: "critical-accent" as const, format: (v: number) => v.toFixed(1) },
+  { id: "counter-index", label: "Market Risk", accent: "critical-accent" as const, format: (v: number) => v.toFixed(1) },
   { id: "counter-exposed", label: "Exposed Cos", accent: "" as const, format: (v: number) => String(v) },
-  { id: "counter-cvar-hero", label: "Portfolio CVaR", accent: "critical-accent" as const, format: (v: number) => `$${v.toFixed(1)}B` },
+  { id: "counter-cvar-hero", label: "Market CVaR", accent: "critical-accent" as const, format: (v: number) => `$${v.toFixed(1)}B` },
   { id: "counter-signals", label: "Live Signals", accent: "" as const, format: (v: number) => String(v) },
 ] as const;
 
@@ -23,9 +23,8 @@ const HERO_STATS_COMPACT = HERO_STATS_FULL.filter((s) =>
 
 export function HeroSection({ showWordmark = true, compact = false }: HeroSectionProps) {
   const { snapshot, asOf } = useLiveData();
-  if (!snapshot) return null;
-
   useSnapshotCounters(snapshot);
+  if (!snapshot) return null;
 
   const stats = compact ? HERO_STATS_COMPACT : HERO_STATS_FULL;
   const values: Record<string, number> = {

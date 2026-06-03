@@ -13,7 +13,6 @@ import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
 import { WatchlistProvider } from "@/context/WatchlistContext";
 import { PortfolioProvider } from "@/context/PortfolioContext";
-import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { AppFooter } from "@/components/shell/AppFooter";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +44,6 @@ export default async function DashboardLayout({
           <KeyboardShortcuts />
           <PageTransition>{children}</PageTransition>
           <AppFooter />
-          <OnboardingTour />
         </div>
       </LiveDataProvider>
       </PortfolioProvider>
