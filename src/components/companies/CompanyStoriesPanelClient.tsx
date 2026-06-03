@@ -64,9 +64,13 @@ export function CompanyStoriesPanelClient({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/companies/${companyId}/stories`, {
-        method: "POST",
-      });
+      // Force a fresh crawl via the public read endpoint (refresh is a read of
+      // external news, not a user mutation — so it isn't role-gated). The
+      // timestamp busts any CDN cache so the refresh is genuinely live.
+      const res = await fetch(
+        `/api/companies/${companyId}/stories?refresh=1&t=${Date.now()}`,
+        { cache: "no-store" }
+      );
       const raw = (await res.json()) as Record<string, unknown>;
       if (!res.ok) {
         const msg =
