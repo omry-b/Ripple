@@ -35,7 +35,7 @@ export const mockDataSource: RippleDataSource = {
   runScenario: async (id, options) => {
     const scenario = mockStore.getScenario(id);
     if (!scenario) return null;
-    return simulationRunStore.run(scenario, options);
+    return simulationRunStore.run(scenario, options, mockStore.getCompanies());
   },
   getSimulationRuns: () => Promise.resolve(simulationRunStore.list()),
   getAlertsForCompany: (companyId) => Promise.resolve(mockStore.getAlertsForCompany(companyId)),

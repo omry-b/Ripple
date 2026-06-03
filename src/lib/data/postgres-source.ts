@@ -282,7 +282,9 @@ export const postgresDataSource: RippleDataSource = {
     if (!scenario) return null;
     const region = options?.region ?? "APAC";
     const contagion = await resolveContagionEntityNames(region);
-    const run = runScenarioEngine(scenario, options, contagion);
+    // Live-scored portfolio drives the Monte Carlo tail-risk simulation.
+    const companies = await this.getCompanies();
+    const run = runScenarioEngine(scenario, options, contagion, companies);
     const db = getDb();
     await db.insert(schema.simulationRuns).values({
       id: run.id,

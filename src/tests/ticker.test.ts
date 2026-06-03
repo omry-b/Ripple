@@ -15,6 +15,7 @@ describe("buildTickerFromAllSources", () => {
           title: "Taiwan Strait",
           detail: "old",
           meta: "",
+          affectedCompanyIds: [],
           timeline: [{ at: "2020-01-01T00:00:00Z", event: "opened" }],
         },
       ],

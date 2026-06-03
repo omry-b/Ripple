@@ -11,6 +11,7 @@
     "db:generate": "drizzle-kit generate",
     "db:seed": "tsx scripts/seed.ts",
     "db:verify": "tsx scripts/db-verify.ts",
+    "evaluate": "tsx scripts/evaluate-risk-model.ts",
     "db:setup": "npm run db:push && npm run db:seed",
     "db:studio": "drizzle-kit studio",
     "ingest": "curl -s -X POST http://localhost:3000/api/ingest/run | jq",

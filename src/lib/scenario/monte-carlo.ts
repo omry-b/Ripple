@@ -1,19 +1,32 @@
-/** 12-bin loss distribution for scenario preview (placeholder Monte Carlo). */
-export function monteCarloLossBins(severity: number, seed = 1): number[] {
-  const bins = 12;
-  const result: number[] = [];
-  for (let i = 0; i < bins; i += 1) {
-    const noise = ((seed * (i + 3) * 17) % 23) / 23;
-    const base = Math.exp(-i / (3 + severity * 2)) * severity * 100;
-    result.push(Math.round(base * (0.7 + noise * 0.6)));
-  }
-  return result;
-}
+/**
+ * Scenario-facing wrapper over the real Monte Carlo engine.
+ *
+ * Historically this returned a deterministic closed-form curve labelled "Monte
+ * Carlo". It now runs an actual seeded simulation (`simulatePortfolioLoss`) over
+ * the live portfolio and returns the resulting loss histogram plus coherent
+ * VaR / CVaR tail metrics.
+ */
+import type { Company } from "@/types/domain";
+import {
+  buildScenarioSimulation,
+  simulatePortfolioLoss,
+  type PortfolioLossResult,
+} from "@/lib/risk/monte-carlo-engine";
 
-export function topContagionEntities(scenarioName: string): string[] {
-  const defaults = ["TSMC", "Foxconn", "Samsung", "Qualcomm", "NVIDIA"];
-  if (scenarioName.toLowerCase().includes("taiwan")) {
-    return ["TSMC", "Apple Inc.", "Foxconn", "ASE Group", "MediaTek"];
-  }
-  return defaults.slice(0, 4);
+export type LossSimulation = {
+  histogram: number[];
+  result: PortfolioLossResult;
+};
+
+/**
+ * Simulate the portfolio loss distribution for a scenario over the supplied
+ * companies. Deterministic given (companies, severity, confidence, seed).
+ */
+export function simulateScenarioLoss(
+  companies: Company[],
+  options: { severity?: number; confidence?: number; seed?: string | number } = {}
+): LossSimulation {
+  const { positions, config } = buildScenarioSimulation(companies, options);
+  const result = simulatePortfolioLoss(positions, config);
+  return { histogram: result.histogram, result };
 }

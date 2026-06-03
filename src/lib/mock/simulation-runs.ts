@@ -1,11 +1,11 @@
-import type { Scenario, ScenarioRunOptions, SimulationRun } from "@/types/domain";
+import type { Company, Scenario, ScenarioRunOptions, SimulationRun } from "@/types/domain";
 import { runScenarioEngine } from "@/lib/scenario/engine";
 
 const runs: SimulationRun[] = [];
 
 export const simulationRunStore = {
-  run(scenario: Scenario, options?: ScenarioRunOptions): SimulationRun {
-    const run = runScenarioEngine(scenario, options);
+  run(scenario: Scenario, options?: ScenarioRunOptions, companies?: Company[]): SimulationRun {
+    const run = runScenarioEngine(scenario, options, undefined, companies);
     runs.unshift(run);
     if (runs.length > 10) runs.pop();
     return run;

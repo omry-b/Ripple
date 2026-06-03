@@ -22,6 +22,33 @@ export type Company = {
   history30d: number[];
 };
 
+export type CompanyStorySource =
+  | "news"
+  | "reddit"
+  | "social"
+  | "gdelt"
+  | "hackernews"
+  | "bbc"
+  | "sec"
+  | "npr";
+
+export type StorySourceStats = Record<string, number>;
+
+export type CompanyStory = {
+  id: string;
+  title: string;
+  url: string;
+  source: CompanyStorySource;
+  publishedAt: string;
+  summary?: string;
+};
+
+export type IntelligenceFeedItem = {
+  companyId: string;
+  companyName: string;
+  story: CompanyStory;
+};
+
 export type ScenarioRunOptions = {
   severity?: number;
   durationDays?: number;
@@ -86,6 +113,19 @@ export type Scenario = {
   impacts: string[];
 };
 
+/** Monte Carlo tail-risk metrics for a simulation run (USD). */
+export type ScenarioRiskMetrics = {
+  confidence: number;
+  trials: number;
+  expectedLossUsd: number;
+  varUsd: number;
+  cvarUsd: number;
+  p99Usd: number;
+  /** portfolioCVaR / Σ standaloneCVaR — lower means more diversification. */
+  diversificationRatio: number;
+  diversificationBenefitUsd: number;
+};
+
 export type SimulationRun = {
   id: string;
   scenarioId: string;
@@ -96,6 +136,7 @@ export type SimulationRun = {
   lossDistribution?: number[];
   contagionEntities?: string[];
   shock?: ScenarioShock;
+  riskMetrics?: ScenarioRiskMetrics;
 };
 
 export type CommandItem = {

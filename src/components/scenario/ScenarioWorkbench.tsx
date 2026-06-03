@@ -13,6 +13,7 @@ import { formatAsOf } from "@/lib/format";
 import { exportSimulationRunCsv } from "@/lib/export/entities";
 import { useDemoAuth } from "@/context/DemoAuthContext";
 import { SimulationLossChart } from "@/components/scenario/SimulationLossChart";
+import { RiskMetricsPanel } from "@/components/scenario/RiskMetricsPanel";
 
 type ScenarioWorkbenchProps = {
   scenarios: Scenario[];
@@ -39,6 +40,8 @@ export function ScenarioWorkbench({
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [shareCopied, setShareCopied] = useState(false);
   const [useAsyncJob, setUseAsyncJob] = useState(false);
+  const [runError, setRunError] = useState<string | null>(null);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   usePerspectiveTilt(".scenario-card", 12);
 
@@ -46,8 +49,11 @@ export function ScenarioWorkbench({
     try {
       const { runs } = await fetchSimulationRuns();
       setHistory(runs);
-    } catch {
-      /* ignore */
+      setHistoryError(null);
+    } catch (e) {
+      setHistoryError(
+        e instanceof Error ? e.message : "Could not load simulation history"
+      );
     }
   }, []);
 
@@ -72,6 +78,7 @@ export function ScenarioWorkbench({
     async (scenario: Scenario) => {
       if (!canRun) return;
       setRunning(true);
+      setRunError(null);
       try {
         if (useAsyncJob) {
           const { job } = await runScenarioAsyncApi(scenario.id, { severity, durationDays });
@@ -94,7 +101,10 @@ export function ScenarioWorkbench({
           animateBars(run.profile);
         }
         await loadHistory();
-      } catch {
+      } catch (e) {
+        setRunError(
+          e instanceof Error ? e.message : "Simulation failed — showing offline estimate"
+        );
         const profile = scenario.profile.map((v) =>
           Math.min(100, Math.round(v * (severity / 100)))
         );
@@ -165,7 +175,13 @@ export function ScenarioWorkbench({
 
   return (
     <>
-      <section className="workbench-card reveal">
+      {(runError || historyError) && (
+        <div className="workbench-errors" role="status">
+          {runError ? <p className="workbench-error">{runError}</p> : null}
+          {historyError ? <p className="workbench-error workbench-error--muted">{historyError}</p> : null}
+        </div>
+      )}
+      <section className="workbench-card surface-visible">
         <div className="scenario-params-bar">
           <button
             type="button"
@@ -228,29 +244,23 @@ export function ScenarioWorkbench({
         {workbenchView === "select" && (
           <div className="scenario-grid">
             {scenarios.map((scenario) => (
-              <div
+              <button
                 key={scenario.id}
+                type="button"
                 className="scenario-card"
-                role="button"
-                tabIndex={0}
+                disabled={running || !canRun}
                 aria-busy={running}
-                onClick={() => canRun && !running && void runSimulation(scenario)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    if (!running) void runSimulation(scenario);
-                  }
-                }}
+                onClick={() => void runSimulation(scenario)}
               >
                 <div>
                   <div className="scenario-name">{scenario.name}</div>
                   <div className="scenario-sub">{scenario.subtitle}</div>
                   <p className="scenario-preview">{scenario.preview}</p>
                 </div>
-                <button type="button" className="scenario-btn" disabled={running || !canRun}>
+                <span className="scenario-btn">
                   {!canRun ? "Viewer (read only)" : running ? "Running…" : "Run Simulation →"}
-                </button>
-              </div>
+                </span>
+              </button>
             ))}
           </div>
         )}
@@ -298,6 +308,7 @@ export function ScenarioWorkbench({
                 <span>Target Severity Threshold (Tail Loss Risk)</span>
               </div>
             </div>
+            {activeRun.riskMetrics && <RiskMetricsPanel metrics={activeRun.riskMetrics} />}
             {activeRun.lossDistribution && (
               <SimulationLossChart bins={activeRun.lossDistribution} />
             )}
