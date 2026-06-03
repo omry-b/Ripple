@@ -340,6 +340,70 @@
   font-size: 18px;
 }
 
+/* ---- Portfolio impact of a scenario ---- */
+.portfolio-scenario-impact {
+  border-left: 3px solid #2563eb;
+}
+.psi-empty {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ripple-text-secondary, #a3a3a3);
+  margin-bottom: 12px;
+}
+.psi-empty-cta {
+  display: inline-block;
+}
+.psi-takeaway {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ripple-text-secondary, #a3a3a3);
+  margin-bottom: 14px;
+}
+.psi-takeaway strong {
+  font-family: var(--font-mono), monospace;
+}
+.psi-compare {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.psi-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.psi-arrow {
+  font-size: 20px;
+  color: var(--ripple-text-muted, #737373);
+}
+.psi-worst {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.psi-worst-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--ripple-radius-sm, 8px);
+  text-decoration: none;
+  transition: background var(--ripple-duration-fast, 120ms) ease;
+}
+.psi-worst-row:hover {
+  background: var(--ripple-surface-overlay, #1a1a1a);
+}
+.psi-worst-name {
+  font-size: 13px;
+  color: var(--ripple-text-primary, #fafafa);
+}
+.psi-worst-loss {
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+}
+
 /* ---- Stress slider ---- */
 .portfolio-stress {
   display: flex;

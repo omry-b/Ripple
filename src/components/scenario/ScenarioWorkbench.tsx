@@ -14,6 +14,7 @@ import { exportSimulationRunCsv } from "@/lib/export/entities";
 import { useDemoAuth } from "@/context/DemoAuthContext";
 import { SimulationLossChart } from "@/components/scenario/SimulationLossChart";
 import { RiskMetricsPanel } from "@/components/scenario/RiskMetricsPanel";
+import { PortfolioScenarioImpact } from "@/components/scenario/PortfolioScenarioImpact";
 
 type ScenarioWorkbenchProps = {
   scenarios: Scenario[];
@@ -24,7 +25,7 @@ type ScenarioWorkbenchProps = {
 
 export function ScenarioWorkbench({
   scenarios,
-  initialSeverity = 100,
+  initialSeverity = 130,
   initialDurationDays = 30,
   initialScenarioId,
 }: ScenarioWorkbenchProps) {
@@ -308,6 +309,10 @@ export function ScenarioWorkbench({
                 <span>Target Severity Threshold (Tail Loss Risk)</span>
               </div>
             </div>
+            <PortfolioScenarioImpact
+              scenarioName={activeRun.scenarioName.split(" · ")[0]}
+              severity={activeRun.shock?.severity ?? 100}
+            />
             {activeRun.riskMetrics && <RiskMetricsPanel metrics={activeRun.riskMetrics} />}
             {activeRun.lossDistribution && (
               <SimulationLossChart bins={activeRun.lossDistribution} />
