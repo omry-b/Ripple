@@ -3,15 +3,16 @@
  */
 
 .alerts-overview-panel {
-  --alert-surface: #1e2433;
-  --alert-surface-hover: #283044;
-  --alert-border: #64748b;
-  --alert-text: #ffffff;
-  --alert-text-secondary: #e2e8f0;
-  --alert-text-muted: #cbd5e1;
+  /* Neutral surfaces matching the app theme; risk colours stay on the borders. */
+  --alert-surface: var(--ripple-surface-overlay, #141414);
+  --alert-surface-hover: #1f1f1f;
+  --alert-border: var(--ripple-border-subtle, #262626);
+  --alert-text: var(--ripple-text-primary, #fafafa);
+  --alert-text-secondary: var(--ripple-text-secondary, #a3a3a3);
+  --alert-text-muted: var(--ripple-text-muted, #737373);
 
-  background: #0f1419;
-  border: 2px solid #475569;
+  background: var(--ripple-surface-base, #0a0a0a);
+  border: 1px solid var(--ripple-border-subtle, #262626);
   border-radius: 12px;
   padding: 16px;
   color: var(--alert-text);
@@ -32,7 +33,7 @@
   gap: 12px;
   margin-bottom: 14px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #475569;
+  border-bottom: 1px solid var(--ripple-border-subtle, #262626);
 }
 
 .alerts-overview-summary {
@@ -48,16 +49,16 @@
 
 .alerts-view-toggle {
   display: inline-flex;
-  border: 2px solid #64748b;
+  border: 1px solid var(--ripple-border-subtle, #262626);
   border-radius: 8px;
   overflow: hidden;
-  background: #0a0a0a;
+  background: var(--ripple-surface-base, #0a0a0a);
 }
 
 .alerts-view-btn {
   border: none;
   background: transparent;
-  color: #e2e8f0;
+  color: var(--ripple-text-secondary, #a3a3a3);
   font-family: var(--font-mono), monospace;
   font-size: 12px;
   font-weight: 600;
@@ -68,8 +69,8 @@
 }
 
 .alerts-view-btn:hover {
-  background: #334155;
-  color: #ffffff;
+  background: #1f1f1f;
+  color: var(--ripple-text-primary, #fafafa);
 }
 
 .alerts-view-btn.active {
@@ -97,7 +98,7 @@
   text-align: left;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 2px solid var(--alert-border);
+  border: 1px solid var(--alert-border);
   background: var(--alert-surface);
   color: var(--alert-text);
   cursor: pointer;
@@ -109,7 +110,7 @@
 
 .alert-overview-row:hover {
   background: var(--alert-surface-hover);
-  border-color: #93c5fd;
+  border-color: var(--ripple-border-strong, #404040);
 }
 
 .alert-overview-row--critical,
@@ -179,13 +180,13 @@
   font-family: var(--font-mono), monospace;
   font-size: 11px;
   font-weight: 700;
-  color: #93c5fd;
+  color: #60a5fa;
 }
 
 .alert-overview-footer {
   margin: 14px 0 0;
   padding-top: 12px;
-  border-top: 1px solid #475569;
+  border-top: 1px solid var(--ripple-border-subtle, #262626);
   font-size: 13px;
   color: var(--alert-text-secondary);
   text-align: center;
@@ -194,7 +195,7 @@
 .alerts-footer-link {
   font: inherit;
   font-weight: 700;
-  color: #93c5fd;
+  color: #60a5fa;
   background: none;
   border: none;
   cursor: pointer;
@@ -203,7 +204,7 @@
 }
 
 .alerts-footer-link:hover {
-  color: #bfdbfe;
+  color: #93c5fd;
 }
 
 [data-theme="light"] .alerts-footer-link {
@@ -212,7 +213,7 @@
 
 .alerts-overview-panel .alerts-empty-wrap {
   background: var(--alert-surface);
-  border: 2px dashed #64748b;
+  border: 1px dashed var(--ripple-border-strong, #404040);
 }
 
 .alerts-overview-panel .alerts-empty-title {

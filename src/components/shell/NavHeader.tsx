@@ -43,7 +43,7 @@ export function NavHeader() {
         Ripple
       </Link>
       <MobileNav />
-      <nav className="nav-tabs nav-tabs-desktop" aria-label="Primary">
+      <nav className="nav-tabs nav-tabs-desktop" aria-label="Main navigation">
         {NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/"
