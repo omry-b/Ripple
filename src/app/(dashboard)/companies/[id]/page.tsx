@@ -22,6 +22,7 @@ import { CvarBacktestChart } from "@/components/charts/CvarBacktestChart";
 import { CompanyPrintButton } from "@/components/companies/CompanyPrintButton";
 import { CompanyStoriesPanelClient } from "@/components/companies/CompanyStoriesPanelClient";
 import { CompanyActivityPanel } from "@/components/companies/CompanyActivityPanel";
+import { CompanyActionCard } from "@/components/companies/CompanyActionCard";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -85,6 +86,9 @@ export default async function CompanyDetailPage({ params }: Props) {
             </span>
           </div>
         </div>
+
+        <span className="section-label">Your position &amp; recommended action</span>
+        <CompanyActionCard company={company} />
 
         <span className="section-label">30-day risk trend</span>
         <section className="workbench-card company-trend-card">

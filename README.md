@@ -22,12 +22,23 @@ When a port congests, a strait closes, or a fab goes dark, the losses ripple thr
 
 | Capability | Where |
 |---|---|
+| **Your portfolio, your risk** — add the suppliers you depend on, set dollar exposures, and every metric (risk index, CVaR, expected loss) is scoped to *your* book | `/` (My Portfolio) |
+| **"What to do today"** — a prioritized action queue ranking your positions by dollars-at-risk, each with a concrete recommended mitigation (effort / cost / impact) | `/` (Priority actions) |
 | **Live risk signals** from GDELT, NOAA, AIS, ports & financial feeds (stub→live on API keys) | `/signals` |
 | **Company exposure scoring** — weighted signals × tier × supplier concentration, with confidence bands | `/companies`, `/companies/[id]` |
-| **Portfolio risk index + CVaR** with a 30-day rolling baseline | `/` |
 | **Monte Carlo scenario engine** — VaR / CVaR / Expected Shortfall with diversification accounting | `/scenario` |
 | **Contagion graph** — BFS over the supplier network to find downstream exposure | `/scenario`, company detail |
 | **Alerts, watchlists, webhooks, CSV export, ⌘K search** | throughout |
+
+### From dashboard to decision tool
+
+Ripple's product thesis: a risk score is worthless if it isn't *yours* and doesn't tell you what to *do*. So the experience is built around a personal portfolio —
+
+1. **Add your positions** (suppliers you depend on) and set a dollar exposure for each.
+2. **See your risk**, not the world's — the dashboard's risk index, tail-loss (CVaR), expected loss, concentration, and regional mix are all computed over your book using the validated Monte Carlo engine.
+3. **Act** — the priority queue ranks your positions by dollars-at-risk and pairs each with a mitigation playbook entry tied to its dominant risk driver.
+
+It works with zero setup (portfolios persist locally; a one-click sample portfolio seeds the experience), so any user reaches personalized value immediately. Logic lives in [`src/lib/portfolio/`](./src/lib/portfolio/) and is unit-tested.
 
 ## The risk engine (the technically interesting part)
 

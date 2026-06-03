@@ -9,6 +9,8 @@ import { StreamGrid } from "@/components/streams/StreamGrid";
 import { SectionJumpNav } from "@/components/overview/SectionJumpNav";
 import { RiskSpectrumBar } from "@/components/overview/RiskSpectrumBar";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { MyPortfolioPanel } from "@/components/portfolio/MyPortfolioPanel";
+import { PriorityActionQueue } from "@/components/portfolio/PriorityActionQueue";
 
 export function OverviewPage() {
   const { dashboard, snapshot: liveSnapshot } = useLiveData();
@@ -19,7 +21,13 @@ export function OverviewPage() {
     <main className="content-container dashboard-overview" id="main-content">
       <SectionJumpNav />
 
-      <SectionLabel id="overview" primary>
+      <SectionLabel id="portfolio" primary>
+        My Portfolio
+      </SectionLabel>
+      <MyPortfolioPanel />
+      <PriorityActionQueue />
+
+      <SectionLabel id="overview">
         Live Risk Overview
       </SectionLabel>
 

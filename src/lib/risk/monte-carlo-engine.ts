@@ -217,10 +217,34 @@ export function simulatePortfolioLoss(
 }
 
 /**
+ * Disruption probability for a company over the scenario horizon. Convex in the
+ * live risk score (high-risk names fail disproportionately) and scaled by
+ * severity. Exported so per-position expected-loss estimates elsewhere stay
+ * consistent with the simulation.
+ */
+export function disruptionProbFromScore(score: number, severity = 1): number {
+  const scoreFrac = clamp(score / 100, 0, 1);
+  return clamp(0.02 + 0.55 * scoreFrac * scoreFrac * severity, 0.005, 0.92);
+}
+
+/** Mean loss-given-disruption at a given severity (fraction of exposure). */
+export function lgdMeanFromSeverity(severity = 1): number {
+  return clamp(0.45 + 0.12 * severity, 0.3, 0.85);
+}
+
+/** Expected loss for a single position at current risk (USD). */
+export function positionExpectedLossUsd(
+  score: number,
+  exposureUsd: number,
+  severity = 1
+): number {
+  return exposureUsd * disruptionProbFromScore(score, severity) * lgdMeanFromSeverity(severity);
+}
+
+/**
  * Derive simulation positions and a stress-scaled config from live company data.
- * Disruption probability is convex in the company's live risk score (high-risk
- * names fail disproportionately under stress); correlation and loss severity
- * both rise with the scenario severity, capturing contagion clustering.
+ * Correlation and loss severity both rise with the scenario severity, capturing
+ * contagion clustering.
  */
 export function buildScenarioSimulation(
   companies: Company[],
@@ -229,25 +253,17 @@ export function buildScenarioSimulation(
   const severity = (options.severity ?? 100) / 100; // 0.5 – 1.5 typical
   const confidence = (options.confidence ?? 95) / 100;
 
-  const positions: Position[] = companies.map((c) => {
-    const scoreFrac = clamp(c.score / 100, 0, 1);
-    const disruptionProb = clamp(
-      0.02 + 0.55 * scoreFrac * scoreFrac * severity,
-      0.005,
-      0.92
-    );
-    return {
-      id: c.id,
-      name: c.name,
-      exposureUsd: c.cvarUsd,
-      disruptionProb,
-    };
-  });
+  const positions: Position[] = companies.map((c) => ({
+    id: c.id,
+    name: c.name,
+    exposureUsd: c.cvarUsd,
+    disruptionProb: disruptionProbFromScore(c.score, severity),
+  }));
 
   const config: SimConfig = {
     trials: 10_000,
     correlation: clamp(0.15 + 0.35 * severity, 0.1, 0.85),
-    lgdMean: clamp(0.45 + 0.12 * severity, 0.3, 0.85),
+    lgdMean: lgdMeanFromSeverity(severity),
     lgdVol: 0.15,
     confidence,
     seed: options.seed ?? "ripple",

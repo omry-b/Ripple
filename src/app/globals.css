@@ -9,6 +9,7 @@
 @import "./styles/scenario-ui.css";
 @import "./styles/visibility-fix.css";
 @import "./styles/ripple-visual.css";
+@import "./styles/portfolio.css";
 
 * {
   box-sizing: border-box;

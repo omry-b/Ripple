@@ -12,6 +12,7 @@ import { DataModeBanner } from "@/components/shell/DataModeBanner";
 import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
 import { WatchlistProvider } from "@/context/WatchlistContext";
+import { PortfolioProvider } from "@/context/PortfolioContext";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
 import { AppFooter } from "@/components/shell/AppFooter";
 
@@ -31,6 +32,7 @@ export default async function DashboardLayout({
   return (
     <DemoAuthProvider>
       <WatchlistProvider>
+      <PortfolioProvider>
       <LiveDataProvider initialDashboard={dashboard}>
         <div className="ripple-app">
           <SkipToContent />
@@ -46,6 +48,7 @@ export default async function DashboardLayout({
           <OnboardingTour />
         </div>
       </LiveDataProvider>
+      </PortfolioProvider>
       </WatchlistProvider>
     </DemoAuthProvider>
   );
