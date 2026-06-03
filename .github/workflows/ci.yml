@@ -88,6 +88,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # gitleaks scans a commit range (before^..after); a shallow clone is
+          # missing those parent commits, so git errors to stderr and gitleaks
+          # aborts ("scanned ~0 bytes"). Full history is required.
+          fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
