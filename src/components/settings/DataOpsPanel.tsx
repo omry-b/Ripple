@@ -5,7 +5,7 @@ import { useDemoAuth } from "@/context/DemoAuthContext";
 import { fetchJsonWithRetry } from "@/lib/client/fetch-retry";
 
 export function DataOpsPanel() {
-  const { permissions, role } = useDemoAuth();
+  const { role } = useDemoAuth();
   const [ingestMsg, setIngestMsg] = useState<string | null>(null);
   const [storiesMsg, setStoriesMsg] = useState<string | null>(null);
   const [pruneMsg, setPruneMsg] = useState<string | null>(null);

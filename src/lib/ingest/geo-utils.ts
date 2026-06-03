@@ -62,7 +62,7 @@ export function lngLatFromGeoJsonGeometry(geometry: unknown): { lng: number; lat
   return null;
 }
 
-export function eventTitle(summary: string, adapter: string): string {
+export function eventTitle(summary: string, _adapter: string): string {
   const trimmed = summary.trim();
   if (trimmed.length <= 72) return trimmed;
   return `${trimmed.slice(0, 69)}...`;

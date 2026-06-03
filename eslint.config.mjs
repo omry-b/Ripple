@@ -21,7 +21,16 @@ const eslintConfig = defineConfig([
     "scripts/**",
     "ripple-firebase-adminsdk.json",
   ]),
-  ...storybook.configs["flat/recommended"]
+  ...storybook.configs["flat/recommended"],
+  {
+    // Conventional: a leading underscore marks an intentionally-unused binding.
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

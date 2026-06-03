@@ -11,8 +11,6 @@ import {
 import type {
   AlertTimelineEvent,
   DashboardSnapshot,
-  Hotspot,
-  RiskLevel,
   ScenarioRunOptions,
   SimulationRun,
 } from "@/types/domain";

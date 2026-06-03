@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { LIVE_THRESHOLD_MS } from "@/lib/constants";
 
 type LiveStatusProps = {
@@ -8,8 +9,15 @@ type LiveStatusProps = {
 };
 
 export function LiveStatus({ asOf, isRefreshing = false }: LiveStatusProps) {
-  const age = Date.now() - new Date(asOf).getTime();
-  const isLive = age < LIVE_THRESHOLD_MS;
+  // Compute liveness on the client (Date.now() is impure / would mismatch on
+  // SSR hydration) and re-check periodically so the indicator stays accurate.
+  const [isLive, setIsLive] = useState(true);
+  useEffect(() => {
+    const update = () => setIsLive(Date.now() - new Date(asOf).getTime() < LIVE_THRESHOLD_MS);
+    update();
+    const id = setInterval(update, 30_000);
+    return () => clearInterval(id);
+  }, [asOf]);
 
   return (
     <div className="nav-status">

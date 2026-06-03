@@ -1,5 +1,5 @@
 import { asc, eq } from "drizzle-orm";
-import type { ScenarioRunOptions, SimulationRun } from "@/types/domain";
+import type { ScenarioRunOptions } from "@/types/domain";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { getDb } from "@/lib/db/client";
 import { DEMO_ORG_ID } from "@/lib/db/seed";

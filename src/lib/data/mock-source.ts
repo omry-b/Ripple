@@ -3,14 +3,12 @@ import { aggregateSnapshot } from "@/lib/risk/snapshot-aggregator";
 import { loadRecentIngestEvents } from "@/lib/ingest/sync-risk";
 import { simulationRunStore } from "@/lib/mock/simulation-runs";
 import { getScoreFactorsForCompany } from "@/lib/mock/score-factors";
-import { buildScoreHistory30d } from "@/lib/mock/score-history";
 import type {
   RippleDataSource,
   IngestRunRecord,
   WatchlistRecord,
   WebhookSubscription,
 } from "./types";
-import type { ScenarioRunOptions, SimulationRun } from "@/types/domain";
 
 const ingestRuns: IngestRunRecord[] = [];
 const watchlists = new Map<string, WatchlistRecord[]>();

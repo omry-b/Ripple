@@ -59,7 +59,6 @@ export function MobileNav() {
               id="mobile-nav-drawer"
               className="mobile-nav-drawer"
               aria-label="Mobile navigation"
-              aria-modal="true"
             >
               {NAV_ITEMS.map((item) => {
                 const isActive =

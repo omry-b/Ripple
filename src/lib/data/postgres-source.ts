@@ -21,7 +21,6 @@ import type {
   Scenario,
   SignalStream,
   SimulationRun,
-  TickerItem,
 } from "@/types/domain";
 import type { RippleDataSource, IngestRunRecord, WatchlistRecord, WebhookSubscription } from "./types";
 import { regionForCompanyId } from "@/lib/mock/regions";
@@ -541,7 +540,7 @@ export const postgresDataSource: RippleDataSource = {
     };
   },
 
-  async getCompanyNote(companyId, userId) {
+  async getCompanyNote(companyId, _userId) {
     const db = getDb();
     const [row] = await db
       .select()

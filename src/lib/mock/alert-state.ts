@@ -52,7 +52,7 @@ const INITIAL: Alert[] = [
   },
 ];
 
-let alerts: Alert[] = INITIAL.map((a) => ({ ...a, timeline: [...a.timeline] }));
+const alerts: Alert[] = INITIAL.map((a) => ({ ...a, timeline: [...a.timeline] }));
 
 export const alertState = {
   list(): Alert[] {

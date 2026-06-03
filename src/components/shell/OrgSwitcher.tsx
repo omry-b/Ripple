@@ -10,9 +10,9 @@ const ORGS = [
 ];
 
 export function OrgSwitcher() {
-  if (isFirebaseClientConfigured()) return null;
-
+  // Hooks must run unconditionally — call before any early return.
   const { organizationId, setOrganizationId } = useDemoAuth();
+  if (isFirebaseClientConfigured()) return null;
 
   return (
     <label className="org-switcher">

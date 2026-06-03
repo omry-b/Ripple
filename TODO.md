@@ -1,7 +1,20 @@
 # Ripple — Build Log & Master TODO
 
 > **How to use:** Check `[x]` when done. Add notes under items if needed.  
-> **Last updated:** 2026-05-28 (secondary pages polish, ripple-components.css, system status pills)
+> **Last updated:** 2026-06-03 (quant engine, personal portfolio, security hardening, real data live)
+
+## Milestones — June 2026
+
+The project matured from a polished dashboard into a validated, personalized, production-safe product:
+
+- **Genuine Monte Carlo risk engine** — one-factor Gaussian/Vasicek threshold model (`src/lib/risk/`): seeded simulation → coherent VaR / CVaR (Expected Shortfall) + diversification. Replaced the placeholder math. Validated via `npm run evaluate` (Kupiec VaR backtest, convergence, sub-additivity) — see `docs/EVALUATION.md`.
+- **Personal portfolio + decision support** (`src/lib/portfolio/`) — users add positions with $ exposures; every metric (risk index, CVaR, expected loss, concentration) is scoped to their book. "What to do today" priority action queue + per-company recommended mitigations. CSV report export.
+- **Scenario → portfolio** — every scenario run shows its impact on the user's actual positions (baseline → stressed CVaR, worst-hit names).
+- **Dynamic data everywhere** — real company roster (SK Hynix, Infineon, Bosch, Maersk…); per-company score attribution + peer comparison computed from live data; animated metric transitions; interactive stress slider.
+- **Security hardening** for public exposure — webhook SSRF guard, no header-based privilege escalation in prod, HSTS/Permissions-Policy, rate limiting (see README → Security).
+- **Production data reconciled** — `npm run db:reconcile` synced the DO Postgres to the real roster.
+- **Live at** https://ripple-cs153.vercel.app (public, clean vanity domain).
+- **Quality** — 68 unit tests + 6 e2e specs green in CI; lint cleaned of real bugs (conditional hook, impure render), dead code removed.
 
 ---
 
