@@ -10,14 +10,25 @@ import { useWatchlist } from "@/context/WatchlistContext";
 import { UserMenu } from "@/components/shell/UserMenu";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import { OrgSwitcher } from "@/components/shell/OrgSwitcher";
-import { LayoutDashboard, Radio, FlaskConical, Building2 } from "lucide-react";
+import { openCommandPalette } from "@/lib/shell/cmdk";
+import {
+  LayoutDashboard,
+  Radio,
+  FlaskConical,
+  Building2,
+  BookOpen,
+  Newspaper,
+  Bell,
+} from "lucide-react";
 
 const NAV_ICONS: Record<string, React.ReactNode> = {
   "/": <LayoutDashboard size={14} aria-hidden />,
+  "/intelligence": <Newspaper size={14} aria-hidden />,
+  "/alerts": <Bell size={14} aria-hidden />,
   "/signals": <Radio size={14} aria-hidden />,
   "/scenario": <FlaskConical size={14} aria-hidden />,
   "/companies": <Building2 size={14} aria-hidden />,
-  "/methodology": <FlaskConical size={14} aria-hidden />,
+  "/methodology": <BookOpen size={14} aria-hidden />,
 };
 
 export function NavHeader() {
@@ -27,12 +38,12 @@ export function NavHeader() {
   const watchlistCount = watchlistIds.size;
 
   return (
-    <nav className="nav-header" role="navigation" aria-label="Main navigation">
-      <Link href="/" className="nav-brand" style={{ textDecoration: "none" }}>
+    <header className="nav-header" role="banner">
+      <Link href="/" className="nav-brand nav-brand-link">
         Ripple
       </Link>
       <MobileNav />
-      <div className="nav-tabs nav-tabs-desktop" role="tablist">
+      <nav className="nav-tabs nav-tabs-desktop" aria-label="Primary">
         {NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/"
@@ -43,9 +54,7 @@ export function NavHeader() {
               key={item.href}
               href={item.href}
               className={`nav-tab-item${isActive ? " active" : ""}`}
-              role="tab"
-              aria-selected={isActive}
-              style={{ textDecoration: "none", display: "inline-block" }}
+              aria-current={isActive ? "page" : undefined}
             >
               <span className="nav-tab-inner">
                 {NAV_ICONS[item.href]}
@@ -57,28 +66,34 @@ export function NavHeader() {
         <Link
           href="/companies?watchlist=1"
           className={`nav-tab-item${pathname.includes("watchlist=1") ? " active" : ""}`}
-          role="tab"
-          aria-selected={pathname.includes("watchlist=1")}
-          style={{ textDecoration: "none", display: "inline-block" }}
+          aria-current={pathname.includes("watchlist=1") ? "page" : undefined}
         >
-          Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
-          {isSyncing ? " · syncing" : syncError ? " · sync issue" : ""}
+          <span className="nav-tab-inner">
+            Watchlist{watchlistCount > 0 ? ` (${watchlistCount})` : ""}
+            {isSyncing ? " · syncing" : syncError ? " · sync issue" : ""}
+          </span>
         </Link>
         {syncError ? (
           <span className="nav-sync-error" title={syncError} role="status">
             !
           </span>
         ) : null}
-      </div>
+      </nav>
       <div className="nav-actions">
         <ThemeToggle />
         <OrgSwitcher />
-        <kbd className="nav-kbd" title="Command palette">
+        <button
+          type="button"
+          className="nav-kbd"
+          title="Open command palette"
+          aria-label="Open command palette"
+          onClick={openCommandPalette}
+        >
           ⌘K
-        </kbd>
+        </button>
         <LiveStatus asOf={asOf} isRefreshing={isRefreshing} />
         <UserMenu />
       </div>
-    </nav>
+    </header>
   );
 }

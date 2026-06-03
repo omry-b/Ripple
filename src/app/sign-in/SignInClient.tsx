@@ -15,7 +15,7 @@ export function SignInClient() {
 
   return (
     <MarketingShell>
-      <main className="auth-page">
+      <main className="auth-page auth-page--polish">
         {hasFirebase ? (
           <FirebaseGoogleSignIn />
         ) : (

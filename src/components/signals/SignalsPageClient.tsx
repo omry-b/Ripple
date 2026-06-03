@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Company, SignalStream } from "@/types/domain";
 import { useSignals } from "@/lib/hooks";
@@ -7,7 +8,6 @@ import { StreamGrid } from "@/components/streams/StreamGrid";
 import { SignalFilters, type SignalFilterState } from "./SignalFilters";
 import { SignalDetailDrawer } from "./SignalDetailDrawer";
 import { SignalComparePanel } from "./SignalComparePanel";
-import { SubscribeCta } from "./SubscribeCta";
 import { exportSignalsCsv } from "@/lib/export/entities";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -56,8 +56,6 @@ export function SignalsPageClient({ streams, companies }: SignalsPageClientProps
 
   return (
     <>
-      <SubscribeCta />
-
       <div className="signals-toolbar">
         <SignalFilters
           categories={categories}
@@ -96,7 +94,11 @@ export function SignalsPageClient({ streams, companies }: SignalsPageClientProps
         <EmptyState
           title="No signal streams match"
           description="Adjust level or category filters to see live channels."
-          action={{ label: "Reset filters", href: "/signals" }}
+          action={
+            <Link href="/signals" className="filter-export-btn">
+              Reset filters
+            </Link>
+          }
         />
       ) : (
         <StreamGrid

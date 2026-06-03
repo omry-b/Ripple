@@ -21,6 +21,9 @@ type OpsStatus = {
     message?: string;
   }>;
   integrations: Record<string, boolean>;
+  storySources?: string[];
+  storyWindowHours?: number;
+  storyCacheHours?: number;
 };
 
 function StatusPill({ ok, label }: { ok: boolean; label: string }) {
@@ -109,7 +112,7 @@ export function SystemStatusPanel() {
           </span>
         </div>
         <p className="watchlist-manager-hint">
-          Async simulations drain every 5 minutes via the Cloudflare scenario-worker cron.
+          Async simulations drain every 15 minutes via the Cloudflare scenario-worker cron.
         </p>
       </section>
 
@@ -134,6 +137,24 @@ export function SystemStatusPanel() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="workbench-card">
+        <h3 className="supplier-tier-title">Intelligence crawl</h3>
+        <p className="watchlist-manager-hint">
+          Stories limited to the last {ops.storyWindowHours ?? 24} hours. Cache TTL ~
+          {ops.storyCacheHours ?? 6}h between scheduled crawls. On-demand via company page or
+          Intelligence feed.
+        </p>
+        {ops.storySources?.length ? (
+          <ul className="integration-chips">
+            {ops.storySources.map((s) => (
+              <li key={s} className="integration-chip on">
+                {s}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </section>
 
       <section className="workbench-card system-integrations-card">

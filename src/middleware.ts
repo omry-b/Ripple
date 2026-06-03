@@ -15,6 +15,8 @@ const PUBLIC_API_PREFIXES = [
   "/api/openapi",
   "/api/auth/session",
   "/api/ops/status",
+  /** Read-only portfolio stories (GET); POST refresh stays protected on route handler */
+  "/api/intelligence",
 ];
 
 function mutationAuthRequired(): boolean {
@@ -54,14 +56,23 @@ function applyRateLimit(request: NextRequest): NextResponse | null {
   return null;
 }
 
+function isPublicApiRoute(pathname: string, method: string): boolean {
+  if (PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p))) {
+    // Intelligence: public reads only (matches dashboard policy)
+    if (pathname.startsWith("/api/intelligence") && method !== "GET" && method !== "HEAD") {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
 function applyMutationAuth(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
+  const method = request.method;
   if (pathname.startsWith("/api/cron/")) return null;
 
-  if (
-    pathname.startsWith("/api/") &&
-    !PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p))
-  ) {
+  if (pathname.startsWith("/api/") && !isPublicApiRoute(pathname, method)) {
     const hasSession = hasClientSession(request);
     if (mutationAuthRequired() && !hasSession) {
       return NextResponse.json({ error: "Auth required" }, { status: 401 });

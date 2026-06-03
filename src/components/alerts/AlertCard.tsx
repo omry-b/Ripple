@@ -22,7 +22,6 @@ export function AlertCard({ alert }: AlertCardProps) {
         <Link
           href={`/companies?alert=${alert.id}`}
           className={`alert-action-btn${alert.level === "elevated" ? " elevated-btn" : ""}`}
-          style={{ display: "inline-block", textDecoration: "none" }}
           aria-label={`View asset exposure for ${alert.title}`}
         >
           View Exposure →

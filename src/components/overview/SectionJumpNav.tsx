@@ -6,6 +6,7 @@ const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "alerts", label: "Alerts" },
   { id: "companies", label: "Companies" },
+  { id: "intelligence", label: "Intel" },
   { id: "signals", label: "Signals" },
   { id: "scenario", label: "Scenario" },
 ] as const;
@@ -33,7 +34,7 @@ export function SectionJumpNav() {
   }, []);
 
   return (
-    <nav className="section-jump-nav" aria-label="Page sections">
+    <nav className="section-jump-nav section-jump-nav--refined" aria-label="Page sections">
       {SECTIONS.map((s) => {
         const isActive = active === s.id;
         return (

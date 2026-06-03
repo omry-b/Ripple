@@ -1,3 +1,5 @@
+import { readApiError } from "@/lib/api/error-body";
+
 const DEFAULT_RETRIES = 3;
 const MAX_DELAY_MS = 8000;
 
@@ -33,7 +35,8 @@ export async function fetchJsonWithRetry<T>(
         headers: mergedHeaders,
       });
       if (!res.ok) {
-        throw new Error(`API ${path} failed: ${res.status}`);
+        const message = await readApiError(res);
+        throw new Error(message);
       }
       return (await res.json()) as T;
     } catch (e) {

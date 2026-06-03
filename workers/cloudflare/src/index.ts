@@ -24,16 +24,28 @@ export default {
 
     ctx.waitUntil(
       (async () => {
-        if (cron === "*/5 * * * *") {
+        /** Async scenario queue only — not a full crawl. */
+        if (cron === "*/15 * * * *") {
           const scenario = await callRipple(env, "/api/cron/scenario-worker");
           console.log("scenario-worker", scenario.status, await scenario.text());
+          return;
+        }
+        /** Snapshot refresh every 2 hours. */
+        if (cron === "0 */2 * * *") {
           const snapshot = await callRipple(env, "/api/cron/snapshot-refresh");
           console.log("snapshot-refresh", snapshot.status, await snapshot.text());
           return;
         }
+        /** Story intelligence crawl (24h window) every 4 hours. */
+        if (cron === "0 */4 * * *") {
+          const stories = await callRipple(env, "/api/cron/stories-refresh");
+          console.log("stories-refresh", stories.status, await stories.text());
+          return;
+        }
+        /** Risk ingest adapters every 6 hours. */
         if (cron === "0 */6 * * *") {
-          const res = await callRipple(env, "/api/ingest/internal", { method: "POST" });
-          console.log("ingest/internal", res.status, await res.text());
+          const ingest = await callRipple(env, "/api/cron/ingest-scheduled");
+          console.log("ingest-scheduled", ingest.status, await ingest.text());
           return;
         }
         if (cron === "0 12 * * *") {

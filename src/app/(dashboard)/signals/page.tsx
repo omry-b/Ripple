@@ -1,6 +1,5 @@
 import { getCompanies, getSignals, getSnapshot } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
 import { SignalsPageClient } from "@/components/signals/SignalsPageClient";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { formatAsOf } from "@/lib/format";
@@ -22,7 +21,6 @@ export default async function SignalsPage() {
         title="Live Signal Streams"
         subtitle={`${streams.length} active channels · updated ${formatAsOf(snapshot.asOf)}`}
       />
-      <CompactMetricsStrip />
       <main className="content-container">
         <Breadcrumbs
           items={[

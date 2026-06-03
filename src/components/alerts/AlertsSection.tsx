@@ -1,30 +1,18 @@
 import type { Alert } from "@/types/domain";
-import { AlertCard } from "./AlertCard";
+import { AlertsOverviewPanel } from "./AlertsOverviewPanel";
 
 type AlertsSectionProps = {
   alerts: Alert[];
+  totalOpenCount?: number;
 };
 
-export function AlertsSection({ alerts }: AlertsSectionProps) {
+/** Server-friendly alerts block (high-contrast list, not glass grid). */
+export function AlertsSection({ alerts, totalOpenCount }: AlertsSectionProps) {
   return (
-    <section className="atmosphere-section reveal">
-      <div className="atmosphere-blob-1" />
-      <div className="atmosphere-blob-2" />
-      <div className="glass-grid">
-        {alerts.map((alert) =>
-          alert.critical ? (
-            <div key={alert.id} className="grad-border-wrapper">
-              <div className="grad-border-inner glass-card">
-                <AlertCard alert={alert} />
-              </div>
-            </div>
-          ) : (
-            <div key={alert.id} className="glass-card">
-              <AlertCard alert={alert} />
-            </div>
-          )
-        )}
-      </div>
-    </section>
+    <AlertsOverviewPanel
+      initialAlerts={alerts}
+      totalOpenCount={totalOpenCount}
+      showViewAllLink
+    />
   );
 }

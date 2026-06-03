@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export function SubscribeCta() {
+export function IntegrationsPanel() {
   const [status, setStatus] = useState<string | null>(null);
 
   async function registerWebhook() {
@@ -20,7 +20,7 @@ export function SubscribeCta() {
       const data = (await res.json()) as { signingSecret?: string; error?: string };
       setStatus(
         res.ok
-          ? `Webhook saved. Signing secret: ${data.signingSecret?.slice(0, 8) ?? " - "}…`
+          ? `Webhook saved. Signing secret: ${data.signingSecret?.slice(0, 8) ?? "—"}…`
           : data.error ?? "Failed"
       );
     } catch {
@@ -29,28 +29,26 @@ export function SubscribeCta() {
   }
 
   return (
-    <aside className="subscribe-cta" aria-label="Alert subscriptions">
-      <div>
-        <span className="subscribe-cta-title">Stream to your stack</span>
-        <p className="subscribe-cta-copy">
-          RSS for readers, webhooks for automation. Server alerts use{" "}
-          <code>SLACK_WEBHOOK_URL</code>, <code>RESEND_API_KEY</code>, or{" "}
-          <code>PAGERDUTY_ROUTING_KEY</code> on Vercel when configured.
-        </p>
-      </div>
+    <section className="workbench-card subscribe-cta" aria-label="Outbound integrations">
+      <h3 className="supplier-tier-title">Outbound integrations</h3>
+      <p className="subscribe-cta-copy">
+        RSS for readers and webhooks for automation. Slack, email, and PagerDuty light up when
+        configured on the server — check integration pills in{" "}
+        <strong>System status</strong> below.
+      </p>
       <div className="subscribe-cta-actions">
         <Link href="/api/feed/rss" className="subscribe-cta-btn" target="_blank" rel="noopener">
-          RSS feed
+          Open RSS feed
         </Link>
         <button
           type="button"
           className="subscribe-cta-btn primary"
           onClick={() => void registerWebhook()}
         >
-          Add webhook
+          Register demo webhook
         </button>
       </div>
-      {status && <p className="subscribe-cta-status">{status}</p>}
-    </aside>
+      {status ? <p className="subscribe-cta-status">{status}</p> : null}
+    </section>
   );
 }

@@ -1,7 +1,8 @@
+import { Suspense } from "react";
 import { getAlert, getCompanies, getSnapshot } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
 import { CompaniesPageClient } from "@/components/companies/CompaniesPageClient";
+import { CompaniesTableSkeleton } from "@/components/companies/CompaniesTableSkeleton";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { WatchlistManager } from "@/components/watchlists/WatchlistManager";
 import { DigestPreferences } from "@/components/watchlists/DigestPreferences";
@@ -30,16 +31,17 @@ export default async function CompaniesPage({ searchParams }: Props) {
         title="Company Exposure"
         subtitle={`${snapshot.trackedCompanies} tracked · ${snapshot.exposedCompanies} currently exposed · ${formatAsOf(snapshot.asOf)}`}
       />
-      <CompactMetricsStrip />
       <main className="content-container">
         <Breadcrumbs items={[{ label: "Companies" }]} />
         <span className="section-label">Full ranking</span>
-        <CompaniesPageClient
-          companies={companies}
-          alertFilter={alertFilter}
-          watchlistOnly={watchlistOnly}
-          regionFilter={region ?? null}
-        />
+        <Suspense fallback={<CompaniesTableSkeleton />}>
+          <CompaniesPageClient
+            companies={companies}
+            alertFilter={alertFilter}
+            watchlistOnly={watchlistOnly}
+            regionFilter={region ?? null}
+          />
+        </Suspense>
         <span className="section-label">Watchlists</span>
         <div className="watchlist-panels">
           <WatchlistManager />

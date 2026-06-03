@@ -26,7 +26,15 @@
    - **ais / ports / financial** — set API keys in Vercel env when available
 5. **Clear cache** — ingest success calls `invalidateSnapshotCache()` (memory + Vercel KV if configured)
 
+## Intelligence stories (24h window)
+
+- Sources: Google News, Reddit, GDELT, Hacker News, BBC Business, SEC EDGAR, NPR Business
+- Scheduled: `GET /api/cron/stories-refresh` every 4h (Vercel + Cloudflare)
+- On-demand: `POST /api/companies/{id}/stories` or Intelligence feed **Refresh all**
+- Cache TTL: 6 hours between automatic crawls per company
+
 ## Escalation
 
 - Rotate `CRON_SECRET` if cron endpoints were exposed
 - Review Vercel function logs for timeout (increase `maxDuration` if needed)
+- Redeploy Cloudflare worker after changing `workers/cloudflare/wrangler.toml` crons

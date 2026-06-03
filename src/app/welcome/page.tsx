@@ -66,6 +66,9 @@ export default function WelcomePage() {
               <Link href="/pricing" className="welcome-cta-secondary">
                 View pricing
               </Link>
+              <Link href="/sign-in" className="welcome-cta-secondary">
+                Sign in
+              </Link>
             </div>
             <ul className="welcome-trust-strip" aria-label="Platform highlights">
               {TRUST.map((t) => (

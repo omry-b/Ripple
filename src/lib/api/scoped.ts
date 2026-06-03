@@ -1,3 +1,4 @@
+import { prepareDashboardForUi } from "@/lib/alerts/payload";
 import { getSessionUser } from "@/lib/auth/session";
 import { filterIdsForOrg } from "@/lib/org/scope";
 import type { Alert, Company, DashboardPayload, DashboardSnapshot } from "@/types/domain";
@@ -29,12 +30,12 @@ export async function getScopedDashboard(request?: Request): Promise<DashboardPa
   const companies = filterIdsForOrg(dashboard.companies, orgId);
   const alerts = filterIdsForOrg(dashboard.alerts, orgId);
   const exposed = companies.filter((c) => c.scoreLevel === "critical" || c.scoreLevel === "elevated").length;
-  return {
+  return prepareDashboardForUi({
     ...dashboard,
     companies,
     alerts,
     snapshot: { ...dashboard.snapshot, exposedCompanies: exposed },
-  };
+  });
 }
 
 export async function getScopedSnapshot(request?: Request): Promise<DashboardSnapshot> {

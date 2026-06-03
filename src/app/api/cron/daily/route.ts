@@ -3,6 +3,8 @@ import { sendWatchlistDigest } from "@/lib/notifications/digest";
 import { getAlerts } from "@/lib/api";
 import { drainScenarioJobQueue } from "@/lib/scenario/worker";
 import { authorizeServiceRequest } from "@/lib/auth/service-secret";
+import { pruneDuplicateOpenAlerts } from "@/lib/alerts/prune-duplicates";
+import { warmStoriesForTopCompanies } from "@/lib/news/warm-stories";
 
 /** Combined daily cron Hobby-safe (single cron slot). Runs snapshot, digest, scenario drain. */
 export async function GET(request: Request) {
@@ -36,6 +38,18 @@ export async function GET(request: Request) {
     results.scenarioWorker = await drainScenarioJobQueue(10);
   } catch (e) {
     results.scenarioWorkerError = e instanceof Error ? e.message : "Scenario worker failed";
+  }
+
+  try {
+    results.duplicatesPruned = await pruneDuplicateOpenAlerts();
+  } catch (e) {
+    results.pruneError = e instanceof Error ? e.message : "Prune failed";
+  }
+
+  try {
+    results.storiesWarm = await warmStoriesForTopCompanies(12);
+  } catch (e) {
+    results.storiesWarmError = e instanceof Error ? e.message : "Stories warm failed";
   }
 
   return Response.json(results);

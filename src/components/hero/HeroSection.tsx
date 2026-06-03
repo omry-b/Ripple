@@ -6,46 +6,37 @@ import { formatRelativeAsOf } from "@/lib/format";
 
 type HeroSectionProps = {
   showWordmark?: boolean;
+  /** Fewer stat pills on overview (metrics also appear in bento). */
+  compact?: boolean;
 };
 
-const HERO_STATS = [
+const HERO_STATS_FULL = [
   { id: "counter-index", label: "Risk Index", accent: "critical-accent" as const, format: (v: number) => v.toFixed(1) },
-  {
-    id: "counter-exposed",
-    label: "Exposed Cos",
-    accent: "" as const,
-    format: (v: number) => String(v),
-  },
-  {
-    id: "counter-cvar-hero",
-    label: "Portfolio CVaR",
-    accent: "critical-accent" as const,
-    format: (v: number) => `$${v.toFixed(1)}B`,
-    prefix: "",
-  },
-  {
-    id: "counter-signals",
-    label: "Live Signals",
-    accent: "" as const,
-    format: (v: number) => String(v),
-  },
+  { id: "counter-exposed", label: "Exposed Cos", accent: "" as const, format: (v: number) => String(v) },
+  { id: "counter-cvar-hero", label: "Portfolio CVaR", accent: "critical-accent" as const, format: (v: number) => `$${v.toFixed(1)}B` },
+  { id: "counter-signals", label: "Live Signals", accent: "" as const, format: (v: number) => String(v) },
 ] as const;
 
-export function HeroSection({ showWordmark = true }: HeroSectionProps) {
+const HERO_STATS_COMPACT = HERO_STATS_FULL.filter((s) =>
+  ["counter-index", "counter-cvar-hero"].includes(s.id)
+);
+
+export function HeroSection({ showWordmark = true, compact = false }: HeroSectionProps) {
   const { snapshot, asOf } = useLiveData();
   if (!snapshot) return null;
 
   useSnapshotCounters(snapshot);
 
-  const values = [
-    snapshot.riskIndex,
-    snapshot.exposedCompanies,
-    snapshot.portfolioCvarB,
-    snapshot.liveSignalsCount,
-  ];
+  const stats = compact ? HERO_STATS_COMPACT : HERO_STATS_FULL;
+  const values: Record<string, number> = {
+    "counter-index": snapshot.riskIndex,
+    "counter-exposed": snapshot.exposedCompanies,
+    "counter-cvar-hero": snapshot.portfolioCvarB,
+    "counter-signals": snapshot.liveSignalsCount,
+  };
 
   return (
-    <header className="hero-container hero-panel">
+    <header className={`hero-container hero-panel${compact ? " hero-panel--compact" : ""}`}>
       <div className="hero-mesh" aria-hidden />
       <div className="hero-glow hero-glow-risk" aria-hidden />
       <div className="hero-glow hero-glow-trust" aria-hidden />
@@ -64,14 +55,18 @@ export function HeroSection({ showWordmark = true }: HeroSectionProps) {
             </>
           )}
         </div>
-        <div className="hero-stats-grid" role="list" aria-label="Key risk metrics">
-          {HERO_STATS.map((stat, i) => (
+        <div
+          className={`hero-stats-grid${compact ? " hero-stats-grid--compact" : ""}`}
+          role="list"
+          aria-label="Key risk metrics"
+        >
+          {stats.map((stat) => (
             <div key={stat.id} className="hero-stat-pill" role="listitem">
               <span
                 className={`hero-metric tabular-nums ${stat.accent}`.trim()}
                 id={stat.id}
               >
-                {stat.format(values[i])}
+                {stat.format(values[stat.id])}
               </span>
               <span className="hero-stat-label">{stat.label}</span>
             </div>

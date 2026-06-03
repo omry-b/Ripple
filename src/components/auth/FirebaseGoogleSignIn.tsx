@@ -25,7 +25,7 @@ export function FirebaseGoogleSignIn() {
   const busy = loading || signingIn;
 
   return (
-    <div className="auth-firebase-wrap">
+    <div className="auth-firebase-wrap auth-card--polish">
       <p className="welcome-eyebrow">Sign in</p>
       <h1 className="auth-title">Continue with Google</h1>
       <p className="auth-lead">

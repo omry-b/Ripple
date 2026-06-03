@@ -14,8 +14,7 @@ export function LiveStatus({ asOf, isRefreshing = false }: LiveStatusProps) {
   return (
     <div className="nav-status">
       <span
-        className={`pulse-dot${isLive ? " live" : ""}`}
-        style={isLive ? undefined : { background: "#404040", boxShadow: "none" }}
+        className={`pulse-dot${isLive ? " live" : " pulse-dot--stale"}`}
         role="status"
         aria-label={isLive ? "Data is live" : "Data is stale"}
       />

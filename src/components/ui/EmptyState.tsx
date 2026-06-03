@@ -1,24 +1,19 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 
 type EmptyStateProps = {
   title: string;
   description?: string;
-  action?: { label: string; href: string };
-  children?: ReactNode;
+  action?: ReactNode;
 };
 
-export function EmptyState({ title, description, action, children }: EmptyStateProps) {
+/** Minimal empty state — grid pattern, no emoji or illustration slop. */
+export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
     <div className="empty-state-panel" role="status">
+      <div className="empty-state-pattern" aria-hidden />
       <p className="empty-state-title">{title}</p>
-      {description && <p className="empty-state-desc">{description}</p>}
-      {children}
-      {action && (
-        <Link href={action.href} className="filter-export-btn empty-state-action">
-          {action.label}
-        </Link>
-      )}
+      {description ? <p className="empty-state-desc">{description}</p> : null}
+      {action}
     </div>
   );
 }

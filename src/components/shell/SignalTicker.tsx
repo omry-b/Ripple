@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import type { TickerItem } from "@/types/domain";
-import { LEVEL_COLOR } from "@/types/domain";
-
 /** Pixels per second — lower = slower crawl. */
 const TICKER_PX_PER_SEC = 24;
 const TICKER_MIN_DURATION_SEC = 90;
@@ -12,21 +10,26 @@ type SignalTickerProps = {
   items: TickerItem[];
 };
 
-function TickerSegment({ items }: { items: TickerItem[] }) {
+function TickerSegment({ items, hidden }: { items: TickerItem[]; hidden?: boolean }) {
   return (
-    <div className="ticker-segment">
+    <div className="ticker-segment" aria-hidden={hidden || undefined}>
       {items.map((item, index) => (
-        <span key={`${item.label}-${index}`} style={{ display: "contents" }}>
+        <span key={`${item.label}-${index}`} className="ticker-item-wrap">
           <div className="ticker-item">
-            <span className="ticker-dot" style={{ color: LEVEL_COLOR[item.level] }}>
+            <span
+              className={`ticker-dot ticker-dot--${item.level}`}
+              aria-hidden
+            >
               ●
             </span>
             <span className="ticker-label">{item.label}</span>
-            <span style={{ color: LEVEL_COLOR[item.level] }}>
+            <span className={`ticker-level ticker-level--${item.level}`}>
               {item.level.toUpperCase()}
             </span>
           </div>
-          <span className="ticker-divider">│</span>
+          <span className="ticker-divider" aria-hidden>
+            │
+          </span>
         </span>
       ))}
     </div>
@@ -56,12 +59,16 @@ export function SignalTicker({ items }: SignalTickerProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="ticker-viewport" aria-live="polite">
-      <div className="ticker-fade-left" />
-      <div className="ticker-fade-right" />
+    <div
+      className="ticker-viewport"
+      role="region"
+      aria-label="Live signal ticker"
+    >
+      <div className="ticker-fade-left" aria-hidden />
+      <div className="ticker-fade-right" aria-hidden />
       <div className="ticker-track" ref={trackRef}>
         <TickerSegment items={items} />
-        <TickerSegment items={items} />
+        <TickerSegment items={items} hidden />
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getDataSource } from "@/lib/data";
 import { getCachedSnapshot } from "@/lib/cache/snapshot-cache";
 import type {
@@ -17,9 +18,9 @@ async function ds() {
   return getDataSource();
 }
 
-export async function getDashboard(): Promise<DashboardPayload> {
+export const getDashboard = cache(async (): Promise<DashboardPayload> => {
   return (await ds()).getDashboard();
-}
+});
 
 export async function getSnapshot(): Promise<DashboardSnapshot> {
   const data = await ds();

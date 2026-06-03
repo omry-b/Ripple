@@ -33,9 +33,12 @@ export function jsonData<T>(
   );
 }
 
-export function jsonError(message: string, status: number) {
+export function jsonError(message: string, status: number, headers?: HeadersInit) {
   return Response.json(
     { asOf: new Date().toISOString(), error: message },
-    { status }
+    { status, headers }
   );
 }
+
+export type { ApiErrorBody } from "@/lib/api/error-body";
+export { readApiError } from "@/lib/api/error-body";

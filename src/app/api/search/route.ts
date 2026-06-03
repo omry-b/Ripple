@@ -1,12 +1,16 @@
 import { getSearchIndex } from "@/lib/api";
 import { getOrgId } from "@/lib/api/scoped";
 import { filterIdsForOrg } from "@/lib/org/scope";
-import { jsonError, jsonOk } from "@/lib/api/response";
+import { jsonOk } from "@/lib/api/response";
+import { rateLimitResponse, withApiHandler } from "@/lib/api/with-handler";
 import { NAV_ITEMS } from "@/lib/nav";
 import { fullTextSearch, type SearchableItem } from "@/lib/search/full-text";
 
 export async function GET(request: Request) {
-  try {
+  const limited = rateLimitResponse(request, "api-search", 120);
+  if (limited) return limited;
+
+  return withApiHandler(async () => {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q")?.trim() ?? "";
 
@@ -47,10 +51,30 @@ export async function GET(request: Request) {
       searchText: "ops health database cloudflare worker cron deploy",
     };
 
+    const intelligence = {
+      id: "intelligence",
+      label: "Intelligence feed",
+      sublabel: "24h external stories · watchlist filter",
+      href: "/intelligence",
+      group: "Navigate" as const,
+      searchText: "intelligence news gdelt reddit crawl stories",
+    };
+
+    const alertInbox = {
+      id: "alerts-inbox",
+      label: "Alert inbox",
+      sublabel: "Open alerts · export CSV",
+      href: "/alerts",
+      group: "Navigate" as const,
+      searchText: "alerts inbox critical elevated acknowledge",
+    };
+
     const all: SearchableItem[] = [
       ...navigation,
       methodology,
       systemStatus,
+      intelligence,
+      alertInbox,
       ...companies.map((c) => ({
         ...c,
         searchText: `${c.label} ${c.id} ${c.sublabel ?? ""}`,
@@ -62,7 +86,5 @@ export async function GET(request: Request) {
     const items = q ? fullTextSearch(all, q) : all;
 
     return jsonOk({ query: q || null, count: items.length, items });
-  } catch {
-    return jsonError("Search failed", 500);
-  }
+  });
 }

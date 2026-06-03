@@ -52,7 +52,7 @@ export function BentoGrid({ snapshot, topCompanies, hotspots }: BentoGridProps) 
   };
 
   return (
-    <section className="bento-grid">
+    <section className="bento-grid reveal-stagger">
       <div className="bento-card bento-large" id="bento-map-card">
         <div>
           <div className="map-card-header">

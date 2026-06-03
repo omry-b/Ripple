@@ -4,7 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { CommandItem } from "@/types/domain";
 import { fetchSearch } from "@/lib/client/api";
+import { readApiError } from "@/lib/api/error-body";
+import { groupCommandItems } from "@/components/shell/command-palette-groups";
 import { getRecentItems, pushRecentItem, type RecentItem } from "@/lib/recent-items";
+import { CMDK_OPEN_EVENT } from "@/lib/shell/cmdk";
+import { FocusTrap } from "@/components/ui/FocusTrap";
 
 export function CommandPalette() {
   const router = useRouter();
@@ -13,18 +17,45 @@ export function CommandPalette() {
   const [items, setItems] = useState<CommandItem[]>([]);
   const [recent, setRecent] = useState<RecentItem[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
+    if (!open) return;
     const q = query.trim();
     const path = q ? `/api/search?q=${encodeURIComponent(q)}` : "/api/search";
+    setLoading(true);
+    setSearchError(null);
     const timer = window.setTimeout(() => {
       fetch(path)
-        .then((res) => (res.ok ? res.json() : fetchSearch()))
-        .then((data) => setItems(data.items ?? []))
-        .catch(() => fetchSearch().then((d) => setItems(d.items)).catch(() => setItems([])));
+        .then(async (res) => {
+          if (!res.ok) {
+            throw new Error(await readApiError(res));
+          }
+          return res.json() as Promise<{ items?: CommandItem[] }>;
+        })
+        .then((data) => {
+          setItems(data.items ?? []);
+          setSearchError(null);
+        })
+        .catch(async (err) => {
+          try {
+            const data = await fetchSearch();
+            setItems(data.items ?? []);
+            setSearchError(
+              err instanceof Error ? err.message : "Search unavailable — showing cached index"
+            );
+          } catch {
+            setItems([]);
+            setSearchError("Search failed. Check your connection and try again.");
+          }
+        })
+        .finally(() => setLoading(false));
     }, q ? 200 : 0);
     return () => window.clearTimeout(timer);
-  }, [query]);
+  }, [query, open]);
 
   useEffect(() => {
     if (open) setRecent(getRecentItems());
@@ -38,10 +69,18 @@ export function CommandPalette() {
         setQuery("");
         setActiveIndex(0);
       }
-      if (e.key === "Escape") setOpen(false);
+    };
+    const onOpen = () => {
+      setOpen(true);
+      setQuery("");
+      setActiveIndex(0);
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener(CMDK_OPEN_EVENT, onOpen);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener(CMDK_OPEN_EVENT, onOpen);
+    };
   }, []);
 
   const recentAsItems: CommandItem[] = useMemo(
@@ -66,6 +105,11 @@ export function CommandPalette() {
     return items.slice(0, 12);
   }, [items, query, recentAsItems]);
 
+  const groupedResults = useMemo(() => {
+    if (!query.trim()) return null;
+    return groupCommandItems(filtered);
+  }, [filtered, query]);
+
   const go = useCallback(
     (item: CommandItem) => {
       pushRecentItem({
@@ -74,29 +118,64 @@ export function CommandPalette() {
         href: item.href,
         group: item.group,
       });
-      setOpen(false);
+      close();
       router.push(item.href);
     },
-    [router]
+    [router, close]
   );
 
   useEffect(() => {
     setActiveIndex(0);
   }, [query]);
 
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const showRecentHeader = !query.trim() && recentAsItems.length > 0;
 
+  const renderItem = (item: CommandItem, i: number) => (
+    <li key={`${item.group}-${item.id}-${item.href}`} role="option" aria-selected={i === activeIndex}>
+      <button
+        type="button"
+        id={`cmdk-option-${i}`}
+        className={`cmdk-item${i === activeIndex ? " active" : ""}`}
+        onClick={() => go(item)}
+        onMouseEnter={() => setActiveIndex(i)}
+      >
+        <span className="cmdk-item-label">{item.label}</span>
+        <span className="cmdk-item-meta">
+          {item.sublabel === "Recent" ? "Recent" : item.group}
+          {item.sublabel && item.sublabel !== "Recent" ? ` · ${item.sublabel}` : ""}
+        </span>
+      </button>
+    </li>
+  );
+
+  let flatIndex = 0;
+
   return (
+  <FocusTrap active={open} onEscape={close}>
     <>
       <button
         type="button"
         className="cmdk-backdrop"
         aria-label="Close command palette"
-        onClick={() => setOpen(false)}
+        onClick={close}
       />
-      <div className="cmdk-panel" role="dialog" aria-label="Command palette">
+      <div
+        className="cmdk-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+      >
         <input
           type="search"
           className="cmdk-input"
@@ -105,6 +184,10 @@ export function CommandPalette() {
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
           aria-label="Search"
+          aria-controls="cmdk-listbox"
+          aria-activedescendant={
+            filtered.length > 0 ? `cmdk-option-${activeIndex}` : undefined
+          }
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
               e.preventDefault();
@@ -120,35 +203,38 @@ export function CommandPalette() {
           }}
         />
         <p className="cmdk-hint">
-          {query.trim()
-            ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} · ↑↓ navigate · Enter open`
-            : "↑↓ navigate · Enter open · Esc close · ⌘K toggle · ? shortcuts"}
+          {loading
+            ? "Searching…"
+            : query.trim()
+              ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} · ↑↓ navigate · Enter open`
+              : "↑↓ navigate · Enter open · Esc close · ⌘K toggle · ? shortcuts"}
         </p>
-        {showRecentHeader && (
-          <p className="cmdk-section-label">Recent</p>
-        )}
-        <ul className="cmdk-list" role="listbox">
-          {filtered.map((item, i) => (
-            <li key={`${item.group}-${item.id}-${item.href}`}>
-              <button
-                type="button"
-                className={`cmdk-item${i === activeIndex ? " active" : ""}`}
-                onClick={() => go(item)}
-                onMouseEnter={() => setActiveIndex(i)}
-              >
-                <span className="cmdk-item-label">{item.label}</span>
-                <span className="cmdk-item-meta">
-                  {item.sublabel === "Recent" ? "Recent" : item.group}
-                  {item.sublabel && item.sublabel !== "Recent"
-                    ? ` · ${item.sublabel}`
-                    : ""}
-                </span>
-              </button>
-            </li>
-          ))}
-          {filtered.length === 0 && <li className="cmdk-empty">No matches</li>}
+        {searchError ? (
+          <p className="cmdk-error" role="status">
+            {searchError}
+          </p>
+        ) : null}
+        {showRecentHeader && <p className="cmdk-section-label">Recent</p>}
+        <ul id="cmdk-listbox" className="cmdk-list" role="listbox">
+          {groupedResults
+            ? groupedResults.map(({ group, items: groupItems }) => (
+                <li key={group} className="cmdk-group" role="presentation">
+                  <p className="cmdk-section-label">{group}</p>
+                  <ul className="cmdk-group-list">
+                    {groupItems.map((item) => {
+                      const i = flatIndex++;
+                      return renderItem(item, i);
+                    })}
+                  </ul>
+                </li>
+              ))
+            : filtered.map((item, i) => renderItem(item, i))}
+          {!loading && filtered.length === 0 && (
+            <li className="cmdk-empty">No matches</li>
+          )}
         </ul>
       </div>
     </>
+  </FocusTrap>
   );
 }

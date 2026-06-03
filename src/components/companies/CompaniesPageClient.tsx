@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { Alert, Company, GeoRegion } from "@/types/domain";
 import {
   CompanyExposureTable,
@@ -13,10 +14,17 @@ import { useWatchlist } from "@/context/WatchlistContext";
 import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
+import {
+  filterCompanies,
+  parseSortKey,
+  type CompanySortKey,
+} from "@/lib/companies/filter";
 
-export type CompanySortKey = "score" | "name" | "cvar" | "delta";
+export type { CompanySortKey };
 
 const PAGE_SIZE = 25;
+const REGIONS: GeoRegion[] = ["APAC", "EMEA", "AMER"];
+const SEARCH_DEBOUNCE_MS = 220;
 
 type CompaniesPageClientProps = {
   companies: Company[];
@@ -25,75 +33,126 @@ type CompaniesPageClientProps = {
   regionFilter?: string | null;
 };
 
-const REGIONS: GeoRegion[] = ["APAC", "EMEA", "AMER"];
-
 export function CompaniesPageClient({
   companies,
   alertFilter,
   watchlistOnly = false,
-  regionFilter = null,
+  regionFilter: serverRegion = null,
 }: CompaniesPageClientProps) {
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<CompanySortKey>("score");
-  const [tier, setTier] = useState<string>("all");
-  const [scoreMin, setScoreMin] = useState(0);
-  const [scoreMax, setScoreMax] = useState(100);
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [searchInput, setSearchInput] = useState(() => searchParams.get("q") ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchInput);
+  const [sort, setSort] = useState<CompanySortKey>(() => parseSortKey(searchParams.get("sort")));
+  const [tier, setTier] = useState(() => searchParams.get("tier") ?? "all");
+  const [scoreMin, setScoreMin] = useState(() => {
+    const v = Number(searchParams.get("min"));
+    return Number.isFinite(v) ? v : 0;
+  });
+  const [scoreMax, setScoreMax] = useState(() => {
+    const v = Number(searchParams.get("max"));
+    return Number.isFinite(v) ? v : 100;
+  });
+  const [page, setPage] = useState(() => {
+    const v = Number(searchParams.get("page"));
+    return Number.isFinite(v) && v >= 1 ? v : 1;
+  });
+  const [urlRegion, setUrlRegion] = useState<string | null>(
+    () => searchParams.get("region") ?? serverRegion
+  );
   const [columns, setColumns] = useState<CompanyColumnVisibility>(DEFAULT_COLUMN_VISIBILITY);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const { ids: watchlistIds, toggle: toggleWatchlist, addMany, isSignedIn } = useWatchlist();
 
-  const filtered = useMemo(() => {
-    let list = companies;
+  const regionFilter = urlRegion ?? serverRegion;
+  const isSearching = searchInput.trim() !== debouncedSearch.trim();
 
-    if (watchlistOnly) {
-      list = list.filter((c) => watchlistIds.has(c.id));
-    }
+  useEffect(() => {
+    const t = window.setTimeout(() => setDebouncedSearch(searchInput), SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(t);
+  }, [searchInput]);
 
-    if (alertFilter) {
-      list = list.filter((c) => alertFilter.affectedCompanyIds.includes(c.id));
-    }
-
+  const syncUrl = useCallback(() => {
+    const params = new URLSearchParams();
+    if (alertFilter) params.set("alert", alertFilter.id);
+    if (watchlistOnly) params.set("watchlist", "1");
     if (regionFilter && REGIONS.includes(regionFilter as GeoRegion)) {
-      list = list.filter((c) => c.region === regionFilter);
+      params.set("region", regionFilter);
     }
+    const q = debouncedSearch.trim();
+    if (q) params.set("q", q);
+    if (sort !== "score") params.set("sort", sort);
+    if (tier !== "all") params.set("tier", tier);
+    if (scoreMin > 0) params.set("min", String(scoreMin));
+    if (scoreMax < 100) params.set("max", String(scoreMax));
+    if (page > 1) params.set("page", String(page));
 
-    if (tier !== "all") {
-      list = list.filter((c) => c.tier === tier);
+    const next = params.toString();
+    const current = searchParams.toString();
+    if (next !== current) {
+      router.replace(next ? `/companies?${next}` : "/companies", { scroll: false });
     }
+  }, [
+    alertFilter,
+    watchlistOnly,
+    regionFilter,
+    debouncedSearch,
+    sort,
+    tier,
+    scoreMin,
+    scoreMax,
+    page,
+    router,
+    searchParams,
+  ]);
 
-    list = list.filter((c) => c.score >= scoreMin && c.score <= scoreMax);
+  useEffect(() => {
+    syncUrl();
+  }, [syncUrl]);
 
-    const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.id.toLowerCase().includes(q) ||
-          c.tier.toLowerCase().includes(q) ||
-          c.region.toLowerCase().includes(q)
-      );
-    }
+  const filtered = useMemo(
+    () =>
+      filterCompanies({
+        companies,
+        search: debouncedSearch,
+        sort,
+        tier,
+        scoreMin,
+        scoreMax,
+        alertFilter,
+        watchlistOnly,
+        watchlistIds,
+        regionFilter,
+        regions: REGIONS,
+      }),
+    [
+      companies,
+      debouncedSearch,
+      sort,
+      tier,
+      scoreMin,
+      scoreMax,
+      alertFilter,
+      watchlistOnly,
+      watchlistIds,
+      regionFilter,
+    ]
+  );
 
-    return [...list].sort((a, b) => {
-      switch (sort) {
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "cvar":
-          return b.cvarUsd - a.cvarUsd;
-        case "delta":
-          return b.score - a.score;
-        case "score":
-        default:
-          return b.score - a.score;
-      }
-    });
-  }, [companies, alertFilter, watchlistOnly, watchlistIds, regionFilter, search, sort, tier, scoreMin, scoreMax]);
+  const visiblePublicCandidates = useMemo(
+    () => [...companies].sort((a, b) => b.score - a.score).slice(0, 10),
+    [companies]
+  );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const pageStart = (safePage - 1) * PAGE_SIZE;
   const paged = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -107,6 +166,17 @@ export function CompaniesPageClient({
   const addSelectedToWatchlist = () => {
     addMany([...selectedIds]);
     setSelectedIds(new Set());
+  };
+
+  const clearClientFilters = () => {
+    setSearchInput("");
+    setDebouncedSearch("");
+    setSort("score");
+    setTier("all");
+    setScoreMin(0);
+    setScoreMax(100);
+    setUrlRegion(null);
+    setPage(1);
   };
 
   return (
@@ -136,9 +206,16 @@ export function CompaniesPageClient({
           <span>
             Showing companies in region: <strong>{regionFilter}</strong>
           </span>
-          <Link href="/companies" className="alert-filter-clear">
+          <button
+            type="button"
+            className="alert-filter-clear"
+            onClick={() => {
+              setUrlRegion(null);
+              setPage(1);
+            }}
+          >
             Clear filter ×
-          </Link>
+          </button>
         </div>
       )}
 
@@ -168,18 +245,50 @@ export function CompaniesPageClient({
         ))}
       </div>
 
-      <div className="filter-bar" style={{ marginBottom: 16 }}>
+      <div className="public-companies-strip" aria-label="Popular public companies">
+        <span className="public-companies-label">Public stocks</span>
+        {visiblePublicCandidates.map((company) => (
+          <Link
+            key={company.id}
+            href={`/companies/${company.id}`}
+            className="public-company-chip"
+            title={`View ${company.name} profile and stories`}
+          >
+            {company.name}
+          </Link>
+        ))}
+      </div>
+
+      <div className="filter-bar filter-bar--companies">
         <input
           type="search"
           className="filter-search"
           placeholder="Search companies…"
-          value={search}
+          value={searchInput}
           onChange={(e) => {
-            setSearch(e.target.value);
+            setSearchInput(e.target.value);
             setPage(1);
           }}
           aria-label="Search companies"
+          aria-busy={isSearching}
         />
+        <select
+          className="filter-select"
+          value={regionFilter ?? "all"}
+          onChange={(e) => {
+            const v = e.target.value;
+            setUrlRegion(v === "all" ? null : v);
+            setPage(1);
+          }}
+          aria-label="Filter by region"
+        >
+          <option value="all">All regions</option>
+          {REGIONS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
         <select
           className="filter-select"
           value={tier}
@@ -204,8 +313,8 @@ export function CompaniesPageClient({
         >
           <option value="score">Sort: Risk score</option>
           <option value="cvar">Sort: CVaR</option>
+          <option value="delta">Sort: 7d Δ score</option>
           <option value="name">Sort: Name</option>
-          <option value="delta">Sort: Score (alt)</option>
         </select>
         <button
           type="button"
@@ -220,7 +329,9 @@ export function CompaniesPageClient({
             Add {selectedIds.size} to watchlist
           </button>
         )}
-        <span className="filter-count">{filtered.length} companies</span>
+        <span className="filter-count">
+          {isSearching ? "Searching…" : `${filtered.length} companies`}
+        </span>
       </div>
 
       <div className="score-range-bar">
@@ -264,7 +375,11 @@ export function CompaniesPageClient({
         <EmptyState
           title="No companies match"
           description="Try clearing filters, widening the score range, or viewing all companies."
-          action={{ label: "Show all companies", href: "/companies" }}
+          action={
+            <Link href="/companies" className="filter-export-btn">
+              Clear filters
+            </Link>
+          }
         />
       ) : (
         <>
@@ -301,6 +416,14 @@ export function CompaniesPageClient({
             </nav>
           )}
         </>
+      )}
+
+      {(debouncedSearch || sort !== "score" || tier !== "all" || scoreMin > 0 || scoreMax < 100) && (
+        <p className="companies-filter-reset">
+          <button type="button" className="text-link" onClick={clearClientFilters}>
+            Reset search & filters
+          </button>
+        </p>
       )}
     </>
   );

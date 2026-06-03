@@ -51,3 +51,7 @@ test-results/
 scripts/prod-ops.local.sh
 scripts/.prod-credentials
 ripple-firebase-adminsdk.json
+
+# Claude Code tooling & local agent memory (not project code)
+.claude/
+memory/

@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getScenarios } from "@/lib/api";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { CompactMetricsStrip } from "@/components/shell/CompactMetricsStrip";
 import { ScenarioPageClient } from "@/components/scenario/ScenarioPageClient";
+import { ScenarioAlertsStrip } from "@/components/alerts/ScenarioAlertsStrip";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 
 export const metadata = {
@@ -18,7 +18,6 @@ export default async function ScenarioPage() {
         title="Scenario Workbench"
         subtitle="What-if loss distribution · contagion preview"
       />
-      <CompactMetricsStrip />
       <main className="content-container">
         <Breadcrumbs
           items={[
@@ -26,6 +25,10 @@ export default async function ScenarioPage() {
             { label: "Scenario" },
           ]}
         />
+        <span className="section-label" id="scenario-alerts">
+          Active alerts
+        </span>
+        <ScenarioAlertsStrip />
         <span className="section-label">Select a scenario to simulate</span>
         <Suspense fallback={<p className="empty-state">Loading workbench…</p>}>
           <ScenarioPageClient scenarios={scenarios} />

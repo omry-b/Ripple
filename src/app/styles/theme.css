@@ -1,4 +1,19 @@
 /* Light theme overrides  -  applied via html[data-theme="light"] */
+[data-theme="light"] {
+  --ripple-surface-base: #f4f4f5;
+  --ripple-surface-raised: #ffffff;
+  --ripple-surface-overlay: #fafafa;
+  --ripple-border-subtle: #e4e4e7;
+  --ripple-border-strong: #d4d4d8;
+  --ripple-text-primary: #18181b;
+  --ripple-text-secondary: #3f3f46;
+  --ripple-text-muted: #71717a;
+  --ripple-glass: rgba(255, 255, 255, 0.88);
+  --ripple-glass-border: rgba(24, 24, 27, 0.12);
+  --ripple-elevation-1: 0 4px 20px rgba(24, 24, 27, 0.08);
+  --ripple-elevation-2: 0 12px 30px rgba(24, 24, 27, 0.12);
+}
+
 [data-theme="light"] body {
   background: #f4f4f5;
   color: #18181b;
@@ -73,6 +88,80 @@
 [data-theme="light"] .alert-modal-panel {
   background: #ffffff;
   color: #18181b;
+}
+
+[data-theme="light"] .atmosphere-section .glass-card,
+[data-theme="light"] .workbench-card,
+[data-theme="light"] .empty-state-panel,
+[data-theme="light"] .alerts-empty-wrap {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #d4d4d8;
+}
+
+[data-theme="light"] .atmosphere-section .glass-card {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .alert-event,
+[data-theme="light"] .stream-name,
+[data-theme="light"] .empty-state-title,
+[data-theme="light"] .card-title,
+[data-theme="light"] .company-stories-link {
+  color: #111827;
+}
+
+[data-theme="light"] .alert-detail,
+[data-theme="light"] .alert-meta,
+[data-theme="light"] .alerts-empty-desc,
+[data-theme="light"] .empty-state-desc,
+[data-theme="light"] .company-stories-summary,
+[data-theme="light"] .company-stories-intro {
+  color: #52525b;
+}
+
+[data-theme="light"] .alert-card-trigger .alert-event {
+  color: #111827;
+}
+
+[data-theme="light"] .alert-card-trigger .alert-detail {
+  color: #334155;
+}
+
+[data-theme="light"] .alert-card-trigger .alert-meta {
+  color: #475569;
+}
+
+[data-theme="light"] .alert-action-btn {
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+[data-theme="light"] .alert-action-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+[data-theme="light"] .alert-action-btn.elevated-btn {
+  border-color: #d97706;
+  color: #b45309;
+}
+
+[data-theme="light"] .alert-action-btn.elevated-btn:hover {
+  background: #d97706;
+  color: #ffffff;
+}
+
+[data-theme="light"] .company-stories-badge {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+[data-theme="light"] .public-company-chip {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
 [data-theme="light"] .org-switcher select,

@@ -1,5 +1,7 @@
 import { PageHeader } from "@/components/shell/PageHeader";
 import { SystemStatusPanel } from "@/components/settings/SystemStatusPanel";
+import { DataOpsPanel } from "@/components/settings/DataOpsPanel";
+import { IntegrationsPanel } from "@/components/settings/IntegrationsPanel";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import Link from "next/link";
 
@@ -26,6 +28,8 @@ export default function SystemSettingsPage() {
           <Link href="/api/ops/status">Ops status</Link>
           <Link href="/api/feed/rss">RSS feed</Link>
         </nav>
+        <IntegrationsPanel />
+        <DataOpsPanel />
         <SystemStatusPanel />
       </main>
     </>

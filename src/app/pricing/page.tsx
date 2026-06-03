@@ -9,6 +9,8 @@ const TIERS = [
     period: "forever",
     detail: "Demo data · 3 seats · community support",
     features: ["Overview + signals", "Scenario workbench", "CSV export", "Mock data mode"],
+    cta: "Open dashboard",
+    href: "/",
   },
   {
     name: "Growth",
@@ -23,6 +25,8 @@ const TIERS = [
       "RSS + OpenAPI",
     ],
     highlight: true,
+    cta: "Start with Growth",
+    href: "/sign-in",
   },
   {
     name: "Enterprise",
@@ -30,10 +34,28 @@ const TIERS = [
     period: "",
     detail: "SSO · dedicated ingest · SLA",
     features: ["Multi-org + Firebase Auth", "Custom risk models", "VPC / on-prem", "Dedicated support"],
+    cta: "Contact sales",
+    href: "mailto:sales@ripple.example?subject=Ripple%20Enterprise",
+    external: true,
   },
 ];
 
-export const metadata = { title: "Pricing  -  Ripple" };
+const FAQ = [
+  {
+    q: "Can I run without Firebase?",
+    a: "Yes. Demo mode uses local watchlists and the full dashboard with mock or Postgres-backed data.",
+  },
+  {
+    q: "Where does live data come from?",
+    a: "Ingest adapters (AIS, ports, weather, financial, geopolitical) run on Cloudflare cron and refresh snapshots in Postgres.",
+  },
+  {
+    q: "Is there an API?",
+    a: "OpenAPI docs at /api-docs with RSS, webhooks, and scoped org endpoints when configured.",
+  },
+];
+
+export const metadata = { title: "Pricing — Ripple" };
 
 export default function PricingPage() {
   return (
@@ -43,7 +65,8 @@ export default function PricingPage() {
           <p className="welcome-eyebrow">Transparent tiers</p>
           <h1 className="welcome-headline pricing-headline">Pricing</h1>
           <p className="welcome-lead">
-            Placeholder tiers for sales conversations  -  production runs on Growth stack today.
+            Start on the live dashboard for free, then scale to Postgres ingest, watchlists, and
+            enterprise SSO when your team is ready.
           </p>
         </header>
         <div className="pricing-grid">
@@ -67,15 +90,46 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                href="/"
-                className={tier.highlight ? "welcome-cta-primary pricing-cta" : "welcome-cta-secondary pricing-cta"}
-              >
-                {tier.name === "Enterprise" ? "Contact sales" : "Get started"}
-              </Link>
+              {tier.external ? (
+                <a
+                  href={tier.href}
+                  className={
+                    tier.highlight
+                      ? "welcome-cta-primary pricing-cta"
+                      : "welcome-cta-secondary pricing-cta"
+                  }
+                >
+                  {tier.cta}
+                </a>
+              ) : (
+                <Link
+                  href={tier.href}
+                  className={
+                    tier.highlight
+                      ? "welcome-cta-primary pricing-cta"
+                      : "welcome-cta-secondary pricing-cta"
+                  }
+                >
+                  {tier.cta}
+                </Link>
+              )}
             </article>
           ))}
         </div>
+
+        <section className="pricing-faq" aria-labelledby="pricing-faq-title">
+          <h2 id="pricing-faq-title" className="welcome-section-title">
+            FAQ
+          </h2>
+          <dl className="pricing-faq-list">
+            {FAQ.map((item) => (
+              <div key={item.q} className="pricing-faq-item">
+                <dt className="pricing-faq-q">{item.q}</dt>
+                <dd className="pricing-faq-a">{item.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
       </main>
     </MarketingShell>
   );

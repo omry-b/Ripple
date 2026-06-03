@@ -28,7 +28,7 @@ export function StreamGrid({
   useCardSpotlight(spotlightIds);
 
   return (
-    <section className="stream-grid reveal">
+    <section className="stream-grid surface-visible">
       {streams.map((stream) => {
         const isSelected = selectedId === stream.id;
         const isCompareSelected = compareIds.includes(stream.id);

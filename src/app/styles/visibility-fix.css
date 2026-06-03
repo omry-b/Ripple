@@ -1,0 +1,32 @@
+/**
+ * Global visibility fixes — prevents inherited gradient text and invisible controls.
+ */
+
+.content-container :where(button, a, p, span, h1, h2, h3, h4, td, th, li, label) {
+  -webkit-text-fill-color: currentColor;
+}
+
+.content-container :where(
+  .exposure-table td,
+  .exposure-table th,
+  .risk-table td,
+  .risk-table th,
+  .mini-table td,
+  .mini-table th
+) {
+  color: var(--ripple-text-primary);
+  font-size: 12px;
+}
+
+.content-container .exposure-table th,
+.content-container .risk-table th {
+  color: var(--ripple-text-secondary);
+}
+
+[data-theme="light"] .content-container :where(.exposure-table td, .risk-table td) {
+  color: #0f172a;
+}
+
+[data-theme="light"] .content-container :where(.exposure-table th, .risk-table th) {
+  color: #475569;
+}

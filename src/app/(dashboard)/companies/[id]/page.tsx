@@ -20,6 +20,8 @@ import { SupplierGraph } from "@/components/companies/SupplierGraph";
 import { ScoreAttributionCard } from "@/components/companies/ScoreAttributionCard";
 import { CvarBacktestChart } from "@/components/charts/CvarBacktestChart";
 import { CompanyPrintButton } from "@/components/companies/CompanyPrintButton";
+import { CompanyStoriesPanelClient } from "@/components/companies/CompanyStoriesPanelClient";
+import { CompanyActivityPanel } from "@/components/companies/CompanyActivityPanel";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -85,12 +87,12 @@ export default async function CompanyDetailPage({ params }: Props) {
         </div>
 
         <span className="section-label">30-day risk trend</span>
-        <section className="workbench-card" style={{ marginBottom: 24 }}>
+        <section className="workbench-card company-trend-card">
           <RiskScoreSparkline
             values={company.history30d}
             accent={company.scoreLevel === "critical" ? "#EF4444" : "#F59E0B"}
           />
-          <p style={{ fontSize: 12, color: "#A3A3A3", marginTop: 12 }}>
+          <p className="company-trend-note">
             <span className={`trend-indicator ${company.deltaTrend}`}>{company.delta7d}</span>
             {" "}7-day change vs prior week.
           </p>
@@ -113,6 +115,12 @@ export default async function CompanyDetailPage({ params }: Props) {
         <span className="section-label">Supply chain · tier 1 & tier 2</span>
         <SupplierTable suppliers={suppliers} />
 
+        <span className="section-label">Risk activity timeline</span>
+        <CompanyActivityPanel companyId={company.id} companyName={company.name} />
+
+        <span className="section-label">Recent external stories (24h)</span>
+        <CompanyStoriesPanelClient companyId={company.id} companyName={company.name} initialStories={[]} />
+
         <CompanyNotes companyId={company.id} companyName={company.name} />
 
         <CompanyPrintButton companyName={company.name} />
@@ -120,15 +128,14 @@ export default async function CompanyDetailPage({ params }: Props) {
         <CompanyProfileSections company={company} alerts={alerts} signals={signals} />
 
         <span className="section-label">Actions</span>
-        <section className="workbench-card">
-          <Link href="/signals" className="text-link" style={{ fontSize: 12 }}>
+        <section className="workbench-card company-actions-card">
+          <Link href="/signals" className="text-link company-action-link">
             View all signal streams →
           </Link>
           <br />
           <Link
             href="/scenario"
-            className="text-link"
-            style={{ fontSize: 12, marginTop: 8, display: "inline-block" }}
+            className="text-link company-action-link"
           >
             Run scenario simulation →
           </Link>

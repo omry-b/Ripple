@@ -1,0 +1,337 @@
+/**
+ * Ripple visual system — flat, hierarchical, semantic (aligned with Cursor canvas guidance).
+ * No decorative gradients, rainbow palettes, or heavy shadows on new surfaces.
+ */
+
+/* ─── Section rail (primary hierarchy cue) ─── */
+.section-label-rail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-3);
+  margin-top: var(--ripple-space-8);
+  margin-bottom: var(--ripple-space-4);
+  padding-left: var(--ripple-space-4);
+  border-left: 3px solid var(--ripple-border-strong);
+}
+
+.section-label-rail--primary {
+  margin-top: var(--ripple-space-4);
+  border-left-color: var(--color-trust);
+}
+
+.section-label-rail__text {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ripple-text-secondary);
+}
+
+.section-label-rail--primary .section-label-rail__text {
+  color: var(--ripple-text-primary);
+}
+
+.section-label-rail__meta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-2);
+}
+
+/* ─── Flat elevated surface (cards without glow) ─── */
+.surface-panel {
+  background: var(--ripple-surface-overlay);
+  border: 1px solid var(--ripple-border-subtle);
+  border-radius: var(--ripple-radius-md);
+  padding: var(--ripple-space-4);
+}
+
+.surface-panel--inset {
+  background: var(--ripple-surface-raised);
+}
+
+/* Open section — no card chrome, rhythm only */
+.page-section-open {
+  margin-bottom: var(--ripple-space-6);
+}
+
+.page-lead {
+  margin: 0 0 var(--ripple-space-4);
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ripple-text-secondary);
+}
+
+.page-lead--tight {
+  margin-bottom: var(--ripple-space-3);
+}
+
+/* ─── Risk spectrum (semantic only) ─── */
+.risk-spectrum {
+  margin-bottom: var(--ripple-space-4);
+}
+
+.risk-spectrum-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--ripple-surface-raised);
+  border: 1px solid var(--ripple-border-subtle);
+}
+
+.risk-spectrum-segment {
+  min-width: 2px;
+  transition: flex-grow var(--ripple-duration-normal) var(--ripple-ease-out);
+}
+
+.risk-spectrum-segment--critical {
+  background: var(--color-critical);
+}
+
+.risk-spectrum-segment--elevated {
+  background: var(--color-elevated);
+}
+
+.risk-spectrum-segment--normal {
+  background: var(--color-normal);
+}
+
+.risk-spectrum-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ripple-space-4);
+  margin-top: var(--ripple-space-2);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  color: var(--ripple-text-muted);
+}
+
+.risk-spectrum-legend dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.risk-spectrum-legend dd {
+  display: inline;
+  margin: 0 0 0 4px;
+  color: var(--ripple-text-secondary);
+}
+
+.risk-spectrum-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.risk-spectrum-dot--critical {
+  background: var(--color-critical);
+}
+
+.risk-spectrum-dot--elevated {
+  background: var(--color-elevated);
+}
+
+.risk-spectrum-dot--normal {
+  background: var(--color-normal);
+}
+
+/* ─── Timeline feed (intelligence / activity) ─── */
+.timeline-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--ripple-space-4);
+  border-left: 1px solid var(--ripple-border-strong);
+}
+
+.timeline-feed-item {
+  position: relative;
+  padding: 0 0 var(--ripple-space-5) var(--ripple-space-4);
+}
+
+.timeline-feed-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--ripple-space-4) - 4px);
+  top: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: var(--ripple-border-strong);
+  border: 2px solid var(--ripple-surface-overlay);
+}
+
+.timeline-feed-item--critical::before {
+  background: var(--color-critical);
+}
+
+.timeline-feed-item--elevated::before {
+  background: var(--color-elevated);
+}
+
+.timeline-feed-item--normal::before {
+  background: var(--color-normal);
+}
+
+/* ─── Empty state (geometric, no illustration) ─── */
+.empty-state-panel {
+  text-align: center;
+  padding: var(--ripple-space-8) var(--ripple-space-4);
+  border: 1px dashed var(--ripple-border-strong);
+  border-radius: var(--ripple-radius-md);
+  background: var(--ripple-surface-raised);
+}
+
+.empty-state-pattern {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--ripple-space-4);
+  background-image:
+    linear-gradient(var(--ripple-border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ripple-border-subtle) 1px, transparent 1px);
+  background-size: 8px 8px;
+  border-radius: var(--ripple-radius-sm);
+  opacity: 0.8;
+}
+
+.empty-state-title {
+  margin: 0 0 var(--ripple-space-2);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ripple-text-primary);
+}
+
+.empty-state-desc {
+  margin: 0 auto var(--ripple-space-4);
+  max-width: 40ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ripple-text-muted);
+}
+
+/* ─── Pulse metrics (flat tiles) ─── */
+.metric-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ripple-space-3);
+  margin-bottom: var(--ripple-space-4);
+}
+
+@media (min-width: 768px) {
+  .metric-tile-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.metric-tile {
+  padding: var(--ripple-space-4);
+  border-radius: var(--ripple-radius-md);
+  border: 1px solid var(--ripple-border-subtle);
+  background: var(--ripple-surface-overlay);
+}
+
+.metric-tile-label {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ripple-text-muted);
+  margin-bottom: 6px;
+}
+
+.metric-tile-value {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ripple-text-primary);
+}
+
+.metric-tile-foot {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.metric-tile-foot--muted {
+  color: var(--ripple-text-muted);
+}
+
+/* ─── Jump nav: flat pills ─── */
+.section-jump-nav--refined {
+  padding: var(--ripple-space-2);
+  border-radius: var(--ripple-radius-md);
+  border: 1px solid var(--ripple-border-subtle);
+  background: var(--ripple-surface-raised);
+}
+
+.section-jump-link.active {
+  background: rgba(37, 99, 235, 0.18);
+  color: var(--ripple-text-primary);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+/* ─── Stagger reveal (respect motion) ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-stagger > .bento-card,
+  .reveal-stagger > .surface-panel {
+    animation: ripple-rise 0.45s var(--ripple-ease-out) both;
+  }
+
+  .reveal-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .reveal-stagger > *:nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .reveal-stagger > *:nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .reveal-stagger > *:nth-child(4) {
+    animation-delay: 120ms;
+  }
+  .reveal-stagger > *:nth-child(5) {
+    animation-delay: 160ms;
+  }
+  .reveal-stagger > *:nth-child(6) {
+    animation-delay: 200ms;
+  }
+}
+
+@keyframes ripple-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-theme="light"] .surface-panel,
+[data-theme="light"] .metric-tile {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .empty-state-panel {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .section-label-rail {
+  border-left-color: #cbd5e1;
+}
+
+[data-theme="light"] .section-label-rail--primary {
+  border-left-color: var(--color-trust);
+}

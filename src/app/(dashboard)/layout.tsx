@@ -1,7 +1,7 @@
-import { getDashboard } from "@/lib/api";
+import { headers } from "next/headers";
+import { getScopedDashboard } from "@/lib/api/scoped";
 import { NavHeader } from "@/components/shell/NavHeader";
 import { SignalTickerLive } from "@/components/shell/SignalTickerLive";
-import { PageEffects } from "@/components/shell/PageEffects";
 import { LiveDataProvider } from "@/context/LiveDataContext";
 import { RefreshBanner } from "@/components/shell/RefreshBanner";
 import { SkipToContent } from "@/components/shell/SkipToContent";
@@ -23,7 +23,10 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const dashboard = await getDashboard();
+  const h = await headers();
+  const dashboard = await getScopedDashboard(
+    new Request("http://internal/dashboard", { headers: h })
+  );
 
   return (
     <DemoAuthProvider>
@@ -36,7 +39,6 @@ export default async function DashboardLayout({
           <NavHeader />
           <RefreshBanner />
           <SignalTickerLive />
-          <PageEffects />
           <CommandPalette />
           <KeyboardShortcuts />
           <PageTransition>{children}</PageTransition>

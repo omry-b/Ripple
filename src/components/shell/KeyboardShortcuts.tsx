@@ -6,6 +6,8 @@ import { NAV_ITEMS } from "@/lib/nav";
 
 const GOTO_ROUTES: Record<string, string> = {
   o: "/",
+  i: "/intelligence",
+  a: "/alerts",
   s: "/signals",
   c: "/companies",
   w: "/scenario",
@@ -80,7 +82,7 @@ export function KeyboardShortcuts() {
   if (!helpOpen) {
     return pendingGo ? (
       <div className="shortcut-toast" role="status" aria-live="polite">
-        Go to… o overview · s signals · c companies · w scenario
+        Go to… o overview · i intelligence · a alerts · s signals · c companies · w scenario
       </div>
     ) : null;
   }
@@ -113,6 +115,14 @@ export function KeyboardShortcuts() {
           <li>
             <kbd>g</kbd> then <kbd>o</kbd>
             <span>Overview</span>
+          </li>
+          <li>
+            <kbd>g</kbd> then <kbd>i</kbd>
+            <span>Intelligence feed</span>
+          </li>
+          <li>
+            <kbd>g</kbd> then <kbd>a</kbd>
+            <span>Alert inbox</span>
           </li>
           <li>
             <kbd>g</kbd> then <kbd>s</kbd>

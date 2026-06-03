@@ -4,6 +4,7 @@ import { listDeadLetters, pushDeadLetter } from "@/lib/ingest/dead-letter";
 import { reconcileStaleIngestRuns } from "@/lib/ingest/reconcile-runs";
 import { normalizeEventsToReadings } from "@/lib/ingest/normalizer";
 import { refreshScoresFromReadings } from "@/lib/ingest/score-refresh";
+import { pruneDuplicateOpenAlerts } from "@/lib/alerts/prune-duplicates";
 import { persistAndSyncIngestEvents } from "@/lib/ingest/sync-risk";
 import { INGEST_ADAPTERS, getAdapter } from "./registry";
 import type { IngestAdapterResult, NormalizedIngestEvent } from "./types";
@@ -20,6 +21,7 @@ export type IngestPipelineResult = {
   streamsRescored: number;
   snapshotRefreshed: boolean;
   snapshotRefreshError?: string;
+  duplicatesPruned?: number;
   deadLetterCount: number;
 };
 
@@ -108,6 +110,13 @@ export async function runIngestPipeline(
     snapshotRefreshError = e instanceof Error ? e.message : "Snapshot refresh failed";
   }
 
+  let duplicatesPruned = 0;
+  try {
+    duplicatesPruned = await pruneDuplicateOpenAlerts();
+  } catch {
+    /* non-fatal */
+  }
+
   return {
     runs,
     totalEvents,
@@ -115,6 +124,7 @@ export async function runIngestPipeline(
     streamsRescored,
     snapshotRefreshed,
     snapshotRefreshError,
+    duplicatesPruned,
     deadLetterCount: listDeadLetters().length,
   };
 }

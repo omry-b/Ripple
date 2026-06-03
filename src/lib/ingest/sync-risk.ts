@@ -4,6 +4,7 @@ import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { DEMO_ORG_ID } from "@/lib/db/seed";
 import * as schema from "@/lib/db/schema";
 import { pushIngestEvents, getRecentIngestEvents } from "./event-store";
+import { stableIngestEventId } from "./stable-id";
 import { enrichEventGeo, eventTitle, regionFromLngLat, severityToLevel } from "./geo-utils";
 import type { NormalizedIngestEvent } from "./types";
 import { alertState } from "@/lib/mock/alert-state";
@@ -19,6 +20,7 @@ export async function persistAndSyncIngestEvents(
 ): Promise<PersistedIngestEvent[]> {
   const events = rawEvents.map(enrichEventGeo).map((e) => ({
     ...e,
+    id: stableIngestEventId(e.adapter, e.summary),
     region: regionFromLngLat(e.lng!, e.lat!),
     level: severityToLevel(e.severity),
   }));
