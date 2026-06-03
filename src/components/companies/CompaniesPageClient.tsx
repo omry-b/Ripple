@@ -47,11 +47,14 @@ export function CompaniesPageClient({
   const [sort, setSort] = useState<CompanySortKey>(() => parseSortKey(searchParams.get("sort")));
   const [tier, setTier] = useState(() => searchParams.get("tier") ?? "all");
   const [scoreMin, setScoreMin] = useState(() => {
-    const v = Number(searchParams.get("min"));
+    // Guard: Number(null) === 0, so an absent param must fall through to the default.
+    const raw = searchParams.get("min");
+    const v = raw !== null && raw !== "" ? Number(raw) : 0;
     return Number.isFinite(v) ? v : 0;
   });
   const [scoreMax, setScoreMax] = useState(() => {
-    const v = Number(searchParams.get("max"));
+    const raw = searchParams.get("max");
+    const v = raw !== null && raw !== "" ? Number(raw) : 100;
     return Number.isFinite(v) ? v : 100;
   });
   const [page, setPage] = useState(() => {
