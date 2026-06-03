@@ -1,14 +1,14 @@
 # Ripple
 
 [![CI](https://github.com/omry-b/Ripple/actions/workflows/ci.yml/badge.svg)](https://github.com/omry-b/Ripple/actions/workflows/ci.yml)
-[![Deployed on Vercel](https://img.shields.io/badge/deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://ripple-omry-2596s-projects.vercel.app)
+[![Deployed on Vercel](https://img.shields.io/badge/deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://ripple-cs153.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 
 **Supply-chain risk intelligence for everyone who can't afford a Bloomberg terminal.**
 Live risk signals, company exposure scoring, and Monte Carlo scenario simulation — in one dashboard.
 
-> 🔗 **Live:** [ripple-omry-2596s-projects.vercel.app](https://ripple-omry-2596s-projects.vercel.app) · **Demo data** is seeded automatically; no login required.
+> 🔗 **Live:** [ripple-cs153.vercel.app](https://ripple-cs153.vercel.app) · **Demo data** is seeded automatically; no login required.
 
 ---
 
@@ -112,12 +112,22 @@ npm run test:e2e     # Playwright
 | `/scenario` | Monte Carlo scenario workbench |
 | `/welcome`, `/pricing`, `/api-docs`, `/changelog` | Marketing / docs |
 
-OpenAPI JSON: [`/api/openapi`](https://ripple-omry-2596s-projects.vercel.app/api/openapi).
+OpenAPI JSON: [`/api/openapi`](https://ripple-cs153.vercel.app/api/openapi).
 Demo roles: set `DEMO_USER_ROLE` to `viewer` / `analyst` / `admin` in `.env.local`.
 
 ## Production setup
 
 Manual steps (credentials, Vercel env, DO Postgres, Cloudflare cron): **[docs/MANUAL_SETUP.md](./docs/MANUAL_SETUP.md)**. Build log: [TODO.md](./TODO.md).
+
+## Security
+
+The deployment is intended to be publicly reachable, so the attack surface is hardened:
+
+- **SSRF protection** on outbound webhooks — internal/loopback/link-local/metadata targets are rejected at creation and re-validated (with DNS resolution) at delivery (`src/lib/webhooks/url-guard.ts`).
+- **No privilege escalation via headers** — client-supplied `x-ripple-role` / `x-ripple-org-id` headers are ignored in production; role is fixed server-side.
+- **Bearer-guarded** cron / ingest / setup routes (`CRON_SECRET`), fail-closed in production.
+- **Rate limiting** on all `/api/*` routes; security headers (CSP, HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options`, Permissions-Policy).
+- No secrets in the client bundle; the Firebase admin key and `.env*` are gitignored.
 
 ---
 
