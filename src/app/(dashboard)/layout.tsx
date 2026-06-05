@@ -13,6 +13,7 @@ import { PageTransition } from "@/components/shell/PageTransition";
 import { DemoAuthProvider } from "@/context/DemoAuthContext";
 import { WatchlistProvider } from "@/context/WatchlistContext";
 import { PortfolioProvider } from "@/context/PortfolioContext";
+import { IntelligenceFeedProvider } from "@/context/IntelligenceFeedContext";
 import { AppFooter } from "@/components/shell/AppFooter";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export default async function DashboardLayout({
     <DemoAuthProvider>
       <WatchlistProvider>
       <PortfolioProvider>
+      <IntelligenceFeedProvider>
       <LiveDataProvider initialDashboard={dashboard}>
         <div className="ripple-app">
           <SkipToContent />
@@ -46,6 +48,7 @@ export default async function DashboardLayout({
           <AppFooter />
         </div>
       </LiveDataProvider>
+      </IntelligenceFeedProvider>
       </PortfolioProvider>
       </WatchlistProvider>
     </DemoAuthProvider>

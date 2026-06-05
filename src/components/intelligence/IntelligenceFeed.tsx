@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { CompanyStorySource, IntelligenceFeedItem } from "@/types/domain";
+import type { CompanyStorySource } from "@/types/domain";
 import { formatAsOf } from "@/lib/format";
 import { exportIntelligenceCsv } from "@/lib/export/entities";
-import { fetchJsonWithRetry } from "@/lib/client/fetch-retry";
 import { useWatchlist } from "@/context/WatchlistContext";
+import { useIntelligenceFeed } from "@/context/IntelligenceFeedContext";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { levelFromStorySource } from "@/lib/intelligence/story-level";
 
@@ -26,43 +26,38 @@ type SourceFilter = "all" | CompanyStorySource;
 
 export function IntelligenceFeed() {
   const { ids: watchlistIds } = useWatchlist();
-  const [items, setItems] = useState<IntelligenceFeedItem[]>([]);
-  const [asOf, setAsOf] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { entries, load: loadScope } = useIntelligenceFeed();
   const [scope, setScope] = useState<ScopeFilter>("all");
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>("all");
 
-  const load = useCallback(async (refresh = false) => {
-    if (refresh) setRefreshing(true);
-    else setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams();
-      if (refresh) params.set("refresh", "1");
-      if (scope === "watchlist" && watchlistIds.size > 0) {
-        params.set("watchlist", [...watchlistIds].join(","));
-      }
-      const path = `/api/intelligence/recent?${params.toString()}`;
-      const raw = await fetchJsonWithRetry<Record<string, unknown>>(path);
-      const data = (raw.data ?? raw) as {
-        items: IntelligenceFeedItem[];
-        asOf: string;
-      };
-      setItems(data.items ?? []);
-      setAsOf(data.asOf ?? new Date().toISOString());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load feed");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [scope, watchlistIds]);
+  const entry = entries[scope];
+  const { items, asOf, loading, refreshing, error } = entry;
+
+  // The "all" scope is warmed in the background on app open, so it's usually
+  // ready before the user ever arrives here — and it's kept in the provider, so
+  // switching tabs never refetches it.
+  const load = useCallback(
+    (refresh = false) =>
+      loadScope(scope, {
+        refresh,
+        watchlistIds: [...watchlistIds],
+      }),
+    [loadScope, scope, watchlistIds]
+  );
+
+  const watchlistKey = useMemo(() => [...watchlistIds].sort().join(","), [watchlistIds]);
 
   useEffect(() => {
-    void load(false);
-  }, [load]);
+    if (scope === "all") {
+      // Only fetch if the background prefetch hasn't populated it yet.
+      if (!entries.all.loaded) void loadScope("all");
+    } else if (watchlistIds.size > 0) {
+      // Watchlist is user-specific; (re)load when entering the scope or when
+      // the starred set changes so it always reflects the current portfolio.
+      void loadScope("watchlist", { watchlistIds: [...watchlistIds] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope, watchlistKey, entries.all.loaded]);
 
   const filtered = useMemo(() => {
     let list = items;
