@@ -16,9 +16,12 @@ Users ──► CF proxy ──► Vercel ──────┼──► Next.js
 
 ## Cron schedule (Cloudflare Worker)
 
-Only **2 triggers** — Cloudflare's free plan caps Cron Triggers at **5 per account**
-(shared across all Workers), so the hourly trigger multiplexes the slower jobs by
-UTC hour inside the worker (`workers/cloudflare/src/index.ts`).
+Only **2 triggers**, **set in the dashboard** (Worker → Settings → Triggers), not in
+`wrangler.toml`: the git-connected Workers Build can't register cron schedules on
+deploy, so the config omits `[triggers]` to keep CI builds green and `wrangler
+deploy` leaves the dashboard-managed schedules untouched. The hourly trigger
+multiplexes the slower jobs by UTC hour inside the worker
+(`workers/cloudflare/src/index.ts`).
 
 | Schedule | Effective cadence | Calls |
 |----------|-------------------|-------|

@@ -13,11 +13,17 @@ compatibility_date = "2024-11-01"
 [vars]
 APP_URL = "https://ripple-cs153.vercel.app"
 
-# Only 2 triggers: Cloudflare's free plan caps Cron Triggers at 5 per ACCOUNT
-# (shared across all Workers). The hourly trigger multiplexes the snapshot /
-# stories / ingest / daily jobs by UTC hour inside the worker — see src/index.ts.
-[triggers]
-crons = [
-  "*/15 * * * *", # scenario queue drain
-  "0 * * * *",    # hourly: snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)
-]
+# Cron Triggers are intentionally NOT declared here.
+#
+# The git-connected Cloudflare Workers Build cannot register cron schedules on
+# deploy (the script uploads fine, but the /schedules API call fails on the CI
+# deploy path), which marked every build as failed. Omitting `[triggers]` makes
+# `wrangler deploy` skip the schedules call entirely and LEAVE EXISTING TRIGGERS
+# IN PLACE (per Cloudflare docs), so CI builds stay green and the schedules set
+# in the dashboard persist across deploys.
+#
+# Set these two triggers ONCE in the dashboard (Worker → Settings → Triggers →
+# Cron Triggers). The scheduled() handler in src/index.ts dispatches on exactly
+# these expressions:
+#   */15 * * * *   scenario queue drain
+#   0 * * * *      hourly: snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)
