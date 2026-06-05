@@ -27,7 +27,7 @@ Save the output as **`CRON_SECRET`** — you’ll use the same value in Vercel a
 |----------|----------|------------------|
 | `CRON_SECRET` | Yes | Step 1 |
 | `DATABASE_URL` | Yes (prod DB) | Step 3 — DigitalOcean Postgres |
-| `NEXT_PUBLIC_APP_URL` | Yes | `https://ripple-omry-2596s-projects.vercel.app` or your custom domain |
+| `NEXT_PUBLIC_APP_URL` | Yes | `https://ripple-cs153.vercel.app` or your custom domain |
 | `DIGEST_EMAIL_TO` | Optional | Your email |
 | `RESEND_API_KEY` | Optional | [resend.com](https://resend.com) |
 | `RESEND_FROM` | Optional | `Ripple <onboarding@resend.dev>` or verified domain |
@@ -48,7 +48,7 @@ Save the output as **`CRON_SECRET`** — you’ll use the same value in Vercel a
 2. **Build** → **Authentication** → **Get started** → **Sign-in method** → enable **Google**.
 3. **Project settings** → **Your apps** → **Web** (`</>`) → register app → copy the `firebaseConfig` values into the `NEXT_PUBLIC_FIREBASE_*` vars above.
 4. **Project settings** → **Service accounts** → **Generate new private key** → paste the JSON as a single line into `FIREBASE_SERVICE_ACCOUNT_JSON` on Vercel.
-5. **Authentication** → **Settings** → **Authorized domains** → add your Vercel hostname (e.g. `ripple-ruby.vercel.app`) and `localhost` for local dev.
+5. **Authentication** → **Settings** → **Authorized domains** → add your Vercel hostname (e.g. `ripple-cs153.vercel.app`) and `localhost` for local dev.
 6. Redeploy after saving env vars. Sign in at `/sign-in` with **Continue with Google**.
 
 7. **Deployment Protection:** Settings → Deployment Protection → allow **public** access to Production (or you’ll see a Vercel login wall).
@@ -113,7 +113,7 @@ bash scripts/prod-ops.local.sh
 Or run manually:
 
 ```bash
-export APP_URL="https://ripple-ruby.vercel.app"
+export APP_URL="https://ripple-cs153.vercel.app"
 export CRON_SECRET="your-secret"
 
 # 1) Recompute KPI snapshot (updates asOf)
@@ -129,9 +129,9 @@ curl -s "$APP_URL/api/ops/status" | jq '.snapshot.asOf'
 ### Keep it fresh automatically
 
 1. **Vercel:** `DATABASE_URL`, `CRON_SECRET`, `NEXT_PUBLIC_APP_URL` on Production → **Redeploy**.
-2. **Cloudflare worker** (`workers/cloudflare`): `wrangler secret put CRON_SECRET`, `wrangler deploy` — schedules:
-   - Every **5 min** → scenario worker + **snapshot refresh**
-   - Every **6 h** → full ingest (`POST /api/ingest/internal`)
+2. **Cloudflare worker** (root `wrangler.toml`): set `CRON_SECRET`, `npm run deploy` from `workers/cloudflare`, then add the 2 cron triggers in the dashboard (see §4):
+   - `*/15 * * * *` → scenario queue drain
+   - `0 * * * *` → snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)
 3. Hard-refresh the browser; the banner should say **Live · Postgres**.
 
 ---

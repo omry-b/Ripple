@@ -1,7 +1,7 @@
 import { getAlerts, getSignals } from "@/lib/api";
 
 export async function GET() {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-ruby.vercel.app";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-cs153.vercel.app";
   const [alerts, signals] = await Promise.all([getAlerts(), getSignals()]);
 
   const items = [

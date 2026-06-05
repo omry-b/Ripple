@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-omry-2596s-projects.vercel.app"
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://ripple-cs153.vercel.app"
   ),
   title: "Ripple | Supply Chain Intelligence",
   description: "Global supply chain risk intelligence dashboard",

@@ -30,7 +30,7 @@ The project matured from a polished dashboard into a validated, personalized, pr
 
 ### Repo & deploy
 
-- Production URL documented in README (`ripple-omry-2596s-projects.vercel.app`)
+- Production URL documented in README (`ripple-cs153.vercel.app`)
 - Auto-deploy on push to `main` (Vercel GitHub app / vercel[bot])
 - Disable Vercel Deployment Protection on Production (if login wall appears)
 - Add stable production alias / custom domain in Vercel → Domains

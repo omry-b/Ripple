@@ -7,4 +7,4 @@ export const STORY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 export const STORY_FETCH_TIMEOUT_MS = 10_000;
 
 export const STORY_USER_AGENT =
-  "RippleIntel/1.0 (+https://ripple-ruby.vercel.app; supply-chain-risk)";
+  "RippleIntel/1.0 (+https://ripple-cs153.vercel.app; supply-chain-risk)";

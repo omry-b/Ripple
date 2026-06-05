@@ -11,7 +11,7 @@ Set `CRON_SECRET` in Vercel → Environment Variables.
 ## Long-running worker (Railway / Fly / local)
 
 ```bash
-export APP_URL=https://ripple-omry-2596s-projects.vercel.app
+export APP_URL=https://ripple-cs153.vercel.app
 export CRON_SECRET=your-secret
 npx tsx workers/scenario-worker.ts
 ```
