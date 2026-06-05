@@ -5,7 +5,6 @@ import { CompaniesPageClient } from "@/components/companies/CompaniesPageClient"
 import { CompaniesTableSkeleton } from "@/components/companies/CompaniesTableSkeleton";
 import { Breadcrumbs } from "@/components/shell/Breadcrumbs";
 import { WatchlistManager } from "@/components/watchlists/WatchlistManager";
-import { DigestPreferences } from "@/components/watchlists/DigestPreferences";
 import { formatAsOf } from "@/lib/format";
 
 export const metadata = {
@@ -45,7 +44,6 @@ export default async function CompaniesPage({ searchParams }: Props) {
         <span className="section-label">Watchlists</span>
         <div className="watchlist-panels">
           <WatchlistManager />
-          <DigestPreferences />
         </div>
       </main>
     </>

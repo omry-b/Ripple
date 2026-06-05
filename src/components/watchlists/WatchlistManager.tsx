@@ -6,8 +6,6 @@ import { useWatchlist } from "@/context/WatchlistContext";
 import { isFirebaseClientConfigured } from "@/lib/firebase/client";
 import Link from "next/link";
 
-const DIGEST_KEY = "ripple-watchlist-digest";
-
 type WatchlistManagerProps = {
   selectedCompanyIds?: string[];
 };
@@ -18,12 +16,6 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
   const [name, setName] = useState("My portfolio");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [digestFrequency, setDigestFrequency] = useState<"off" | "daily" | "weekly">("off");
-
-  useEffect(() => {
-    const stored = localStorage.getItem(DIGEST_KEY);
-    if (stored === "daily" || stored === "weekly") setDigestFrequency(stored);
-  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -98,23 +90,6 @@ export function WatchlistManager({ selectedCompanyIds = [] }: WatchlistManagerPr
           {loading ? "Saving…" : "Create watchlist"}
         </button>
       </div>
-      <label className="watchlist-digest-pref">
-        <span>Email digest</span>
-        <select
-          value={digestFrequency}
-          onChange={(e) => {
-            const value = e.target.value as "off" | "daily" | "weekly";
-            setDigestFrequency(value);
-            if (value === "off") localStorage.removeItem(DIGEST_KEY);
-            else localStorage.setItem(DIGEST_KEY, value);
-          }}
-          aria-label="Digest email frequency"
-        >
-          <option value="off">Off</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-        </select>
-      </label>
       {message && <p className="watchlist-manager-msg">{message}</p>}
       {lists.length > 0 && (
         <ul className="watchlist-server-list">
