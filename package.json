@@ -29,7 +29,7 @@
     "analyze": "ANALYZE=true npm run build",
     "lighthouse": "node scripts/lighthouse-audit.mjs",
     "worker:scenario": "tsx workers/scenario-worker.ts",
-    "worker:cf-deploy": "cd workers/cloudflare && npm install && npx wrangler deploy",
+    "worker:cf-deploy": "cd workers/cloudflare && npm install && npm run deploy",
     "chromatic": "chromatic --exit-zero-on-changes"
   },
   "dependencies": {

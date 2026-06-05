@@ -155,12 +155,17 @@ curl -s "$APP_URL/api/ops/status" | jq '.snapshot.asOf'
 ```bash
 cd workers/cloudflare
 npm install
-# Edit wrangler.toml [vars] APP_URL if not using default production URL
-wrangler secret put CRON_SECRET    # paste same value as Vercel
-wrangler deploy
+# Edit ../../wrangler.toml [vars] APP_URL if not using the default production URL.
+# The wrangler config lives at the repo root so Cloudflare Workers Builds
+# (git-connected CI) can also find it; these npm scripts pass --config to it.
+wrangler secret put CRON_SECRET --config ../../wrangler.toml   # same value as Vercel
+npm run deploy
 ```
 
-4. Cloudflare dashboard → **Workers** → `ripple-cron` → confirm **Cron Triggers**:
+> **Git-connected auto-deploy (optional):** a Cloudflare **Workers Build** connected to
+> this repo deploys the `ripple` worker from the root `wrangler.toml` on every push.
+
+4. Cloudflare dashboard → **Workers** → `ripple` → confirm **Cron Triggers**:
    - Every 5 min → scenario worker
    - Every 6 hours → full ingest
    - Daily 12:00 UTC → daily maintenance
@@ -168,7 +173,7 @@ wrangler deploy
 5. Optional manual test:
 
 ```bash
-curl "https://ripple-cron.<your-subdomain>.workers.dev/?path=/api/health"
+curl "https://ripple.<your-subdomain>.workers.dev/?path=/api/health"
 ```
 
 (Requires `CRON_SECRET` set; health is public but path proxy still sends Bearer.)

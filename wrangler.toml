@@ -1,0 +1,23 @@
+# Cloudflare Worker — cron pinger that drives Ripple's scheduled jobs.
+#
+# This config lives at the repo root so Cloudflare Workers Builds (which builds
+# from the repository root) can find it and deploy on push. The worker source
+# stays under workers/cloudflare/src; `main` is resolved relative to this file.
+#
+# Secret (set once in the dashboard or via `wrangler secret put`):
+#   CRON_SECRET  → must match the value in Vercel (Bearer auth for /api/cron/*)
+name = "ripple"
+main = "workers/cloudflare/src/index.ts"
+compatibility_date = "2024-11-01"
+
+[vars]
+APP_URL = "https://ripple-cs153.vercel.app"
+
+[triggers]
+crons = [
+  "*/15 * * * *", # scenario queue drain
+  "0 */2 * * *",  # snapshot refresh
+  "0 */4 * * *",  # story intelligence crawl (24h window)
+  "0 */6 * * *",  # risk ingest adapters
+  "0 12 * * *",   # daily roll-up
+]

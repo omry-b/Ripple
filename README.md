@@ -138,6 +138,6 @@ Per the CS 153 AI policy, this project was built with heavy use of AI coding too
 - **[Claude Code](https://claude.com/claude-code) (Anthropic)** — the primary development environment. Used for architecture, full-stack implementation, the risk engine (Monte Carlo model, numerical methods, validation harness), debugging, test authoring, CI configuration, and documentation.
 - **Cursor** — secondary editor assistance for quick iteration.
 
-**How to read this honestly:** AI wrote the large majority of the code under my direction. My role was problem definition, architectural decisions, reviewing/correcting model design (e.g. demanding a real Monte Carlo + validation rather than the original placeholder), and verifying correctness. The mathematics in `src/lib/risk/` (one-factor threshold model, Expected Shortfall, Kupiec backtest) was specified and reviewed by me and implemented with AI assistance. All AI-assisted output was tested (`npm run test`, `npm run evaluate`) and is reproducible.
+My role was problem definition, architectural decisions, reviewing/correcting model design, and verifying correctness. The mathematics in `src/lib/risk/` (one-factor threshold model, Expected Shortfall, Kupiec backtest) was specified and reviewed by me and implemented with AI assistance. All AI-assisted output was tested (`npm run test`, `npm run evaluate`) and is reproducible.
 
 No external repositories were forked; all application code in this repo was written for this project. Third-party libraries are standard npm dependencies listed in `package.json`.

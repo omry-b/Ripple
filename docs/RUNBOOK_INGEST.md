@@ -37,4 +37,4 @@
 
 - Rotate `CRON_SECRET` if cron endpoints were exposed
 - Review Vercel function logs for timeout (increase `maxDuration` if needed)
-- Redeploy Cloudflare worker after changing `workers/cloudflare/wrangler.toml` crons
+- Redeploy Cloudflare worker after changing `wrangler.toml` (repo root) crons
