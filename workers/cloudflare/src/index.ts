@@ -24,33 +24,29 @@ export default {
 
     ctx.waitUntil(
       (async () => {
-        /** Async scenario queue only — not a full crawl. */
+        const run = async (label: string, path: string) => {
+          const res = await callRipple(env, path);
+          console.log(label, res.status, await res.text());
+        };
+
+        /** Async scenario queue drain — frequent, for responsiveness. */
         if (cron === "*/15 * * * *") {
-          const scenario = await callRipple(env, "/api/cron/scenario-worker");
-          console.log("scenario-worker", scenario.status, await scenario.text());
+          await run("scenario-worker", "/api/cron/scenario-worker");
           return;
         }
-        /** Snapshot refresh every 2 hours. */
-        if (cron === "0 */2 * * *") {
-          const snapshot = await callRipple(env, "/api/cron/snapshot-refresh");
-          console.log("snapshot-refresh", snapshot.status, await snapshot.text());
-          return;
-        }
-        /** Story intelligence crawl (24h window) every 4 hours. */
-        if (cron === "0 */4 * * *") {
-          const stories = await callRipple(env, "/api/cron/stories-refresh");
-          console.log("stories-refresh", stories.status, await stories.text());
-          return;
-        }
-        /** Risk ingest adapters every 6 hours. */
-        if (cron === "0 */6 * * *") {
-          const ingest = await callRipple(env, "/api/cron/ingest-scheduled");
-          console.log("ingest-scheduled", ingest.status, await ingest.text());
-          return;
-        }
-        if (cron === "0 12 * * *") {
-          const res = await callRipple(env, "/api/cron/daily");
-          console.log("cron/daily", res.status, await res.text());
+
+        /**
+         * Hourly multiplexer. Cloudflare's free plan caps Cron Triggers at 5 per
+         * account, so rather than a separate trigger per cadence we run one hourly
+         * trigger and derive the original schedule from the UTC hour:
+         *   snapshot every 2h · stories every 4h · ingest every 6h · daily 12:00 UTC.
+         */
+        if (cron === "0 * * * *") {
+          const hour = new Date(event.scheduledTime).getUTCHours();
+          if (hour % 2 === 0) await run("snapshot-refresh", "/api/cron/snapshot-refresh");
+          if (hour % 4 === 0) await run("stories-refresh", "/api/cron/stories-refresh");
+          if (hour % 6 === 0) await run("ingest-scheduled", "/api/cron/ingest-scheduled");
+          if (hour === 12) await run("cron/daily", "/api/cron/daily");
         }
       })()
     );

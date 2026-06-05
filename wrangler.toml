@@ -13,11 +13,11 @@ compatibility_date = "2024-11-01"
 [vars]
 APP_URL = "https://ripple-cs153.vercel.app"
 
+# Only 2 triggers: Cloudflare's free plan caps Cron Triggers at 5 per ACCOUNT
+# (shared across all Workers). The hourly trigger multiplexes the snapshot /
+# stories / ingest / daily jobs by UTC hour inside the worker — see src/index.ts.
 [triggers]
 crons = [
   "*/15 * * * *", # scenario queue drain
-  "0 */2 * * *",  # snapshot refresh
-  "0 */4 * * *",  # story intelligence crawl (24h window)
-  "0 */6 * * *",  # risk ingest adapters
-  "0 12 * * *",   # daily roll-up
+  "0 * * * *",    # hourly: snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)
 ]

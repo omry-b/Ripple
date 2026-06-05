@@ -165,10 +165,11 @@ npm run deploy
 > **Git-connected auto-deploy (optional):** a Cloudflare **Workers Build** connected to
 > this repo deploys the `ripple` worker from the root `wrangler.toml` on every push.
 
-4. Cloudflare dashboard → **Workers** → `ripple` → confirm **Cron Triggers**:
-   - Every 5 min → scenario worker
-   - Every 6 hours → full ingest
-   - Daily 12:00 UTC → daily maintenance
+4. Cloudflare dashboard → **Workers** → `ripple` → confirm **Cron Triggers** (2 total —
+   the free plan caps cron triggers at 5 per account, so the hourly trigger
+   multiplexes the slower jobs by UTC hour inside the worker):
+   - `*/15 * * * *` → scenario queue drain
+   - `0 * * * *` → snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)
 
 5. Optional manual test:
 

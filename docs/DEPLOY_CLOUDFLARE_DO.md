@@ -16,11 +16,18 @@ Users ──► CF proxy ──► Vercel ──────┼──► Next.js
 
 ## Cron schedule (Cloudflare Worker)
 
-| Schedule | Calls | Purpose |
-|----------|--------|---------|
-| `*/5 * * * *` | `/api/cron/scenario-worker` | Drain `scenario_jobs` |
-| `0 */6 * * *` | `/api/ingest/internal` | Full adapter ingest |
-| `0 12 * * *` | `/api/cron/daily` | Snapshot + digest + drain |
+Only **2 triggers** — Cloudflare's free plan caps Cron Triggers at **5 per account**
+(shared across all Workers), so the hourly trigger multiplexes the slower jobs by
+UTC hour inside the worker (`workers/cloudflare/src/index.ts`).
+
+| Schedule | Effective cadence | Calls |
+|----------|-------------------|-------|
+| `*/15 * * * *` | every 15 min | `/api/cron/scenario-worker` (drain `scenario_jobs`) |
+| `0 * * * *` → | hourly, dispatched by hour: | |
+| · `hour % 2 == 0` | every 2 h | `/api/cron/snapshot-refresh` |
+| · `hour % 4 == 0` | every 4 h | `/api/cron/stories-refresh` |
+| · `hour % 6 == 0` | every 6 h | `/api/cron/ingest-scheduled` |
+| · `hour == 12` | daily 12:00 UTC | `/api/cron/daily` |
 
 Vercel Hobby daily cron remains a backup; CF Worker is the primary scheduler when deployed.
 
