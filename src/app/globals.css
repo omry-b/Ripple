@@ -2811,6 +2811,15 @@ body {
   color: #a3a3a3;
 }
 
+.digest-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: #d4d4d4;
+}
+
 .auth-placeholder-page {
   min-height: 100vh;
   display: flex;
