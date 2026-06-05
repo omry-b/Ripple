@@ -32,24 +32,24 @@ export default async function DashboardLayout({
   return (
     <DemoAuthProvider>
       <WatchlistProvider>
-      <PortfolioProvider>
-      <IntelligenceFeedProvider>
-      <LiveDataProvider initialDashboard={dashboard}>
-        <div className="ripple-app">
-          <SkipToContent />
-          <DataModeBanner />
-          <OfflineBanner />
-          <NavHeader />
-          <RefreshBanner />
-          <SignalTickerLive />
-          <CommandPalette />
-          <KeyboardShortcuts />
-          <PageTransition>{children}</PageTransition>
-          <AppFooter />
-        </div>
-      </LiveDataProvider>
-      </IntelligenceFeedProvider>
-      </PortfolioProvider>
+        <PortfolioProvider>
+          <IntelligenceFeedProvider>
+            <LiveDataProvider initialDashboard={dashboard}>
+              <div className="ripple-app">
+                <SkipToContent />
+                <DataModeBanner />
+                <OfflineBanner />
+                <NavHeader />
+                <RefreshBanner />
+                <SignalTickerLive />
+                <CommandPalette />
+                <KeyboardShortcuts />
+                <PageTransition>{children}</PageTransition>
+                <AppFooter />
+              </div>
+            </LiveDataProvider>
+          </IntelligenceFeedProvider>
+        </PortfolioProvider>
       </WatchlistProvider>
     </DemoAuthProvider>
   );
