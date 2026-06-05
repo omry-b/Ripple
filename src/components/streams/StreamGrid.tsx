@@ -81,7 +81,7 @@ export function StreamGrid({
               role="img"
               aria-label={`${stream.name} 7-day sparkline, score ${stream.score}`}
             >
-              <title>{stream.name} recent trend</title>
+              <title>{`${stream.name} recent trend`}</title>
               <polyline
                 points={stream.sparkline}
                 fill="none"

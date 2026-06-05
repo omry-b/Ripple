@@ -25,14 +25,14 @@ export default async function ScenarioPage() {
             { label: "Scenario" },
           ]}
         />
-        <span className="section-label" id="scenario-alerts">
-          Active alerts
-        </span>
-        <ScenarioAlertsStrip />
         <span className="section-label">Select a scenario to simulate</span>
         <Suspense fallback={<p className="empty-state">Loading workbench…</p>}>
           <ScenarioPageClient scenarios={scenarios} />
         </Suspense>
+        <span className="section-label" id="scenario-alerts">
+          Or simulate from an active alert
+        </span>
+        <ScenarioAlertsStrip />
       </main>
     </>
   );

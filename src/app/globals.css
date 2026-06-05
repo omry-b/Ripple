@@ -2293,6 +2293,21 @@ body {
     background: #1a1a1a;
     color: #f5f5f5;
   }
+
+  /* Keep header actions on a single row; demote power-user controls that
+     don't belong on a small screen (org switcher, keyboard-only command palette)
+     so they no longer wrap below the header and overlap the ticker. The
+     `.nav-header` prefix raises specificity above the base `.nav-actions` rule
+     that appears later in this file (media queries don't add specificity). */
+  .nav-header .nav-actions {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .nav-header .nav-actions .org-switcher,
+  .nav-header .nav-actions .nav-kbd {
+    display: none;
+  }
 }
 
 .column-picker-bar {

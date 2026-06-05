@@ -26,7 +26,8 @@ export const financialAdapter: IngestAdapter = {
       const events = rows.slice(0, 8).map((row, i) => {
         const country = row.country?.value ?? "Global";
         const geo = COUNTRY_GEO[country] ?? { lng: 0, lat: 30 };
-        const value = row.value ?? "n/a";
+        const raw = row.value ?? "n/a";
+        const value = Number.isFinite(Number(raw)) ? Number(raw).toFixed(1) : raw;
         return {
           id: `fin-${country}-${row.date ?? i}-${Date.now()}`,
           adapter: "financial" as const,

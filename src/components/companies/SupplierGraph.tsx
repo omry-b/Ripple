@@ -15,7 +15,7 @@ export function SupplierGraph({ company, suppliers }: SupplierGraphProps) {
     <section className="workbench-card supplier-graph-wrap" aria-label="Supplier network graph">
       <h3 className="supplier-tier-title">Supply network</h3>
       <svg viewBox="0 0 300 180" className="supplier-graph-svg" role="img">
-        <title>{company.name} supplier network</title>
+        <title>{`${company.name} supplier network`}</title>
         {linked.map((s, i) => {
           const angle = (i / linked.length) * Math.PI * 2 - Math.PI / 2;
           const x = cx + Math.cos(angle) * radius;

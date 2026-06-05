@@ -41,7 +41,7 @@ export function RiskScoreSparkline({
         role="img"
         aria-label={`30-day risk score trend, ${trend}, current score ${latest}`}
       >
-        <title>30-day risk score: {latest}</title>
+        <title>{`30-day risk score: ${latest}`}</title>
         <polyline
           points={points}
           fill="none"

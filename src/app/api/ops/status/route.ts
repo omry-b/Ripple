@@ -34,13 +34,15 @@ export async function GET() {
       : null,
     edge: {
       scheduler: "cloudflare-workers",
-      worker: "ripple-cron",
+      worker: "ripple",
+      // 2 triggers (Cloudflare free plan caps cron triggers at 5 per account);
+      // the hourly trigger multiplexes the slower jobs by UTC hour in the worker.
       schedules: [
         { cron: "*/15 * * * *", task: "scenario-worker" },
-        { cron: "0 */2 * * *", task: "snapshot-refresh" },
-        { cron: "0 */4 * * *", task: "stories-refresh (24h crawl)" },
-        { cron: "0 */6 * * *", task: "ingest-scheduled" },
-        { cron: "0 12 * * *", task: "daily-maintenance" },
+        {
+          cron: "0 * * * *",
+          task: "hourly: snapshot (2h) · stories (4h) · ingest (6h) · daily (12:00 UTC)",
+        },
       ],
       vercelCronBackup: "/api/cron/daily",
     },
